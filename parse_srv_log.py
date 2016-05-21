@@ -1,21 +1,33 @@
+
 readme = '''
-	示例：
-	parse_srv_log.basic_parse() -- 基础解析
+	说明：
+	parse_srv_log.basic_parse() -- 基础解析流程
+
 	parse_srv_log.start -- 所有start
 	parse_srv_log.stop -- 所有stop
 	parse_srv_log.stop_2
 	parse_srv_log.stop_pos
 	parse_srv_log.stop_ack
+
+	parse_srv_log.pt_log(parse_srv_log.start) -- 显示具体内容
+
 	parse_srv_log.find_nearest(parse_srv_log.period,1362)
 	-- 查找parse_srv_log.period中最接近（小于）1362的值
+
 	parse_srv_log.find_nearest(parse_srv_log.period,1362,big=True)
 	-- 查找parse_srv_log.period中最接近（大于）1362的值
-	GGA_seg_1 = parse_srv_log.search_in('GGA',1301,1362)
-	-- 查询在1301和1362之间的GGA的个数
+
+	parse_srv_log.search_in('GGA',1301,1362,pt=True)
+	-- 查询在1301和1362之间包含'GGA'的行数，并显示该行具体内容（pt为True）
+
+	parse_srv_log.search_more(['GGA','GST'],1301,1362)
+	-- 查询在1301和1362之间包含'GGA'或'GST'的行数（可加pt）
+
 	parse_srv_log.calc(',T3,','[GPSstop]pos',',E,1,')
-	-- 查询在,T3,和[GPSstop]pos之间,E,1,的个数
+	-- 查询在',T3,'和'[GPSstop]pos'之间',E,1,'的个数
+
 	parse_srv_log.calc('mx_agps_request_start','time_finish:119','ACKOK all',max=True)
-	-- 查询在mx_agps_request_start和time_finish:119之间ACKOK all的个数（按最大范围）
+	-- 查询在'mx_agps_request_start'和'time_finish:119'之间'ACKOK all'的个数（按最大范围）
 '''
 
 def open_file(file):
@@ -26,7 +38,7 @@ def open_file(file):
 			log.append(line)
 	return log  # string list
 
-# 从line_from到line_to找出内容包含string的行，返回行号
+# v1: 从line_from到line_to找出内容包含string的行，返回行号
 def search_in(string, line_from=0, line_to=0, pt=False):
 	global file
 	log = open_file(file)
@@ -51,6 +63,32 @@ def search_in(string, line_from=0, line_to=0, pt=False):
 	print(string, ': ', str(len(search_res)))
 	return search_res  # list
 
+# v2: 从line_from到line_to找出内容包含string_list内任一内容的行，返回行号
+def search_more(string_list, line_from=0, line_to=0, pt=False):
+	global file
+	log = open_file(file)
+	search_res = []
+	if line_from == 0:
+		start = 0
+	else:
+		start = line_from
+
+	if line_to == 0:
+		stop = len(log)
+	else:
+		stop = line_to
+
+	for line_index in range(start, stop):
+		for string in string_list:
+			if string in log[line_index]:
+				# search_res.append((line_index,log[line_index]))
+				search_res.append(line_index)
+				if pt:
+					print(line_index, log[line_index])
+				break
+
+	print(string_list, ': ', str(len(search_res)))
+	return search_res  # list
 
 # v1:找出line_list（从小到大排列）中最接近（小于）line_goal的一个
 # def find_nearest(line_list, line_goal):
@@ -129,18 +167,19 @@ def calc_time(stop_list,string='GGA'):
 # 默认统计范围：对每一个stop，从它前面最靠近的一个start开始
 # max为True情况的统计范围：对每一个stop，从前一个stop之后的第一个start开始
 # 如果stop前面没有start，则以0作为start
-# TODO：可以直接输入列表
-def calc(start_str, stop_str, goal_str, max = False):
+# 可以直接输入start/stop列表
+def calc(start_str_or_list, stop_str_or_list, goal_str, max = False):
 	goal_cnt = []
 
-	if type(start_str) == list:
-		start_list = start_str
+	if type(start_str_or_list) == list:
+		start_list = start_str_or_list
 	else:
-		start_list = search_in(start_str)
-	if type(stop_str) == list:
-		stop_list = stop_str
+		start_list = search_in(start_str_or_list)
+
+	if type(stop_str_or_list) == list:
+		stop_list = stop_str_or_list
 	else:
-		stop_list = search_in(stop_str)
+		stop_list = search_in(stop_str_or_list)
 		
 	for i in range(len(stop_list)):
 		stop_line = stop_list[i]
@@ -163,7 +202,12 @@ def calc(start_str, stop_str, goal_str, max = False):
 def pt(list):
 	for i in list:
 		print(i)
-	
+
+# 按行号打印log内容
+def pt_log(list):
+	for i in list:
+		print(log[i])
+
 # 基础解析
 def basic_parse():
 	global file,fw,stop,stop_1,stop_all,stop_hold,drv_start,period,start,locate,stop_2,stop_pos,stop_ack,GGA
