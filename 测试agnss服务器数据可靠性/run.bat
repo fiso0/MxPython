@@ -1,0 +1,2 @@
+python getData4TCPServer.py
+pause

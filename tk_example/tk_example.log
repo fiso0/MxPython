@@ -1,0 +1,3 @@
+ERROR:root:Can't convert 'bytes' object to str implicitly
+ERROR:root:Can't convert 'bytes' object to str implicitly
+2016-05-25 10:40:42,330 - root - ERROR - Can't convert 'bytes' object to str implicitly

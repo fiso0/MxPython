@@ -1,0 +1,17 @@
+#-*- coding:utf-8 -*-
+
+from frmGetData4TcpServer import *
+import Tkinter
+
+#主函数体
+root = Tkinter.Tk()
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+root.geometry('640x360')  #设置了主窗口的初始大小960x540 800x450 640x360
+
+frmMain = frmGetData4TcpServer(master=root)
+frmMain.master.title("监控服务器")
+
+frmMain.mainloop()
+root.destroy()
+
