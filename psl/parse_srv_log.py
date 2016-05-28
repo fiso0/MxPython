@@ -1,46 +1,73 @@
-'''
-说明：
-	psl.basic_parse() -- 基础解析流程
+help='''
+功能说明：
+	basic_parse() -- 读取log文件并进行基础解析（请首先执行这个）
 
-	psl.start -- 所有start
-	psl.stop -- 所有stop
-	psl.stop_2
-	psl.stop_pos
-	psl.stop_ack
+	line_list变量包括：
+	start -- 所有start
+	stop -- 所有stop
+	fw,stop,stop_1,stop_all,stop_hold,drv_start,period,start,locate,stop_2,stop_pos,stop_ack,time_fin......
 
-	psl.pt_log(psl.start) -- 显示具体内容
+	pt2file(a) -- a为True则将后续所有输出存入文件psl.log，否则输出到console（默认为False）
+	
+	pt_log(line_list) -- 显示行号和具体内容
 
-	psl.find_nearest(psl.period,1362)
-	-- 查找psl.period中最接近（小于）1362的值
+	find_nearest(line_list,1362,big=True)
+	-- 查找line_list中最接近（默认小于，big=True表示大于）1362的值
 
-	psl.find_nearest(psl.period,1362,big=True)
-	-- 查找psl.period中最接近（大于）1362的值
+	search('GGA',1301,1362,pt=True)
+	-- 查询在1301和1362之间包含'GGA'的行数，pt为True则显示该行具体内容（默认为False）
 
-	psl.search('GGA',1301,1362,pt=True)
-	-- 查询在1301和1362之间包含'GGA'的行数，并显示该行具体内容（pt为True）
-
-	psl.search_or(['GGA','GST'],1301,1362)
+	search_or(['GGA','GST'],1301,1362)
 	-- 查询在1301和1362之间包含'GGA'或'GST'的行数（可加pt）
 
-	psl.search_and(['GGA',',E,1,'],1301,1362)
+	search_and(['GGA',',E,1,'],1301,1362)
 	-- 查询在1301和1362之间包含'GGA'和',E,1,'的行数（可加pt）
 	
-	psl.calc(',T3,','[GPSstop]pos',',E,1,')
+	calc(',T3,','[GPSstop]pos',',E,1,')
 	-- 查询在',T3,'和'[GPSstop]pos'之间',E,1,'的个数
-
-	psl.calc('mx_agps_request_start','time_finish:119','ACKOK all',max=True)
-	-- 查询在'mx_agps_request_start'和'time_finish:119'之间'ACKOK all'的个数（按最大范围）
+	calc(start,time_fin,'GPSstop',max=True)
+	-- 查询在start和time_fin之间'GPSstop'的个数（max为True表示按最大范围）
 	
-	psl.save_to(psl.start,'start.txt',line_no=Ture)
+	calc_time(stop_list,string='GGA')
+	-- 自动寻找最近的start，然后计算中间GGA的个数，打印输出结果，返回所有结果的列表
+	
+	save_to(start,'start.txt',line_no=Ture)
 	-- 将start行号对应的内容保存到start.txt，line_no为True表示同时保存行号（默认为False）
 	
-	psl.select_to('RMC')
-	-- 搜索'RMC'并保存结果到同名文件，例如：
-	-- 从D:\log\srv_logs\Y25\Y25_20160519.log寻找RMC，结果将保存到D:\log\srv_logs\Y25\Y25_20160519 RMC.log
+	select_to('RMC')
+	-- 按文件名+' RMC'保存结果到文件
+	-- 参数line_no为True表示同时保存行号（默认为False）
+	-- 参数result不为空时直接保存result到文件（默认为空时，保存搜索'RMC'的结果）
+	
+	get_speed()
+	-- 获取包含有效RMC速度的NMEA到同名文件(valid RMC)
 '''
 
 import re
+import sys
 
+MYOUT_FILE = False
+LOG_FILE = 'psl.log'
+RESULT_FILE = 'psl_basic_result.log'
+
+# 自定义打印函数
+def myprint(*objects, sep=' ', end='\n', flush=False):
+	global MYOUT_FILE
+	if not MYOUT_FILE:
+		print(*objects,sep=sep,end=end,flush=flush)
+	else:
+		try:
+			f = open(LOG_FILE, 'x')
+		except FileExistsError:
+			f = open(LOG_FILE, 'a')
+		print(*objects,sep=sep,end=end,file=f,flush=flush)
+		f.close()
+
+def pt2file(a=False):
+	global MYOUT_FILE
+	MYOUT_FILE = a
+
+		
 def open_file(file):
 	# global log
 	log = []
@@ -69,9 +96,9 @@ def search(string, line_from=0, line_to=0, pt=False):
 			# search_res.append((line_index,log[line_index]))
 			search_res.append(line_index)
 			if pt:
-				print(line_index, log[line_index])
+				myprint(line_index, log[line_index].strip())
 
-	print(string, ': ', str(len(search_res)))
+	myprint(string, ': ', str(len(search_res)))
 	return search_res  # list
 
 # v2: 从line_from到line_to找出内容包含string_list内任一内容的行，返回行号
@@ -93,10 +120,10 @@ def search_or(string_list, line_from=0, line_to=0, pt=False):
 				# search_res.append((line_index,log[line_index]))
 				search_res.append(line_index)
 				if pt:
-					print(line_index, log[line_index])
+					myprint(line_index, log[line_index].strip())
 				break
 
-	print(string_list, ': ', str(len(search_res)))
+	myprint(string_list, ': ', str(len(search_res)))
 	return search_res  # list
 
 # v3：从line_from到line_to找出内容包含string_list内所有内容的行，返回行号
@@ -121,9 +148,9 @@ def search_and(string_list, line_from=0, line_to=0, pt=False):
 		else:
 			search_res.append(line_index)
 			if pt:
-				print(line_index, log[line_index])
+				myprint(line_index, log[line_index].strip())
 
-	print(string_list, ': ', str(len(search_res)))
+	myprint(string_list, ': ', str(len(search_res)))
 	return search_res  # list
 
 
@@ -131,7 +158,7 @@ def search_and(string_list, line_from=0, line_to=0, pt=False):
 # def find_nearest(line_list, line_goal):
 	# res = 0
 	# if len(line_list) == 0:
-		# print('error: line_list empty')
+		# myprint('error: line_list empty')
 		# return None
 	# for line_no in line_list:
 		# if line_no < line_goal:
@@ -141,7 +168,7 @@ def search_and(string_list, line_from=0, line_to=0, pt=False):
 # v2:应该是找line_list（从小到大排列）中最接近（大于）line_goal的一个
 # def find_nearest(line_list, line_goal):
 	# if len(line_list) == 0:
-		# print('error: line_list empty')
+		# myprint('error: line_list empty')
 		# return None
 	# for line_no in line_list:
 		# if line_no > line_goal:
@@ -153,7 +180,7 @@ def search_and(string_list, line_from=0, line_to=0, pt=False):
 def find_nearest(line_list, line_goal, big = False):
 	res = 0
 	if len(line_list) == 0:
-		print('error: line_list empty')
+		myprint('error: line_list empty')
 		return None
 	if big:
 		for line_no in line_list:
@@ -172,7 +199,7 @@ def calc_time(stop_list,string='GGA'):
 	
 	for stop_line in stop_list:
 		start_line = find_nearest(start,stop_line)
-		print('\tbetween line %d and %d, '%(start_line, stop_line),end='')
+		myprint('\tbetween line %d and %d, '%(start_line, stop_line),end='')
 		if string != 'GGA':
 			cnt = len(search_and([string,'GGA'],start_line,stop_line))
 		else:
@@ -191,14 +218,14 @@ def calc_time(stop_list,string='GGA'):
 		# start_line = 0
 	# else:
 		# start_line = find_nearest(start,stop_line)
-	# print('\tbetween line %d and %d, '%(start_line, stop_line),end='')
+	# myprint('\tbetween line %d and %d, '%(start_line, stop_line),end='')
 	# cnt = len(search(string,start_line,stop_line))
 	# GGA_cnt.append(cnt)
 	
 	# for i in range(1,len(stop_list)):
 		# stop_line = stop_list[i]
 		# start_line = find_nearest(start,stop_list[i-1])
-		# print('\tbetween line %d and %d, '%(start_line, stop_line),end='')
+		# myprint('\tbetween line %d and %d, '%(start_line, stop_line),end='')
 		# cnt = len(search(string,start_line,stop_line))
 		# GGA_cnt.append(cnt)
 	# return GGA_cnt
@@ -233,13 +260,15 @@ def calc(start_str_or_list, stop_str_or_list, goal_str, max = False):
 					start_line = find_nearest(start_list,stop_line)
 		else:
 			start_line = find_nearest(start_list,stop_line)
-		print('\tbetween line %d and %d, '%(start_line, stop_line),end='')
+		myprint('\tbetween line %d and %d, '%(start_line, stop_line),end='')
 		cnt = len(search(goal_str,start_line,stop_line))
 		goal_cnt.append(cnt)
 	return goal_cnt
 
 # 寻找imei，日期，时间
 def find_imei_date_time():
+	global imei,first_date,first_time,last_date,last_time
+	
 	ptn=r'^(\d{15}),(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})$'
 	imei,first_date,first_time,last_date,last_time='','','','',''
 	
@@ -260,9 +289,9 @@ def find_imei_date_time():
 			last_time = res.group(3)
 			break
 	
-	print('IMEI: '+imei)
-	print('First date & time: \t'+first_date+' '+first_time)
-	print('Last date & time: \t'+last_date+' '+last_time)
+	myprint('IMEI: '+imei)
+	myprint('First date & time: \t'+first_date+' '+first_time)
+	myprint('Last date & time: \t'+last_date+' '+last_time)
 
 # 解析结束时间，排序输出
 def sort_time_finish():
@@ -275,17 +304,17 @@ def sort_time_finish():
 			time_finish_res.append(int(res.group(1)))
 	
 	time_finish_res.sort()
-	print(time_finish_res)
+	myprint(time_finish_res)
 
 # 换行打印列表
 def pt(list):
 	for i in list:
-		print(i)
+		myprint(i)
 
 # 按行号打印log内容
 def pt_log(list):
 	for i in list:
-		print(log[i])
+		myprint(str(i)+' '+log[i].strip())
 
 # 按行号保存log内容到新文件
 def save_to(lines, file_name, line_no = False):
@@ -297,137 +326,174 @@ def save_to(lines, file_name, line_no = False):
 					f.write(str(i)+'\t'+log[i])
 				else:
 					f.write(log[i])
-		print('保存成功：'+new_file)
+		myprint('保存成功：'+new_file)
 	except FileExistsError:
-		print('保存失败：文件已存在')
+		myprint('保存失败：文件已存在')
 
 # 寻找string，保存到同名文件
 # 例如：从D:\log\srv_logs\Y25\Y25_20160519.log寻找RMC，结果将保存到D:\log\srv_logs\Y25\Y25_20160519 RMC.log
-def select_to(string, line_no = False):
-	result = search(string)
+def select_to(string, result = None, line_no = False):
+	if result == None:
+		result = search(string)
 	log_file_names = file.split('\\')[-1].split('.',maxsplit=1) # 原文件名内只能有一个点
 	new_file_name = log_file_names[0] + ' ' + string + '.' + log_file_names[-1]
 	save_to(result, new_file_name, line_no)
 
-# todo：保存基础解析结果到文件
+# 获取包含有效RMC速度的NMEA到同名文件
+# todo：考虑按日期分开
+def get_speed():
+	result = search_and(['RMC',',A,'])
+	select_to('valid RMC',result)
+	
+# 保存基础解析结果到文件
 # 格式：
-# 文件名，版本号（最后一条版本号记录），drv_start个数，period个数，start个数，stop个数，stop_1个数，stop_all个数，stop_hold个数，locate个数，stop_2个数，stop_pos个数，stop_ack个数
+# 文件名，版本号（最后一条版本号记录），IMEI，开始时间，结束时间，drv_start个数，period个数，start个数，stop个数，stop_1个数，stop_all个数，stop_hold个数，stop_2个数，stop_pos个数，stop_ack个数，time_finish个数，AGPS开始个数，AGPS成功个数，AGPS失败个数
 def save_basic_result_to():
-	basic_result_file = 'basic_result.txt'
+	basic_result_file = RESULT_FILE
 	try:
 		f = open(basic_result_file, 'x')
-		f.write('文件名,版本号（最后一条版本号记录）,drv_start个数,period个数,start个数,stop个数,stop_1个数,stop_all个数,stop_hold个数,locate个数,stop_2个数,stop_pos个数,stop_ack个数\n')
+		f.write('文件名,版本号（最后一条版本号记录）,IMEI,开始时间,结束时间,start个数,drv_start个数,period个数,stop个数,stop_1个数,stop_all个数,stop_hold个数,stop_2个数,stop_pos个数,stop_ack个数,time_finish个数,AGPS开始个数,AGPS成功个数,AGPS失败个数\n')
 	except FileExistsError:
 		f = open(basic_result_file, 'a')
 	finally:
 		last_fw = log[fw[-1]][log[fw[-1]].index('bb'):-1].strip()
-		f.write(file+','+last_fw+','+str(len(drv_start))+','+str(len(period))+','+str(len(start))+','+str(len(stop))+','+str(len(stop_1))+','+str(len(stop_all))+','+str(len(stop_hold))+','+str(len(locate))+','+str(len(stop_2))+','+str(len(stop_pos))+','+str(len(stop_ack))+'\n')
+		first_dt = first_date+' '+first_time
+		last_dt = last_date+' '+last_time
+		res_list = [file,last_fw,imei,first_dt,last_dt,str(len(start)),str(len(drv_start)),str(len(period)),str(len(stop)),str(len(stop_1)),str(len(stop_all)),str(len(stop_hold)),str(len(stop_2)),str(len(stop_pos)),str(len(stop_ack)),str(len(time_fin)),str(len(agps_start)),str(len(agps_ok)),str(len(agps_fail))]
+		res_string = ','.join(res_list)
+		f.write(res_string+'\n')
 		f.close()
-
 
 
 # 基础解析
 def basic_parse():
-	global file,log,fw,stop,stop_1,stop_all,stop_hold,drv_start,period,start,locate,stop_2,stop_pos,stop_ack,time_fin
+	global file,log,fw,stop,stop_1,stop_all,stop_hold,drv_start,period,start,locate,stop_2,stop_pos,stop_ack,time_fin,agps_start,agps_ok,agps_fail
 	
 	file = input('待解析文件地址：')
-	log = open_file(file)
+	try:
+		log = open_file(file)
+	except:
+		input('读取文件失败')
+		return
 	
 	# 寻找imei，日期，时间
-	print('\n')
+	myprint('\n')
 	find_imei_date_time()
 	
 	# 版本号
-	print('\n')
-	print('__fw__')
+	myprint('\n')
+	myprint('__fw__')
 	fw = search('FW')
 	first_fw = log[fw[0]][log[fw[0]].index('bb'):-1].strip()
-	print(first_fw)
+	myprint(first_fw)
 	last_fw = log[fw[-1]][log[fw[-1]].index('bb'):-1].strip()
 	if first_fw != last_fw:
-		print(last_fw)
+		myprint(last_fw)
 
-	# print('__GGA__',end='')
+	# myprint('__GGA__',end='')
 	# GGA = search('GGA')
 
 	# 定位开始
-	print('\n')
-	print('__drv_start__',end='')
+	myprint('\n')
+	myprint('__drv_start__',end='')
 	drv_start = search('mx_gps_ctrl_drv_start')
-	print('__period__',end='')
+	myprint('__period__',end='')
 	period = search('mx_location_period_timer__cb')
 
 	start = drv_start+period
 	start.sort()
-	print('__start__ = drv_start + period')
+	myprint('__start__ = drv_start + period')
 
 	# 定位结束
-	print('__stop__',end='')
+	myprint('__stop__',end='')
 	stop = search('[GPSstop]')
 	
 	# 定位起止
 	locate = start+stop
 	locate.sort()
 	# for i in locate:
-		# print('%d: %s'%(i,log[i]))
+		# myprint('%d: %s'%(i,log[i]))
 
 	## 固定时间
-	print('\n')
-	print('[30s]__stop_1__',end='')
+	myprint('\n')
+	myprint('[30s]__stop_1__',end='')
 	stop_1 = search('[GPSstop]phase 1 timeout')
 
-	print('[5min]__stop_all__',end='')
+	myprint('[5min]__stop_all__',end='')
 	stop_all = search('[GPSstop]phase all timeout')
 
-	print('[2min]__stop_hold__',end='')
+	myprint('[2min]__stop_hold__',end='')
 	stop_hold = search('[GPSstop]hold timer timeout')
 
 	## 变化时间
-	print('\n')
-	print('__stop_2__',end='')
+	myprint('\n')
+	myprint('__stop_2__',end='')
 	stop_2 = search('[GPSstop]phase 2 end')
 	if len(stop_2) > 0 and len(stop_2) < 30:
-		print('calculate GGA before [GPSstop]phase 2 end (calc_time(stop_2)):')
+		myprint('calculate GGA before [GPSstop]phase 2 end (calc_time(stop_2)):')
 		calc_time(stop_2)
-		print("calculate valid GGA before [GPSstop]phase 2 end (calc_time(stop_2,',E,1,')):")
+		myprint("calculate valid GGA before [GPSstop]phase 2 end (calc_time(stop_2,',E,1,')):")
 		calc_time(stop_2,',E,1,')
 	elif len(stop_2) > 29:
-		print("\ttoo much, call -> calc_time(stop_2,',E,1,')")
+		myprint("\ttoo much, call -> calc_time(stop_2,',E,1,')")
 		
-	print('\n')
-	print('__stop_pos__',end='')
+	myprint('\n')
+	myprint('__stop_pos__',end='')
 	stop_pos = search('[GPSstop]postion complete')
 	if len(stop_pos) > 0 and len(stop_pos) < 30:
-		print('calculate GGA before [GPSstop]postion complete (calc_time(stop_pos)):')
+		myprint('calculate GGA before [GPSstop]postion complete (calc_time(stop_pos)):')
 		calc_time(stop_pos)
-		print("calculate valid GGA before [GPSstop]postion complete: (calc_time(stop_pos,',E,1,'))")
+		myprint("calculate valid GGA before [GPSstop]postion complete: (calc_time(stop_pos,',E,1,'))")
 		calc_time(stop_pos,',E,1,')
 	elif len(stop_pos) > 29:
-		print("\ttoo much, call -> calc_time(stop_pos,',E,1,')")
+		myprint("\ttoo much, call -> calc_time(stop_pos,',E,1,')")
 		
-	print('\n')
-	print('__stop_ack__',end='')
+	myprint('\n')
+	myprint('__stop_ack__',end='')
 	stop_ack = search('[GPSstop]ACKOK all done')
 	if len(stop_ack) > 0 and len(stop_ack) < 30:
-		print('calculate GGA before [GPSstop]ACKOK all done (calc_time(stop_ack)):')
+		myprint('calculate GGA before [GPSstop]ACKOK all done (calc_time(stop_ack)):')
 		calc_time(stop_ack)
-		print("calculate valid GGA before [GPSstop]ACKOK all done (calc_time(stop_ack,',E,1,')):")
+		myprint("calculate valid GGA before [GPSstop]ACKOK all done (calc_time(stop_ack,',E,1,')):")
 		calc_time(stop_ack,',E,1,')
 	elif len(stop_ack) > 29:
-		print("\ttoo much, call -> calc_time(stop_ack,',E,1,')")
+		myprint("\ttoo much, call -> calc_time(stop_ack,',E,1,')")
 	
 	# 结束时间
-	print('\n')
-	print('__time_fin__')
+	myprint('\n')
+	myprint('__time_fin__')
 	time_fin = search('[GPS]time_finish')
 	sort_time_finish()
 	
+	# AGPS
+	myprint('\n')
+	myprint('__agps_start__',end='')
+	agps_start = search('[AGPS]mx_agps_request_start')
+	
+	myprint('\n')
+	myprint('__agps_ok__',end='')
+	agps_ok = search('[AGPS]ACKOK all done')
+	
+	myprint('\n')
+	myprint('__agps_fail__',end='')
+	agps_fail = search('[AGPS]mx_agps_request_stop')
+
+	
 	# 保存结果
 	save_basic_result_to()
-	input('\n基础分析到此完毕\n')
+	input('\n基础分析到此完毕，结果已保存到%s，建议使用Excel按逗号分列查看\n'%(RESULT_FILE))
 
-# 双击parse_srv_log.py运行时，执行基础分析，不打印__doc__
-# 在命令行内import模块时，执行基础分析，打印__doc__
+	
+# 无限读取用户命令并执行
+def cmd_parse():
+	while True:
+		cmd = input('\ncmd:')
+		try:
+			exec(cmd)
+		except Exception as e:
+			myprint(e)
+
+
 basic_parse()
-if __name__ != '__main__':
-	print(__doc__)
+myprint(help)
+cmd_parse()

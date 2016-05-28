@@ -1,5 +1,0 @@
-文件名,版本号（最后一条版本号记录）,drv_start个数,period个数,start个数,stop个数,stop_1个数,stop_all个数,stop_hold个数,locate个数,stop_2个数,stop_pos个数,stop_ack个数
-C:\Users\chuan.wang\Desktop\device.log,bb[MXT535-BD-V100C001B004] gnss[FW Ver:MXT535S-V300C001B002E4998] bt[MXT535BD_BLE_V1.0.8],2,0,2,6,5,0,0,8,1,0,0
-C:\Users\chuan.wang\Desktop\Y25 0524.log,bb[MXT535-V100C003B004T002s] gnss[FW Ver:MXT535S-V300C001B002E4804] bt[MXT535BD_BLE_V1.0.8],46,46,92,5,1,1,0,97,0,2,1
-C:\Users\chuan.wang\Desktop\E4 0525.log,bb[MXT535-BD-V100C001B004] gnss[FW Ver:MXT535S-V300C001B002E4998] bt[MXT535BD_BLE_V1.0.8],34,47,81,2,1,0,0,83,0,1,0
-C:\Users\chuan.wang\Desktop\E4 0524.log,bb[MXT535-BD-V100C001B004] gnss[FW Ver:MXT535S-V300C001B002E4998] bt[MXT535BD_BLE_V1.0.8],28,33,61,6,6,0,0,67,0,0,0
