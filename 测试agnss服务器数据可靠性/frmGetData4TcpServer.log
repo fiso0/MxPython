@@ -2937,3 +2937,18 @@ Traceback (most recent call last):
     recv = tcpclient.recv(1024)
 ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
 2016-05-25 11:21:08,545 - frmGetData4TcpServer - INFO - 数据长度匹配;starttime=2016-05-25 11:20:57.528;endtime=2016-05-25 11:21:07.544;len1=content-length: 4598;len2=4598
+2016-07-26 18:13:01,726 - frmGetData4TcpServer - ERROR - 网络错误;starttime=2016-07-26 18:13:01.389;endtime=2016-07-26 18:13:01.717;buf=0
+Traceback (most recent call last):
+  File "D:\MX_bk\python\测试agnss服务器数据可靠性\frmGetData4TcpServer.py", line 82, in linkTcpServer
+    recv = tcpclient.recv(1024)
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+2016-07-26 18:13:07,484 - frmGetData4TcpServer - ERROR - 网络错误;starttime=2016-07-26 18:13:07.465;endtime=2016-07-26 18:13:07.484;buf=0
+Traceback (most recent call last):
+  File "D:\MX_bk\python\测试agnss服务器数据可靠性\frmGetData4TcpServer.py", line 82, in linkTcpServer
+    recv = tcpclient.recv(1024)
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+2016-07-26 18:13:07,888 - frmGetData4TcpServer - ERROR - 网络错误;starttime=2016-07-26 18:13:07.778;endtime=2016-07-26 18:13:07.888;buf=0
+Traceback (most recent call last):
+  File "D:\MX_bk\python\测试agnss服务器数据可靠性\frmGetData4TcpServer.py", line 82, in linkTcpServer
+    recv = tcpclient.recv(1024)
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
