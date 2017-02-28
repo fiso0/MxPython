@@ -1,0 +1,132 @@
+<html>
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!--引用百度地图-->
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=kSawRGwppT4aGXg3B67zq5zlWb2Bzd3P">
+        </script>
+        <title>
+            测试：如何调用API
+        </title>
+            <!--设计样式
+            container容器：占100%大小
+			-->
+        <style type="text/css">
+			html
+			{
+				height: 100%;
+			}
+			body
+			{
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				font-family: "微软雅黑";
+			}
+			#map
+			{
+				height: 100%;
+			}
+		</style>
+    </head>
+    <body>
+        <div id="container" style="width: 100%; height: 100%" ></div>
+		<input type="button" value="mark1" onclick="addMarker(114,30,true,1)" />
+		<input type="button" value="mark2" onclick="addSimpleMarker(114,30.01,true)" />
+    </body>
+</html>
+<script type="text/javascript">
+	var map = new BMap.Map("container");//在container容器中创建一个地图，参数container为div的id属性;;
+
+	//map = new BMap.Map("container");//在container容器中创建一个地图，参数container为div的id属性;
+	var point = new BMap.Point(114,30.005);//定位，精度，纬度
+	map.centerAndZoom(point,15);//将point移到浏览器中心，并且地图大小调整为15;
+	map.addControl(new BMap.NavigationControl());//添加默认缩放平移控件
+	map.addControl(new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT}));//添加比例尺
+	map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));//添加平移和缩放按钮
+	map.enableScrollWheelZoom(true);//开启鼠标滚轮缩放
+	//var marker = new BMap.Marker(point);//在point处添加标注
+	//map.addOverlay(marker);
+	
+	//测试addMarker函数
+	//addMarker(114,30,true,2);
+
+
+	function testfunc(num){
+	  alert(num);
+	}
+	
+	function clearMarkers()
+	{
+		map.clearOverlays();
+	}
+		
+	var myIconindexbuf = [];
+
+	//坐标转换完之后的回调函数
+	var translateCallback = function (data)
+	{
+		alert('cb');
+		myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25),
+			{
+				offset : new BMap.Size(10, 0), // 指定定位位置
+				imageOffset : new BMap.Size(0, 0 - myIconindexbuf.shift() * 25) // 设置图片偏移,图片是个2列n行的图片
+				// JavaScript数组shift()方法删除数组中的第一个元素，并返回该元素
+			}
+			);
+		if (data.status == 0)
+		{
+			for (i = 0; i < data.points.length; i++)
+			{
+				var marker = new BMap.Marker(data.points[i],
+					{
+						icon : myIcon
+					}
+					);
+				map.addOverlay(marker);
+			}
+		}
+	}
+
+	// 编写自定义函数,创建标注
+	function addMarker(lng, lat, isMars, iconIndex)
+	{
+		alert('add: '+iconIndex);
+		var ggPoint = new BMap.Point(lng, lat);
+		var pointArr = [];
+		pointArr.push(ggPoint);
+		myIconindexbuf.push(iconIndex);
+		var convertor = new BMap.Convertor();
+		if (isMars)
+			convertor.translate(pointArr, 3, 5, translateCallback);
+		else
+			convertor.translate(pointArr, 1, 5, translateCallback);
+	}
+	
+	//坐标转换完之后的回调函数
+	var translateSimpleCallback = function (data)
+	{
+		alert('cb');
+		if (data.status == 0)
+		{
+			for (i = 0; i < data.points.length; i++)
+			{
+				var marker = new BMap.Marker(data.points[i]);
+				map.addOverlay(marker);
+			}
+		}
+	}
+
+	// 编写自定义函数,创建标注
+	function addSimpleMarker(lng, lat, isMars)
+	{
+		var ggPoint = new BMap.Point(lng, lat);
+		var pointArr = [];
+		pointArr.push(ggPoint);
+		var convertor = new BMap.Convertor();
+		if (isMars)
+			convertor.translate(pointArr, 3, 5, translateSimpleCallback);
+		else
+			convertor.translate(pointArr, 1, 5, translateSimpleCallback);
+	}
+
+</script>
