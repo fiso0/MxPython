@@ -76,8 +76,16 @@ class GGA(object):
 		self.lon = '%011.6f' % lon
 		return
 
+	def checksum(self,data):
+		CS = 0
+		for a in data:
+			CS ^= ord(a)
+		return '%02X' % CS
+
 	def gen(self):
-		return ','.join([self.header, self.time, self.lat, self.N_S, self.lon, self.E_W, self.quality,self.num, self.HDOP,self.alt, self.altUnit, self.geoid, self.geoidUnit, self.age, self.diffID])
+		wo_cs = ','.join([self.header, self.time, self.lat, self.N_S, self.lon, self.E_W, self.quality,self.num, self.HDOP,self.alt, self.altUnit, self.geoid, self.geoidUnit, self.age, self.diffID])
+		cs = self.checksum(wo_cs)
+		return '$'+wo_cs+'*'+cs
 
 
 def save(lines,name=''):
@@ -93,18 +101,19 @@ def save(lines,name=''):
 		f.close()
 
 
-# GGA语句列表默认以0无效语句开始，参数表示每组连续无效/有效语句的个数，最后以0结束
-# 示例：'0,1,1,10,0'表示0个无效+1个有效+1个无效+10个有效GGA，结束
-def parse_cmd(cmd='10,1,1,10,0'):
-	while cmd[-1] is not '0':
-		cmd = input('最后以0结束,重新输入：')
+# GGA语句列表默认以0无效语句开始，参数表示每组连续无效/有效语句的个数
+# 示例：'0,1,1,10'表示0个无效、1个有效、1个无效、10个有效GGA
+def parse_cmd(cmd='10,1,1,10'):
 	cmd_list = cmd.strip().split(',')
+	# while cmd_list[-1] is not '0':
+	# 	cmd = input('最后以0结束,重新输入：')
+	# 	cmd_list = cmd.strip().split(',')
 	return cmd_list
 
 
 # 命令模式
 def cmd_mode():
-	cmd = input('请输入每组无效/有效/无效...GGA的个数，以逗号分隔，以0结束：')
+	cmd = input('请输入每组无效/有效/无效...GGA的个数，以逗号分隔：')
 	cmd_num = parse_cmd(cmd)
 	valid = False
 	gga = []
@@ -114,12 +123,9 @@ def cmd_mode():
 			quality = '1'
 		else:
 			quality = ''
-		if num is 0:
-			pass
-		else:
-			for i in range(0, num):
-				gga.append(GGA(quality).gen())
-				time.sleep(1)
+		for i in range(0, num):
+			gga.append(GGA(quality).gen())
+			time.sleep(1)
 		valid = not valid
 	save(gga,cmd)
 
@@ -137,6 +143,7 @@ def man_mode():
 
 
 # GGA()
+# GGA().checksum('GNGGA,000000.000,0000.000000,N,00000.000000,E,,00,0.000,0.000,M,0,M,,')
 cmd_mode()
 # man_mode()
 input('=== Finished ===\n')

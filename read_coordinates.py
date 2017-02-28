@@ -1,8 +1,16 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+读取文件，解析其中GNGGA语句得到经纬度，计算相邻经纬度的距离
+"""
+
 from math import radians, asin, sqrt, sin, cos
 
+file=input("input file:")
 coordinates=[[0,0]]
 #print(coordinates)
-f=open('log_cold_warm.txt', 'r', encoding='utf-8')
+f=open(file, 'r', encoding='utf-8')
 for line in f.readlines():
 	#print(line)
 	if 'GNGGA' in line:
@@ -32,7 +40,7 @@ for i in range(1,len(coordinates)-1):
 		s=2 * asin(sqrt((sin(a / 2)*sin(a / 2)) + cos(radlat1)*cos(radlat2)*(sin(b / 2)*sin(b / 2))))
 		s=s*6378137
 		print('gps%d: lat=%f lon=%f; gps%d: lat=%f lon=%f' % (i,lat_f,lon_f,i+1,lat_t,lon_t))
-		print('distance between gps%d and gps%d is %f' % (i,i+1,s))
-		wait=input()
+		print('distance between gps%d and gps%d is %f meters' % (i,i+1,s))
+		wait=input("next...")
 f.close()
 input()
