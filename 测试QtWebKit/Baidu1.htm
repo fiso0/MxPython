@@ -1,0 +1,311 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>异步加载</title>
+    <style type="text/css">
+        html
+        {
+            height: 100%;
+        }
+        body
+        {
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            font-family: "微软雅黑";
+        }
+        #map
+        {
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+		var map;
+		function initialize()
+		{
+			map = new BMap.Map('map');
+
+			//百度地图上负责与地图交互的UI元素称为控件。百度地图API中提供了丰富的控件，您还可以通过Control类来实现自定义控件。
+			// 地图API中提供的控件有：
+			//  Control：控件的抽象基类，所有控件均继承此类的方法、属性。通过此类您可实现自定义控件。
+			//  NavigationControl：地图平移缩放控件，PC端默认位于地图左上方，它包含控制地图的平移和缩放的功能。移动端提供缩放控件，默认位于地图右下方。
+			//  OverviewMapControl：缩略地图控件，默认位于地图右下方，是一个可折叠的缩略地图。
+			//  ScaleControl：比例尺控件，默认位于地图左下方，显示地图的比例关系。
+			//  MapTypeControl：地图类型控件，默认位于地图右上方。
+			//  CopyrightControl：版权控件，默认位于地图左下方。
+			//  GeolocationControl：定位控件，针对移动端开发，默认位于地图左下方。
+
+			map.centerAndZoom(new BMap.Point(114.3938, 30.5053), 11);
+			map.addControl(new BMap.NavigationControl());
+			//map.addControl(new BMap.ScaleControl());
+			map.addControl(new BMap.OverviewMapControl());
+			var opts =
+			{
+				mapTypes : [BMAP_NORMAL_MAP, BMAP_SATELLITE_MAP, BMAP_HYBRID_MAP]
+			};
+			map.addControl(new BMap.MapTypeControl(opts));
+			map.enableScrollWheelZoom();
+			
+			//addMarker(114.39387, 30.505299, true, 1); //测试时使用 B
+			//addMarker(114.39387, 30.505299, false, 2); //测试时使用 C
+
+			//lngs=[114.40568086611,114.40560656097,114.40564381704,114.40515744543,30.50937463898,30.51028982056,30.50862775608];
+			//lats=[30.50946583905,30.50966913405,30.50946751334,30.51006915801,114.40559122348,114.40534439267];
+			//addMarkers(lngs,lats,0);
+			//lngs=[114.40549813505,114.40549813505,114.40549813505,114.40549813505,114.40549813505,114.40549813505,114.40559000801];
+			//lats=[30.50607964605,30.50607964605,30.50607964605,30.50607964605,30.50607964605,30.50607964605,30.50970860049];
+			//addMarkers(lngs,lats,1);
+			//lngs=[114.40591126522,114.40591126522,114.40591126522,114.40591126522,114.40591126522,114.40531876026];
+			//lats=[30.50939347561,30.50939347561,30.50939347561,30.50939347561,30.50939347561,30.50943291145];
+			//addMarkers(lngs,lats,2);
+		}
+
+		function loadScript()
+		{
+			var script = document.createElement("script");
+			script.src = "http://api.map.baidu.com/api?v=2.0&ak=kSawRGwppT4aGXg3B67zq5zlWb2Bzd3P&callback=initialize"; //此为v2.0版本的引用方式
+			// http://api.map.baidu.com/api?v=1.4&ak=kSawRGwppT4aGXg3B67zq5zlWb2Bzd3P&callback=initialize"; //此为v1.4版本及以前版本的引用方式
+			document.body.appendChild(script);
+			//  var script_changePosition = document.createElement("script");
+		}
+
+		// 编写自定义函数,创建标注
+		function addMarker(lng, lat, isMars, iconIndex)
+		{
+			var ggPoint = new BMap.Point(0, 0);
+			if (false)
+			{
+				var lnglat = gcj2wgs_exact(lat, lng);
+				ggPoint = new BMap.Point(lnglat.lng, lnglat.lat);
+			}
+			else
+			{
+				ggPoint = new BMap.Point(lng, lat);
+			}
+			var pointArr = [];
+			pointArr.push(ggPoint);
+			myIconindexbuf.push(iconIndex);
+			var convertor = new BMap.Convertor();
+			if (isMars)
+				convertor.translate(pointArr, 3, 5, translateCallback);
+			else
+				convertor.translate(pointArr, 1, 5, translateCallback);
+		}
+
+		// 编写自定义函数,批量创建标注
+		function addMarkers(lngs, lats, isMars, iconIndex)
+		{
+			var pointArr = [];
+			var ggPoint = new BMap.Point(0, 0); ;
+			for (i = 0; i < lngs.length; i++)
+			{
+				if (false)
+				{
+					var lnglat = gcj2wgs_exact(lats[i], lngs[i]);
+					ggPoint = new BMap.Point(lnglat.lng, lnglat.lat);
+				}
+				else
+				{
+					ggPoint = new BMap.Point(lngs[i], lats[i]);
+				}
+				pointArr.push(ggPoint);
+			}
+
+			myIconindexbuf.push(iconIndex);
+			var convertor = new BMap.Convertor();
+			if (isMars)
+				convertor.translate(pointArr, 3, 5, translateCallback);
+			else
+				convertor.translate(pointArr, 1, 5, translateCallback);
+		}
+
+		function clearMarkers()
+		{
+			map.clearOverlays();
+		}
+
+		var lngs = [];
+		var lats = [];
+		var myIconindexbuf = [];
+
+		//坐标转换完之后的回调函数
+		translateCallback = function (data)
+		{
+			alert(myIconindexbuf);
+			myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25),
+				{
+					offset : new BMap.Size(10, 0), // 指定定位位置
+					imageOffset : new BMap.Size(0, 0 - myIconindexbuf.shift() * 25) // 设置图片偏移,图片是个2列n行的图片
+					// JavaScript数组shift()方法删除数组中的第一个元素，并返回该元素
+				}
+				);
+			if (data.status == 0)
+			{
+				for (i = 0; i < data.points.length; i++)
+				{
+					var marker = new BMap.Marker(data.points[i],
+						{
+							icon : myIcon
+						}
+						);
+					map.addOverlay(marker);
+				}
+			}
+		}
+
+		// 编写自定义函数,批量创建标注
+		function addMarkers(lngs, lats, iconIndex)
+		{
+			var ggPoint = new BMap.Point(0, 0);
+			myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25),
+				{
+					offset : new BMap.Size(10, 0), // 指定定位位置
+					imageOffset : new BMap.Size(0, 0 - iconIndex * 25) // 设置图片偏移,图片是个2列n行的图片
+				}
+				);
+			for (i = 0; i < lngs.length; i++)
+			{
+				ggPoint = new BMap.Point(lngs[i], lats[i]);
+				marker = new BMap.Marker(ggPoint,
+					{
+						icon : myIcon
+					}
+					);
+				map.addOverlay(marker);
+			}
+
+		}
+
+		function outOfChina(lat, lng)
+		{
+			if ((lng < 72.004) || (lng > 137.8347))
+			{
+				return true;
+			}
+			if ((lat < 0.8293) || (lat > 55.8271))
+			{
+				return true;
+			}
+			return false;
+		}
+
+		function transformLat(x, y)
+		{
+			var ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+			ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+			ret += (20.0 * Math.sin(y * Math.PI) + 40.0 * Math.sin(y / 3.0 * Math.PI)) * 2.0 / 3.0;
+			ret += (160.0 * Math.sin(y / 12.0 * Math.PI) + 320 * Math.sin(y * Math.PI / 30.0)) * 2.0 / 3.0;
+			return ret;
+		}
+
+		function transformLon(x, y)
+		{
+			var ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+			ret += (20.0 * Math.sin(6.0 * x * Math.PI) + 20.0 * Math.sin(2.0 * x * Math.PI)) * 2.0 / 3.0;
+			ret += (20.0 * Math.sin(x * Math.PI) + 40.0 * Math.sin(x / 3.0 * Math.PI)) * 2.0 / 3.0;
+			ret += (150.0 * Math.sin(x / 12.0 * Math.PI) + 300.0 * Math.sin(x / 30.0 * Math.PI)) * 2.0 / 3.0;
+			return ret;
+		}
+
+		function delta(lat, lng)
+		{
+			var a = 6378245.0;
+			var ee = 0.00669342162296594323;
+			var dLat = transformLat(lng - 105.0, lat - 35.0);
+			var dLng = transformLon(lng - 105.0, lat - 35.0);
+			var radLat = lat / 180.0 * Math.PI;
+			var magic = Math.sin(radLat);
+			magic = 1 - ee * magic * magic;
+			var sqrtMagic = Math.sqrt(magic);
+			dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * Math.PI);
+			dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * Math.PI);
+			return {"lat": dLat, "lng": dLng};
+		}
+
+		function wgs2gcj(wgsLat, wgsLng)
+		{
+			if (outOfChina(wgsLat, wgsLng))
+			{
+				return {"lat": wgsLat, "lng": wgsLng};
+			}
+			var d = delta(wgsLat, wgsLng);
+			return {"lat": wgsLat + d.lat, "lng": wgsLng + d.lng};
+		}
+
+		function gcj2wgs(gcjLat, gcjLng)
+		{
+			if (outOfChina(gcjLat, gcjLng))
+			{
+				return {"lat": gcjLat, "lng": gcjLng};
+			}
+			var d = delta(gcjLat, gcjLng);
+			return {"lat": gcjLat - d.lat, "lng": gcjLng - d.lng};
+		}
+
+		function gcj2wgs_exact(gcjLat, gcjLng)
+		{
+			var initDelta = 0.01;
+			var threshold = 0.000001;
+				  var dLat = initDelta, dLng = initDelta;
+				  var mLat = gcjLat-dLat, mLng = gcjLng-dLng;
+				  var pLat = gcjLat+dLat, pLng = gcjLng+dLng;
+				  var wgsLat, wgsLng;
+			for (var i = 0; i < 30; i++)
+			{
+				wgsLat = (mLat + pLat) / 2;
+				wgsLng = (mLng + pLng) / 2;
+				var tmp = wgs2gcj(wgsLat, wgsLng)
+					dLat = tmp.lat - gcjLat;
+				dLng = tmp.lng - gcjLng;
+				if ((Math.abs(dLat) < threshold) && (Math.abs(dLng) < threshold))
+				{
+					return {"lat": wgsLat, "lng": wgsLng};
+				}
+				if (dLat > 0)
+				{
+					pLat = wgsLat;
+				}
+				else
+				{
+					mLat = wgsLat;
+				}
+				if (dLng > 0)
+				{
+					pLng = wgsLng;
+				}
+				else
+				{
+					mLng = wgsLng;
+				}
+			}
+			return {"lat": wgsLat, "lng": wgsLng};
+		}
+
+		function distance(latA, lngA, latB, lngB)
+		{
+			var earthR = 6371000;
+			var x = Math.cos(latA * Math.PI / 180) * Math.cos(latB * Math.PI / 180) * Math.cos((lngA - lngB) * Math.PI / 180);
+			var y = Math.sin(latA * Math.PI / 180) * Math.sin(latB * Math.PI / 180);
+			var s = x + y;
+			if (s > 1)
+			{
+				s = 1;
+			}
+			if (s < -1)
+			{
+				s = -1;
+			}
+			var alpha = Math.acos(s);
+			var distance = alpha * earthR;
+			return distance;
+		}
+
+		window.onload = loadScript;
+    </script>
+</head>
+<body>
+    <div id="map" style="width: 100%; height: 100%" />
+    <div id="changePosition" style="width: 0px; height: 0px" />
+</body>
+</html>
