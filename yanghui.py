@@ -96,5 +96,5 @@ def triangles_answers():  # 答案
 	L = [1]
 	while True:
 		yield L
-		L.append(0)
-		L = [L[i-1] + L[i] for i in range(len(L))]
+		L.append(0)  # 最后补0
+		L = [L[i-1] + L[i] for i in range(len(L))]  # 前两项相加
