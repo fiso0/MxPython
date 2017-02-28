@@ -57,17 +57,6 @@ def triangles_func_1_ever():  # NO parameter
 		return numbers
 
 def triangles():
-	# n = 1
-	# list = []
-	# new_list = [1]
-	# while True:
-	# 	for i in range(n - 1):
-	# 		new_list[n-1] = list[0 if n <= 1 else n - 2] + list[n-1]
-	# 	if n > 1:
-	# 		new_list[n - 1] = 1
-	# 	list = new_list
-	# 	n = n + 1
-	# 	yield new_list
 	n = 0
 	while True:
 		numbers = []
