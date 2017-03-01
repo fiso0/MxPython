@@ -6,7 +6,7 @@ import sys
 
 from PyQt5 import QtCore
 from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QStatusBar
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QStatusBar, QComboBox
 import Point
 import math
 import time
@@ -34,6 +34,8 @@ class ShowPoints(QWidget):
 	def __init__(self):
 		super().__init__()
 		self.webView = QtWebEngineWidgets.QWebEngineView()
+		self.sourceType = QComboBox()
+		self.sourceType.addItems(['国测局坐标（google）','GPS设备坐标（wgs84）'])
 		self.inputText = QTextEdit()
 		self.inputText.setFixedWidth(280)
 		self.runButton = QPushButton('确定')
@@ -64,6 +66,7 @@ class ShowPoints(QWidget):
 		buttonBox.addWidget(self.clrButton)
 
 		rightBox = QVBoxLayout()  # right box
+		rightBox.addWidget(self.sourceType)
 		rightBox.addWidget(self.inputText)
 		rightBox.addLayout(buttonBox)
 		rightBox.addWidget(self.statusBar)
@@ -97,6 +100,8 @@ class ShowPoints(QWidget):
 	def add_points(self):
 		self.statusBar.showMessage(STATUS_TIP+"Running...")
 		points_text = self.inputText.toPlainText()  # 获取输入
+		source_type = self.sourceType.currentIndex()
+		if_mars = 'true' if (source_type == 0) else 'false'
 
 		if points_text == "":  # 使用示例输入
 			points_text = SAMPLE_DATA
@@ -118,7 +123,7 @@ class ShowPoints(QWidget):
 			index_e = N if (index_e > N) else index_e
 			latsStr = "[" + ",".join(lats[index_s:index_e]) + "]"
 			lonsStr = "[" + ",".join(lons[index_s:index_e]) + "]"
-			script = "addSimpleMarker(%s,%s,true);" % (latsStr, lonsStr)
+			script = "addSimpleMarker(%s,%s,%s);" % (latsStr, lonsStr, if_mars)
 			self.run_script(script)
 			time.sleep(0.1)  # seconds，延时0.1秒，避免回调函数的执行顺序被打乱
 
