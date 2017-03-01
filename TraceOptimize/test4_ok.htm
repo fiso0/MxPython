@@ -29,9 +29,9 @@
 		</style>
     </head>
     <body>
-        <div id="container" style="width: 100%; height: 90%" ></div>
-		<input type="button" value="mark1" onclick="addMarker(114,30,true,1)" />
-		<input type="button" value="mark2" onclick="addSimpleMarker([114,114,114.01],[30.01,30.02,30.02],true)" />
+        <div id="container" style="width: 100%; height: 100%" ></div>
+		<!-- input type="button" value="mark1" onclick="addMarker(114,30,true,1)" /-->
+		<!-- input type="button" value="mark2" onclick="addSimpleMarker([114,114,114.01],[30.01,30.02,30.02],true)" /-->
     </body>
 </html>
 <script type="text/javascript">
@@ -143,7 +143,7 @@
 		{
 			var ggPoint = new BMap.Point(lngs[i], lats[i]);
 			pointArr[i] = ggPoint;
-			titles[i] = i+" : "+lngs[i]+", "+lats[i]; // 添加标题数组
+			titles[i] = lngs[i]+", "+lats[i]; // 添加标题数组
 			//alert(titles[i]);
 		}
 		

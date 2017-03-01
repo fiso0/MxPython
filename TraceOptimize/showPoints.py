@@ -6,9 +6,10 @@ import sys
 
 from PyQt5 import QtCore
 from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QStatusBar
 import Point
 import math
+import time
 
 SAMPLE_DATA = '''\
 114.41949164302063	30.461033485055296
@@ -27,6 +28,7 @@ SAMPLE_DATA = '''\
 114.39954156153658	30.503332807270766
 '''
 
+STATUS_TIP = '状态：'
 
 class ShowPoints(QWidget):
 	def __init__(self):
@@ -38,11 +40,13 @@ class ShowPoints(QWidget):
 		self.runButton.setFixedWidth(100)
 		self.clrButton = QPushButton('清除')
 		self.clrButton.setFixedWidth(100)
+		self.statusBar = QStatusBar()
+		self.statusBar.showMessage(STATUS_TIP+"Ready")
 		self.init_ui()
 
 	def init_ui(self):
 		path = os.getcwd()
-		url = path + '\\test3_ok.htm'
+		url = path + '\\test4_ok.htm'
 		self.webView.setUrl(QtCore.QUrl(url))
 		self.webView.page().loadFinished.connect(self.load_finished)  # for test
 
@@ -62,6 +66,7 @@ class ShowPoints(QWidget):
 		rightBox = QVBoxLayout()  # right box
 		rightBox.addWidget(self.inputText)
 		rightBox.addLayout(buttonBox)
+		rightBox.addWidget(self.statusBar)
 
 		layout = QHBoxLayout()  # main box
 		layout.addWidget(self.webView)
@@ -90,6 +95,7 @@ class ShowPoints(QWidget):
 		a.runJavaScript(script)
 
 	def add_points(self):
+		self.statusBar.showMessage(STATUS_TIP+"Running...")
 		points_text = self.inputText.toPlainText()  # 获取输入
 
 		if points_text == "":  # 使用示例输入
@@ -101,7 +107,7 @@ class ShowPoints(QWidget):
 		lons = [p.lon for p in points]
 
 		N = len(lats)  # 共N组经纬度
-		G = math.ceil((N - 1) / 9)  # 每10个一组，收尾相接，共G组
+		G = math.ceil((N - 1) / 9)  # 每10个一组，首尾相接，共G组
 
 		if N == 1:
 			G = 1
@@ -114,10 +120,14 @@ class ShowPoints(QWidget):
 			lonsStr = "[" + ",".join(lons[index_s:index_e]) + "]"
 			script = "addSimpleMarker(%s,%s,true);" % (latsStr, lonsStr)
 			self.run_script(script)
+			time.sleep(0.1)  # seconds，延时0.1秒，避免回调函数的执行顺序被打乱
+
+		self.statusBar.showMessage(STATUS_TIP+"Done")
 
 	def clr_points(self):
 		self.run_script("clearMarkers();")
 		self.inputText.setPlainText("")
+		self.statusBar.showMessage(STATUS_TIP+"Ready")
 
 
 if __name__ == '__main__':
