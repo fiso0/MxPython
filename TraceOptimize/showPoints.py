@@ -35,7 +35,7 @@ class ShowPoints(QWidget):
 		super().__init__()
 		self.webView = QtWebEngineWidgets.QWebEngineView()
 		self.sourceType = QComboBox()
-		self.sourceType.addItems(['国测局坐标（google）','GPS设备坐标（wgs84）'])
+		self.sourceType.addItems(['国测局坐标（google）','GPS设备坐标（wgs-84）'])
 		self.inputText = QTextEdit()
 		self.inputText.setFixedWidth(280)
 		self.runButton = QPushButton('确定')
@@ -48,14 +48,13 @@ class ShowPoints(QWidget):
 
 	def init_ui(self):
 		path = os.getcwd()
-		url = path + '\\test4_ok.htm'
+		url = path + '\\test6_ok.htm'
 		self.webView.setUrl(QtCore.QUrl(url))
 		self.webView.page().loadFinished.connect(self.load_finished)  # for test
 
 		self.inputText.setEnabled(False)
 		self.inputText.setAcceptRichText(False)
-		self.inputText.setToolTip("每行一组经纬度，纬度lat在前\n" + "以空格、逗号或制表符分隔\n" + \
-		                          "GCJ-02（高德）坐标系\n\n" + "点击确定显示样本数据")
+		self.inputText.setToolTip("每行一组经纬度，纬度lat在前\n" + "以空格、逗号或制表符分隔")
 
 		self.runButton.clicked.connect(self.add_points)  # show all points in input text window
 		self.clrButton.clicked.connect(self.clr_points)
