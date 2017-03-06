@@ -11,6 +11,7 @@ import two_points as tp
 # from Point import *
 import db_parser as db
 import logging
+import sys
 
 logging_lv = input("是否需要细节log（Y/N）：")
 if logging_lv == 'Y' or logging_lv == 'y':
@@ -73,7 +74,11 @@ def data_statics(key):
 	logging.debug(speeds_others)
 
 	# 其他点速度的均值、最大值
-	S_avg = sum(speeds_others) / len(speeds_others)
+	try:
+		S_avg = sum(speeds_others) / len(speeds_others)
+	except ZeroDivisionError:
+		logging.error('Not enough data!')
+		sys.exit(1)
 	S_max = max(speeds_others)
 	logging.debug('S_avg=%.4f S_max=%.4f' % (S_avg, S_max))
 

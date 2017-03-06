@@ -34,15 +34,19 @@ def calc_distance(lat1, lon1, lat2, lon2):
 	return s  # meters
 
 
-def calc_time(time_start, time_end):  # 19 2017 01 00:00:02
+def calc_time(time_start, time_end):  # 19 2017 01 00:00:02 或 2017-02-23 18:44:07
 	"""
 	计算两时间间隔
-	:param time_start: 起始时间，格式为“日 年 月 时:分:秒”
-	:param time_end: 终止时间，格式为“日 年 月 时:分:秒”
+	:param time_start: 起始时间，格式为“日 年 月 时:分:秒”或“年-月-日 时:分:秒”
+	:param time_end: 终止时间，格式为“日 年 月 时:分:秒”或“年-月-日 时:分:秒”
 	:return: 时间差，单位为秒
 	"""
-	time1_t = time.strptime(time_start, "%d %Y %m %H:%M:%S")
-	time2_t = time.strptime(time_end, "%d %Y %m %H:%M:%S")
+	if '-' in time_start:
+		time_format = "%Y-%m-%d %H:%M:%S"
+	else:
+		time_format = "%d %Y %m %H:%M:%S"
+	time1_t = time.strptime(time_start, time_format)
+	time2_t = time.strptime(time_end, time_format)
 	time1_s = time.mktime(time1_t)
 	time2_s = time.mktime(time2_t)
 	return int(time2_s - time1_s)  # seconds
