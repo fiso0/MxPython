@@ -28,6 +28,7 @@ SAMPLE_DATA = '''\
 114.39954156153658	30.503332807270766
 '''
 
+HTM_FILE = '\\test7_ok.htm'
 STATUS_TIP = '状态：'
 
 class ShowPoints(QWidget):
@@ -48,7 +49,7 @@ class ShowPoints(QWidget):
 
 	def init_ui(self):
 		path = os.getcwd()
-		url = path + '\\test6_ok.htm'
+		url = path + HTM_FILE
 		self.webView.setUrl(QtCore.QUrl(url))
 		self.webView.page().loadFinished.connect(self.load_finished)  # for test
 
