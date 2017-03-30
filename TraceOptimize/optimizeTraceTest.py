@@ -88,8 +88,14 @@ def data_statics(key):
 	logging.debug('K_avg=%d K_max=%d STOP_avg=%.4f STOP_max=%.4f' % (K_avg, K_max, STOP_avg, STOP_max))
 
 	# 参数范围
-	Q_avg = min(S1 / S_avg, S2 / S_avg)
-	Q_max = min(S1 / S_max, S2 / S_max)
+	if S_avg != 0:
+		Q_avg = min(S1 / S_avg, S2 / S_avg)
+	else:
+		Q_avg = 0
+	if S_max != 0:
+		Q_max = min(S1 / S_max, S2 / S_max)
+	else:
+		Q_max = 0
 	logging.info("Q_avg=%d Q_max=%d" % (Q_avg, Q_max))
 
 	# filter A
