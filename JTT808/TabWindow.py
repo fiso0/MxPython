@@ -40,7 +40,12 @@ class Register(QWidget):
 		edit03.setEnabled(False)
 		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
 		edit05 = QLineEdit('00 00') # '消息流水号'
-		edit05.setFont(QFont("宋体",9,QFont.Bold))
+		# edit05.setFont(QFont("宋体",9,QFont.Bold))
+		p = self.palette()
+		c = QColor(Qt.red)
+		p.setColor(QPalette.Text,c)
+		edit05.setPalette(p)
+		# edit05.setAutoFillBackground(True)
 		edit06 = QLineEdit() # '消息包封装项'
 		edit07 = QLineEdit('00 2A') # '省'
 		edit08 = QLineEdit('00 6F') # '市'
@@ -166,7 +171,10 @@ class Authorize(QWidget):
 		edit03.setEnabled(False)
 		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
 		edit05 = QLineEdit('00 01') # '消息流水号'
-		edit05.setFont(QFont("宋体",9,QFont.Bold))
+		p = self.palette()
+		c = QColor(Qt.red)
+		p.setColor(QPalette.Text,c)
+		edit05.setPalette(p)
 		edit06 = QLineEdit() # '消息包封装项'
 		edit07 = QLineEdit('02 00 00 00 00 15') # '鉴权码'
 		edit08 = QLineEdit() # '校验码'
@@ -292,7 +300,10 @@ class LocReport(QWidget):
 		edit03.setEnabled(False)
 		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
 		edit05 = QLineEdit('00 02') # '消息流水号'
-		edit05.setFont(QFont("宋体",9,QFont.Bold))
+		p = self.palette()
+		c = QColor(Qt.red)
+		p.setColor(QPalette.Text,c)
+		edit05.setPalette(p)
 		edit06 = QLineEdit() # '消息包封装项'
 		edit07 = QLineEdit('00 00 00 00') # '报警标识'
 		edit08 = QLineEdit('00 0c 00 03') # '状态'
@@ -425,7 +436,10 @@ class Heartbeat(QWidget):
 		edit03.setEnabled(False)
 		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
 		edit05 = QLineEdit('00 03') # '消息流水号'
-		edit05.setFont(QFont("宋体",9,QFont.Bold))
+		p = self.palette()
+		c = QColor(Qt.red)
+		p.setColor(QPalette.Text,c)
+		edit05.setPalette(p)
 		edit06 = QLineEdit() # '消息包封装项'
 		edit07 = QLineEdit() # '校验码'
 		edit08 = QLineEdit('7E') # '标识位'
@@ -536,7 +550,10 @@ class MessageBreak(QWidget):
 		edit03 = QLineEdit() # '消息体属性（长度）'
 		edit04 = QLineEdit() # '终端手机号'
 		edit05 = QLineEdit() # '消息流水号'
-		edit05.setFont(QFont("宋体",9,QFont.Bold))
+		p = self.palette()
+		c = QColor(Qt.red)
+		p.setColor(QPalette.Text,c)
+		edit05.setPalette(p)
 		edit06 = QLineEdit() # '消息包封装项'
 		edit07 = QTextEdit()
 		# edit07.setFixedHeight(60)
