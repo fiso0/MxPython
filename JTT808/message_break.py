@@ -8,7 +8,7 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QLabel, QApplication, QPushButton, QHBoxLayout, QVBoxLayout, QTextEdit, QComboBox, QGridLayout, QLineEdit
 
-class Register(QWidget):
+class MessageBreak(QWidget):
 	def __init__(self):
 		super().__init__()
 		self.init_ui()
@@ -101,5 +101,5 @@ class Register(QWidget):
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	gui = Register()
+	gui = MessageBreak()
 	sys.exit(app.exec_())
