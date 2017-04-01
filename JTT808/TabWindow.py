@@ -5,7 +5,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-
+import inputToHexText
 
 class Register(QWidget):
 	def __init__(self):
@@ -79,6 +79,42 @@ class Register(QWidget):
 		flow_button.clicked.connect(self.flowButtonClicked)
 		cs_button.clicked.connect(self.csButtonClicked)
 
+		self.cell_input = QLineEdit('12000187148') # 手机号
+		grid.addWidget(self.cell_input,3,2)
+		self.cell_input.setFixedWidth(75)
+
+		self.province_input = QLineEdit('42') # 省
+		grid.addWidget(self.province_input,6,2)
+		self.province_input.setFixedWidth(75)
+
+		self.city_input = QLineEdit('111') # 市
+		grid.addWidget(self.city_input,7,2)
+		self.city_input.setFixedWidth(75)
+
+		self.manu_input = QLineEdit('12345') # 制造商
+		grid.addWidget(self.manu_input,8,2)
+		self.manu_input.setFixedWidth(75)
+
+		self.dev_type_input = QLineEdit('MX1608S') # 终端型号
+		grid.addWidget(self.dev_type_input,9,2)
+		self.dev_type_input.setFixedWidth(75)
+
+		self.dev_id_input = QLineEdit('MX2017') # 终端ID
+		grid.addWidget(self.dev_id_input,10,2)
+		self.dev_id_input.setFixedWidth(75)
+
+		self.license_input = QLineEdit('AZ1234') # 车辆标识
+		grid.addWidget(self.license_input,12,2)
+		self.license_input.setFixedWidth(75)
+
+		self.cell_input.textChanged.connect(self.cellChanged)
+		self.province_input.textChanged.connect(self.provinceChanged)
+		self.city_input.textChanged.connect(self.cityChanged)
+		self.manu_input.textChanged.connect(self.manuChanged)
+		self.dev_type_input.textChanged.connect(self.dev_typeChanged)
+		self.dev_id_input.textChanged.connect(self.dev_idChanged)
+		self.license_input.textChanged.connect(self.licenseChanged)
+
 		# '完整消息'
 		result_label = QLabel('完整消息')
 		self.result_text = QTextEdit()
@@ -105,16 +141,14 @@ class Register(QWidget):
 			body += self.edits[i].text().strip().replace(' ','')
 			i += 1
 		body_len = int(len(body)/2)
-		new_text = '%04X' % body_len
-		new_text = new_text[:2] + ' ' + new_text[2:]
+		new_text = inputToHexText.num2hex(body_len, 4, True)
 		self.edits[2].setText(new_text)
 
 	def flowButtonClicked(self):
 		text = self.edits[4].text().strip().replace(' ','')
 		flow_num = int(text,16)
 		new_flow_num = flow_num+1
-		new_text = '%04X' % new_flow_num
-		new_text = new_text[:2] + ' ' + new_text[2:]
+		new_text = inputToHexText.num2hex(new_flow_num, 4, True)
 		self.edits[4].setText(new_text)
 
 	def csButtonClicked(self):
@@ -143,6 +177,52 @@ class Register(QWidget):
 		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
 		self.result_text.setPlainText(result_text) # 显示完整消息
+
+	def cellChanged(self):
+		text = self.cell_input.text().strip().replace(' ','')
+		new_text = inputToHexText.string2hex(text,12)
+		self.edits[3].setText(new_text)
+
+	def provinceChanged(self):
+		in_text = self.province_input.text().strip()
+		try:
+			new_text = inputToHexText.num2hex(int(in_text), 4)
+			self.edits[6].setText(new_text)
+		except:
+			pass
+
+	def cityChanged(self):
+		in_text = self.city_input.text().strip()
+		try:
+			new_text = inputToHexText.num2hex(int(in_text), 4)
+			self.edits[7].setText(new_text)
+		except:
+			pass
+
+	def manuChanged(self):
+		in_text = self.manu_input.text().strip()
+		text = ''.join(['%02X' % ord(a) for a in in_text])
+		new_text = inputToHexText.string2hex(text,10)
+		self.edits[8].setText(new_text)
+
+	def dev_typeChanged(self):
+		in_text = self.dev_type_input.text().strip()
+		text = ''.join(['%02X' % ord(a) for a in in_text])
+		new_text = inputToHexText.string2hex(text,40,rear0=True)
+		self.edits[9].setText(new_text)
+
+	def dev_idChanged(self):
+		in_text = self.dev_id_input.text().strip()
+		text = ''.join(['%02X' % ord(a) for a in in_text])
+		new_text = inputToHexText.string2hex(text,14,rear0=True)
+		self.edits[10].setText(new_text)
+
+	def licenseChanged(self):
+		in_text = self.license_input.text().strip()
+		text = ''.join(['%02X' % ord(a) for a in in_text])
+		new_text = inputToHexText.string2hex(text,len(in_text)*2)
+		self.edits[12].setText(new_text)
+
 
 class Authorize(QWidget):
 	def __init__(self):
@@ -227,16 +307,14 @@ class Authorize(QWidget):
 			body += self.edits[i].text().strip().replace(' ','')
 			i += 1
 		body_len = int(len(body)/2)
-		new_text = '%04X' % body_len
-		new_text = new_text[:2] + ' ' + new_text[2:]
+		new_text = inputToHexText.num2hex(body_len, 4)
 		self.edits[2].setText(new_text)
 
 	def flowButtonClicked(self):
 		text = self.edits[4].text().strip().replace(' ','')
 		flow_num = int(text,16)
 		new_flow_num = flow_num+1
-		new_text = '%04X' % new_flow_num
-		new_text = new_text[:2] + ' ' + new_text[2:]
+		new_text = inputToHexText.num2hex(new_flow_num, 4)
 		self.edits[4].setText(new_text)
 
 	def csButtonClicked(self):
@@ -285,7 +363,7 @@ class LocReport(QWidget):
 		label09 = QLabel('体:纬度')
 		label10 = QLabel('体:经度')
 		label11 = QLabel('体:高程（米）')
-		label12 = QLabel('体:速度')
+		label12 = QLabel('体:速度（1/10km/h）')
 		label13 = QLabel('体:方向（0-359，正北为0）')
 		label14 = QLabel('体:时间')
 		label15 = QLabel('校验码')
@@ -327,6 +405,8 @@ class LocReport(QWidget):
 
 		flow_button = QPushButton('加1')
 		grid.addWidget(flow_button,4,2)
+		# flow_button.resize(flow_button.sizeHint())
+		# width = flow_button.width() # 75
 
 		alarm_button = QPushButton('设置/清除')
 		grid.addWidget(alarm_button,6,2)
@@ -341,6 +421,32 @@ class LocReport(QWidget):
 		alarm_button.clicked.connect(self.alarmButtonClicked)
 		time_button.clicked.connect(self.timeButtonClicked)
 		cs_button.clicked.connect(self.csButtonClicked)
+
+		self.lat_input = QLineEdit('30') # 纬度
+		grid.addWidget(self.lat_input,8,2)
+		self.lat_input.setFixedWidth(75)
+
+		self.lon_input = QLineEdit('114') # 经度
+		grid.addWidget(self.lon_input,9,2)
+		self.lon_input.setFixedWidth(75)
+
+		self.alt_input = QLineEdit('50') # 高程
+		grid.addWidget(self.alt_input,10,2)
+		self.alt_input.setFixedWidth(75)
+
+		self.spd_input = QLineEdit('0') # 速度
+		grid.addWidget(self.spd_input,11,2)
+		self.spd_input.setFixedWidth(75)
+
+		self.dir_input = QLineEdit('0') # 方向
+		grid.addWidget(self.dir_input,12,2)
+		self.dir_input.setFixedWidth(75)
+
+		self.lat_input.textChanged.connect(self.latChanged)
+		self.lon_input.textChanged.connect(self.lonChanged)
+		self.alt_input.textChanged.connect(self.altChanged)
+		self.spd_input.textChanged.connect(self.spdChanged)
+		self.dir_input.textChanged.connect(self.dirChanged)
 
 		# '完整消息'
 		result_label = QLabel('完整消息')
@@ -365,8 +471,7 @@ class LocReport(QWidget):
 		text = self.edits[4].text().strip().replace(' ','')
 		flow_num = int(text,16)
 		new_flow_num = flow_num+1
-		new_text = '%04X' % new_flow_num
-		new_text = new_text[:2] + ' ' + new_text[2:]
+		new_text = inputToHexText.num2hex(new_flow_num, 4)
 		self.edits[4].setText(new_text)
 
 	def alarmButtonClicked(self):
@@ -409,6 +514,52 @@ class LocReport(QWidget):
 		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
 		self.result_text.setPlainText(result_text) # 显示完整消息
+
+	def latChanged(self):
+		lat_input = self.lat_input.text().strip()
+		try:
+			lat = float(lat_input)
+			new_text = inputToHexText.num2hex(int(lat * 1000000), 8)
+			self.edits[8].setText(new_text)
+		except:
+			pass
+
+	def lonChanged(self):
+		lon_input = self.lon_input.text().strip()
+		try:
+			lon = float(lon_input)
+			new_text = inputToHexText.num2hex(int(lon * 1000000), 8)
+			self.edits[9].setText(new_text)
+		except:
+			pass
+
+	def altChanged(self):
+		alt_input = self.alt_input.text().strip()
+		try:
+			alt = int(alt_input)
+			new_text = inputToHexText.num2hex(alt, 4)
+			self.edits[10].setText(new_text)
+		except:
+			pass
+
+	def spdChanged(self):
+		spd_input = self.spd_input.text().strip()
+		try:
+			spd = int(spd_input)
+			new_text = inputToHexText.num2hex(spd, 4)
+			self.edits[11].setText(new_text)
+		except:
+			pass
+
+	def dirChanged(self):
+		dir_input = self.dir_input.text().strip()
+		try:
+			dir = int(dir_input)
+			new_text = inputToHexText.num2hex(dir, 4)
+			self.edits[12].setText(new_text)
+		except:
+			pass
+
 
 class Heartbeat(QWidget):
 	def __init__(self):
@@ -484,8 +635,7 @@ class Heartbeat(QWidget):
 		text = self.edits[4].text().strip().replace(' ','')
 		flow_num = int(text,16)
 		new_flow_num = flow_num+1
-		new_text = '%04X' % new_flow_num
-		new_text = new_text[:2] + ' ' + new_text[2:]
+		new_text = inputToHexText.num2hex(new_flow_num, 4)
 		self.edits[4].setText(new_text)
 
 	def csButtonClicked(self):
