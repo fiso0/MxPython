@@ -677,11 +677,8 @@ class MessageBreak(QWidget):
 		message_label = QLabel('消息')
 		self.message_text = QTextEdit()
 		# self.message_text.setFixedHeight(80)
-		break_button = QPushButton('分解')
 		grid.addWidget(message_label,0,0)
 		grid.addWidget(self.message_text,0,1)
-		grid.addWidget(break_button,0,2)
-		break_button.clicked.connect(self.breakButtonClicked)
 
 		label01 = QLabel('=标识位=')
 		label02 = QLabel('头:消息ID')
@@ -718,6 +715,34 @@ class MessageBreak(QWidget):
 			grid.addWidget(self.labels[i],i+1,0)
 			grid.addWidget(self.edits[i],i+1,1)
 			i = i + 1
+
+		break_button = QPushButton('分解↓')
+		# grid.addWidget(break_button,0,2)
+
+		result_button = QPushButton('↑转义(3)')
+		# grid.addWidget(result_button,7,2)
+
+		vbox = QVBoxLayout()
+		vbox.addStretch()
+		vbox.addWidget(break_button)
+		vbox.addWidget(result_button)
+		vbox.addStretch()
+		grid.addLayout(vbox,0,2)
+
+		len_button = QPushButton('重新计算(1)')
+		grid.addWidget(len_button,3,2)
+
+		flow_button = QPushButton('加1')
+		grid.addWidget(flow_button,5,2)
+
+		cs_button = QPushButton('重新计算(2)')
+		grid.addWidget(cs_button,8,2)
+
+		break_button.clicked.connect(self.breakButtonClicked)
+		result_button.clicked.connect(self.resultButtonClicked)
+		len_button.clicked.connect(self.lenButtonClicked)
+		flow_button.clicked.connect(self.flowButtonClicked)
+		cs_button.clicked.connect(self.csButtonClicked)
 
 		box = QVBoxLayout()
 		box.addLayout(grid)
@@ -763,6 +788,49 @@ class MessageBreak(QWidget):
 		self.edits[6].setText(body)
 		self.edits[7].setText(cs)
 		self.edits[8].setText(flag_field)
+
+	def lenButtonClicked(self):
+		i = 6
+		body = '' # 消息体
+		while i < 7:
+			body += self.edits[i].toPlainText().strip().replace(' ','')
+			i += 1
+		body_len = int(len(body)/2)
+		new_text = inputToHexText.num2hex(body_len, 4)
+		self.edits[2].setText(new_text)
+
+	def flowButtonClicked(self):
+		text = self.edits[4].text().strip().replace(' ','')
+		flow_num = int(text,16)
+		new_flow_num = flow_num+1
+		new_text = inputToHexText.num2hex(new_flow_num, 4)
+		self.edits[4].setText(new_text)
+
+	def csButtonClicked(self):
+		import checksum
+		i = 1
+		header_body = '' # 消息头+消息体
+		while i < 6:
+			header_body += self.edits[i].text().strip().replace(' ','')
+			i += 1
+		header_body += self.edits[6].toPlainText().strip().replace(' ','')
+		cs = checksum.checksum(header_body)
+		cs_text = '%02X' % cs
+		self.edits[7].setText(cs_text)
+
+		self.header_body_cs = header_body + cs_text # 消息头+消息体+校验码
+
+		# 自动显示完整消息
+		i = 0
+		result_text = ''
+		result_text = self.edits[0].text() + self.header_body_cs + self.edits[8].text()
+		self.message_text.setPlainText(result_text)
+
+	def resultButtonClicked(self):
+		import tran7e
+		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
+		result_text = '7E' + tran_res + '7E'
+		self.message_text.setPlainText(result_text) # 显示完整消息
 
 class TabWindow(QTabWidget):
 	def __init__(self):
