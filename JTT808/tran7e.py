@@ -30,7 +30,7 @@ def detran7e(msg):
 			new_msg = new_msg[:i] + '7d' + new_msg[i+4:]
 		i += 2
 	if new_msg != msg:
-		print('tran7e result: '+new_msg)
+		print('detran7e result: '+new_msg)
 	return new_msg
 
 if __name__ == '__main__':
