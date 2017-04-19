@@ -7,13 +7,14 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import inputToHexText
 
+
 class Register(QWidget):
 	def __init__(self):
 		super().__init__()
 		self.init_ui()
 
 	def init_ui(self):
-		grid = QGridLayout() # 创建网格布局
+		grid = QGridLayout()  # 创建网格布局
 
 		label01 = QLabel('=标识位=')
 		label02 = QLabel('头:消息ID')
@@ -30,81 +31,83 @@ class Register(QWidget):
 		label13 = QLabel('体:车辆标识')
 		label14 = QLabel('校验码')
 		label15 = QLabel('=标识位=')
-		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08, label09, label10, label11, label12, label13, label14, label15]
+		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08, label09, label10,
+		               label11, label12, label13, label14, label15]
 
-		edit01 = QLineEdit('7E') # '标识位'
+		edit01 = QLineEdit('7E')  # '标识位'
 		edit01.setEnabled(False)
-		edit02 = QLineEdit('01 00') # '消息ID'
+		edit02 = QLineEdit('01 00')  # '消息ID'
 		edit02.setEnabled(False)
-		edit03 = QLineEdit('00 2B') # '消息体属性（长度）'
+		edit03 = QLineEdit('00 2B')  # '消息体属性（长度）'
 		edit03.setEnabled(False)
-		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
-		edit05 = QLineEdit('00 00') # '消息流水号'
+		edit04 = QLineEdit('01 20 00 18 71 48')  # '终端手机号'
+		edit05 = QLineEdit('00 00')  # '消息流水号'
 		# edit05.setFont(QFont("宋体",9,QFont.Bold))
 		p = self.palette()
 		c = QColor(Qt.red)
-		p.setColor(QPalette.Text,c)
+		p.setColor(QPalette.Text, c)
 		edit05.setPalette(p)
 		# edit05.setAutoFillBackground(True)
-		edit06 = QLineEdit() # '消息包封装项'
-		edit07 = QLineEdit('00 2A') # '省'
-		edit08 = QLineEdit('00 6F') # '市'
-		edit09 = QLineEdit('31 32 33 34 35') # '制造商'
-		edit10 = QLineEdit('4D 58 31 36 30 38 53 00 00 00 00 00 00 00 00 00 00 00 00 00') # '终端型号'
+		edit06 = QLineEdit()  # '消息包封装项'
+		edit07 = QLineEdit('00 2A')  # '省'
+		edit08 = QLineEdit('00 6F')  # '市'
+		edit09 = QLineEdit('31 32 33 34 35')  # '制造商'
+		edit10 = QLineEdit('4D 58 31 36 30 38 53 00 00 00 00 00 00 00 00 00 00 00 00 00')  # '终端型号'
 		edit10.setMinimumWidth(400)
-		edit11 = QLineEdit('4D 58 32 30 31 37 00') # '终端ID'
-		edit12 = QLineEdit('01') # '车牌颜色'
-		edit13 = QLineEdit('41 5A 31 32 33 34') # '车辆标识'
-		edit14 = QLineEdit() # '校验码'
-		edit15 = QLineEdit('7E') # '标识位'
-		self.edits = [edit01, edit02, edit03, edit04, edit05, edit06, edit07, edit08, edit09, edit10, edit11, edit12, edit13, edit14, edit15]
+		edit11 = QLineEdit('4D 58 32 30 31 37 00')  # '终端ID'
+		edit12 = QLineEdit('01')  # '车牌颜色'
+		edit13 = QLineEdit('41 5A 31 32 33 34')  # '车辆标识'
+		edit14 = QLineEdit()  # '校验码'
+		edit15 = QLineEdit('7E')  # '标识位'
+		self.edits = [edit01, edit02, edit03, edit04, edit05, edit06, edit07, edit08, edit09, edit10, edit11, edit12,
+		              edit13, edit14, edit15]
 
 		# 添加lebels和edits
 		i = 0
 		while i < 15:
-			grid.addWidget(self.labels[i],i,0)
-			grid.addWidget(self.edits[i],i,1)
+			grid.addWidget(self.labels[i], i, 0)
+			grid.addWidget(self.edits[i], i, 1)
 			i = i + 1
 
 		len_button = QPushButton('计算(1)')
-		grid.addWidget(len_button,2,2)
+		grid.addWidget(len_button, 2, 2)
 
 		flow_button = QPushButton('加1')
-		grid.addWidget(flow_button,4,2)
+		grid.addWidget(flow_button, 4, 2)
 
 		cs_button = QPushButton('计算(2)')
-		grid.addWidget(cs_button,13,2)
+		grid.addWidget(cs_button, 13, 2)
 
 		len_button.clicked.connect(self.lenButtonClicked)
 		flow_button.clicked.connect(self.flowButtonClicked)
 		cs_button.clicked.connect(self.csButtonClicked)
 
-		self.cell_input = QLineEdit('12000187148') # 手机号
-		grid.addWidget(self.cell_input,3,2)
+		self.cell_input = QLineEdit('12000187148')  # 手机号
+		grid.addWidget(self.cell_input, 3, 2)
 		self.cell_input.setFixedWidth(75)
 
-		self.province_input = QLineEdit('42') # 省
-		grid.addWidget(self.province_input,6,2)
+		self.province_input = QLineEdit('42')  # 省
+		grid.addWidget(self.province_input, 6, 2)
 		self.province_input.setFixedWidth(75)
 
-		self.city_input = QLineEdit('111') # 市
-		grid.addWidget(self.city_input,7,2)
+		self.city_input = QLineEdit('111')  # 市
+		grid.addWidget(self.city_input, 7, 2)
 		self.city_input.setFixedWidth(75)
 
-		self.manu_input = QLineEdit('12345') # 制造商
-		grid.addWidget(self.manu_input,8,2)
+		self.manu_input = QLineEdit('12345')  # 制造商
+		grid.addWidget(self.manu_input, 8, 2)
 		self.manu_input.setFixedWidth(75)
 
-		self.dev_type_input = QLineEdit('MX1608S') # 终端型号
-		grid.addWidget(self.dev_type_input,9,2)
+		self.dev_type_input = QLineEdit('MX1608S')  # 终端型号
+		grid.addWidget(self.dev_type_input, 9, 2)
 		self.dev_type_input.setFixedWidth(75)
 
-		self.dev_id_input = QLineEdit('MX2017') # 终端ID
-		grid.addWidget(self.dev_id_input,10,2)
+		self.dev_id_input = QLineEdit('MX2017')  # 终端ID
+		grid.addWidget(self.dev_id_input, 10, 2)
 		self.dev_id_input.setFixedWidth(75)
 
-		self.license_input = QLineEdit('AZ1234') # 车辆标识
-		grid.addWidget(self.license_input,12,2)
+		self.license_input = QLineEdit('AZ1234')  # 车辆标识
+		grid.addWidget(self.license_input, 12, 2)
 		self.license_input.setFixedWidth(75)
 
 		self.cell_input.textChanged.connect(self.cellChanged)
@@ -120,9 +123,9 @@ class Register(QWidget):
 		self.result_text = QTextEdit()
 		# self.result_text.setFixedHeight(80)
 		result_button = QPushButton('转义(3)')
-		grid.addWidget(result_label,15,0)
-		grid.addWidget(self.result_text,15,1)
-		grid.addWidget(result_button,15,2)
+		grid.addWidget(result_label, 15, 0)
+		grid.addWidget(self.result_text, 15, 1)
+		grid.addWidget(result_button, 15, 2)
 		result_button.clicked.connect(self.resultButtonClicked)
 
 		box = QVBoxLayout()
@@ -131,56 +134,56 @@ class Register(QWidget):
 
 		self.setLayout(box)
 		self.setWindowTitle('注册')
-		self.move(100,50)
+		self.move(100, 50)
 		self.show()
 
 	def lenButtonClicked(self):
 		i = 6
-		body = '' # 消息体
+		body = ''  # 消息体
 		while i < 13:
-			body += self.edits[i].text().strip().replace(' ','')
+			body += self.edits[i].text().strip().replace(' ', '')
 			i += 1
-		body_len = int(len(body)/2)
+		body_len = int(len(body) / 2)
 		new_text = inputToHexText.num2hex(body_len, 4, True)
 		self.edits[2].setText(new_text)
 
 	def flowButtonClicked(self):
-		text = self.edits[4].text().strip().replace(' ','')
-		flow_num = int(text,16)
-		new_flow_num = flow_num+1
+		text = self.edits[4].text().strip().replace(' ', '')
+		flow_num = int(text, 16)
+		new_flow_num = flow_num + 1
 		new_text = inputToHexText.num2hex(new_flow_num, 4, True)
 		self.edits[4].setText(new_text)
 
 	def csButtonClicked(self):
 		import checksum
 		i = 1
-		header_body = '' # 消息头+消息体
+		header_body = ''  # 消息头+消息体
 		while i < 13:
-			header_body += self.edits[i].text().strip().replace(' ','')
+			header_body += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
 		self.edits[13].setText(cs_text)
 
-		self.header_body_cs = header_body + cs_text # 消息头+消息体+校验码
+		self.header_body_cs = header_body + cs_text  # 消息头+消息体+校验码
 
 		# 自动显示完整消息
 		i = 0
 		result_text = ''
 		while i < 15:
-			result_text += self.edits[i].text().strip().replace(' ','')
+			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		self.result_text.setPlainText(result_text)
 
 	def resultButtonClicked(self):
 		import tran7e
-		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
+		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text) # 显示完整消息
+		self.result_text.setPlainText(result_text)  # 显示完整消息
 
 	def cellChanged(self):
-		text = self.cell_input.text().strip().replace(' ','')
-		new_text = inputToHexText.string2hex(text,12)
+		text = self.cell_input.text().strip().replace(' ', '')
+		new_text = inputToHexText.string2hex(text, 12)
 		self.edits[3].setText(new_text)
 
 	def provinceChanged(self):
@@ -202,25 +205,25 @@ class Register(QWidget):
 	def manuChanged(self):
 		in_text = self.manu_input.text().strip()
 		text = ''.join(['%02X' % ord(a) for a in in_text])
-		new_text = inputToHexText.string2hex(text,10)
+		new_text = inputToHexText.string2hex(text, 10)
 		self.edits[8].setText(new_text)
 
 	def dev_typeChanged(self):
 		in_text = self.dev_type_input.text().strip()
 		text = ''.join(['%02X' % ord(a) for a in in_text])
-		new_text = inputToHexText.string2hex(text,40,rear0=True)
+		new_text = inputToHexText.string2hex(text, 40, rear0=True)
 		self.edits[9].setText(new_text)
 
 	def dev_idChanged(self):
 		in_text = self.dev_id_input.text().strip()
 		text = ''.join(['%02X' % ord(a) for a in in_text])
-		new_text = inputToHexText.string2hex(text,14,rear0=True)
+		new_text = inputToHexText.string2hex(text, 14, rear0=True)
 		self.edits[10].setText(new_text)
 
 	def licenseChanged(self):
 		in_text = self.license_input.text().strip()
 		text = ''.join(['%02X' % ord(a) for a in in_text])
-		new_text = inputToHexText.string2hex(text,len(in_text)*2)
+		new_text = inputToHexText.string2hex(text, len(in_text) * 2)
 		self.edits[12].setText(new_text)
 
 
@@ -230,7 +233,7 @@ class Authorize(QWidget):
 		self.init_ui()
 
 	def init_ui(self):
-		grid = QGridLayout() # 创建网格布局
+		grid = QGridLayout()  # 创建网格布局
 
 		label01 = QLabel('=标识位=')
 		label02 = QLabel('头:消息ID')
@@ -243,39 +246,39 @@ class Authorize(QWidget):
 		label09 = QLabel('=标识位=')
 		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08, label09]
 
-		edit01 = QLineEdit('7E') # '标识位'
+		edit01 = QLineEdit('7E')  # '标识位'
 		edit01.setEnabled(False)
-		edit02 = QLineEdit('01 02') # '消息ID'
+		edit02 = QLineEdit('01 02')  # '消息ID'
 		edit02.setEnabled(False)
-		edit03 = QLineEdit('00 06') # '消息体属性（长度）'
+		edit03 = QLineEdit('00 06')  # '消息体属性（长度）'
 		edit03.setEnabled(False)
-		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
-		edit05 = QLineEdit('00 01') # '消息流水号'
+		edit04 = QLineEdit('01 20 00 18 71 48')  # '终端手机号'
+		edit05 = QLineEdit('00 01')  # '消息流水号'
 		p = self.palette()
 		c = QColor(Qt.red)
-		p.setColor(QPalette.Text,c)
+		p.setColor(QPalette.Text, c)
 		edit05.setPalette(p)
-		edit06 = QLineEdit() # '消息包封装项'
-		edit07 = QLineEdit('02 00 00 00 00 15') # '鉴权码'
-		edit08 = QLineEdit() # '校验码'
-		edit09 = QLineEdit('7E') # '标识位'
+		edit06 = QLineEdit()  # '消息包封装项'
+		edit07 = QLineEdit('02 00 00 00 00 15')  # '鉴权码'
+		edit08 = QLineEdit()  # '校验码'
+		edit09 = QLineEdit('7E')  # '标识位'
 		self.edits = [edit01, edit02, edit03, edit04, edit05, edit06, edit07, edit08, edit09]
 
 		# 添加labels和edits
 		i = 0
 		while i < 9:
-			grid.addWidget(self.labels[i],i,0)
-			grid.addWidget(self.edits[i],i,1)
+			grid.addWidget(self.labels[i], i, 0)
+			grid.addWidget(self.edits[i], i, 1)
 			i = i + 1
 
 		len_button = QPushButton('计算(1)')
-		grid.addWidget(len_button,2,2)
+		grid.addWidget(len_button, 2, 2)
 
 		flow_button = QPushButton('加1')
-		grid.addWidget(flow_button,4,2)
+		grid.addWidget(flow_button, 4, 2)
 
 		cs_button = QPushButton('计算(2)')
-		grid.addWidget(cs_button,7,2)
+		grid.addWidget(cs_button, 7, 2)
 
 		len_button.clicked.connect(self.lenButtonClicked)
 		flow_button.clicked.connect(self.flowButtonClicked)
@@ -286,9 +289,9 @@ class Authorize(QWidget):
 		self.result_text = QTextEdit()
 		# self.result_text.setFixedHeight(80)
 		result_button = QPushButton('转义(3)')
-		grid.addWidget(result_label,9,0)
-		grid.addWidget(self.result_text,9,1)
-		grid.addWidget(result_button,9,2)
+		grid.addWidget(result_label, 9, 0)
+		grid.addWidget(self.result_text, 9, 1)
+		grid.addWidget(result_button, 9, 2)
 		result_button.clicked.connect(self.resultButtonClicked)
 
 		box = QVBoxLayout()
@@ -297,52 +300,53 @@ class Authorize(QWidget):
 
 		self.setLayout(box)
 		self.setWindowTitle('鉴权')
-		self.move(650,50)
+		self.move(650, 50)
 		self.show()
 
 	def lenButtonClicked(self):
 		i = 6
-		body = '' # 消息体
+		body = ''  # 消息体
 		while i < 7:
-			body += self.edits[i].text().strip().replace(' ','')
+			body += self.edits[i].text().strip().replace(' ', '')
 			i += 1
-		body_len = int(len(body)/2)
+		body_len = int(len(body) / 2)
 		new_text = inputToHexText.num2hex(body_len, 4)
 		self.edits[2].setText(new_text)
 
 	def flowButtonClicked(self):
-		text = self.edits[4].text().strip().replace(' ','')
-		flow_num = int(text,16)
-		new_flow_num = flow_num+1
+		text = self.edits[4].text().strip().replace(' ', '')
+		flow_num = int(text, 16)
+		new_flow_num = flow_num + 1
 		new_text = inputToHexText.num2hex(new_flow_num, 4)
 		self.edits[4].setText(new_text)
 
 	def csButtonClicked(self):
 		import checksum
 		i = 1
-		header_body = '' # 消息头+消息体
+		header_body = ''  # 消息头+消息体
 		while i < 7:
-			header_body += self.edits[i].text().strip().replace(' ','')
+			header_body += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
 		self.edits[7].setText(cs_text)
 
-		self.header_body_cs = header_body + cs_text # 消息头+消息体+校验码
+		self.header_body_cs = header_body + cs_text  # 消息头+消息体+校验码
 
 		# 自动显示完整消息
 		i = 0
 		result_text = ''
 		while i < 9:
-			result_text += self.edits[i].text().strip().replace(' ','')
+			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		self.result_text.setPlainText(result_text)
 
 	def resultButtonClicked(self):
 		import tran7e
-		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
+		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text) # 显示完整消息
+		self.result_text.setPlainText(result_text)  # 显示完整消息
+
 
 class LocReport(QWidget):
 	def __init__(self):
@@ -350,7 +354,7 @@ class LocReport(QWidget):
 		self.init_ui()
 
 	def init_ui(self):
-		grid = QGridLayout() # 创建网格布局
+		grid = QGridLayout()  # 创建网格布局
 
 		label01 = QLabel('=标识位=')
 		label02 = QLabel('头:消息ID')
@@ -368,78 +372,80 @@ class LocReport(QWidget):
 		label14 = QLabel('体:时间')
 		label15 = QLabel('校验码')
 		label16 = QLabel('=标识位=')
-		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08, label09, label10, label11, label12, label13, label14, label15, label16]
+		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08, label09, label10,
+		               label11, label12, label13, label14, label15, label16]
 
-		edit01 = QLineEdit('7E') # '标识位'
+		edit01 = QLineEdit('7E')  # '标识位'
 		edit01.setEnabled(False)
-		edit02 = QLineEdit('02 00') # '消息ID'
+		edit02 = QLineEdit('02 00')  # '消息ID'
 		edit02.setEnabled(False)
-		edit03 = QLineEdit('00 1C') # '消息体属性（长度）'
+		edit03 = QLineEdit('00 1C')  # '消息体属性（长度）'
 		edit03.setEnabled(False)
-		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
-		edit05 = QLineEdit('00 02') # '消息流水号'
+		edit04 = QLineEdit('01 20 00 18 71 48')  # '终端手机号'
+		edit05 = QLineEdit('00 02')  # '消息流水号'
 		p = self.palette()
 		c = QColor(Qt.red)
-		p.setColor(QPalette.Text,c)
+		p.setColor(QPalette.Text, c)
 		edit05.setPalette(p)
-		edit06 = QLineEdit() # '消息包封装项'
-		edit07 = QLineEdit('00 00 00 00') # '报警标识'
-		edit08 = QLineEdit('00 0c 00 03') # '状态'
-		edit09 = QLineEdit('01 C9 C3 80') # '纬度'
-		edit10 = QLineEdit('06 CB 80 80') # '经度'
-		edit11 = QLineEdit('00 32') # '高程'
-		edit12 = QLineEdit('00 00') # '速度'
-		edit13 = QLineEdit('00 00') # '方向'
-		edit14 = QLineEdit('17 03 29 17 03 00') # '时间'
-		edit15 = QLineEdit() # '校验码'
-		edit16 = QLineEdit('7E') # '标识位'
+		edit06 = QLineEdit()  # '消息包封装项'
+		edit07 = QLineEdit('00 00 00 00')  # '报警标识'
+		edit08 = QLineEdit('00 0c 00 03')  # '状态'
+		edit09 = QLineEdit('01 C9 C3 80')  # '纬度'
+		edit10 = QLineEdit('06 CB 80 80')  # '经度'
+		edit11 = QLineEdit('00 32')  # '高程'
+		edit12 = QLineEdit('00 00')  # '速度'
+		edit13 = QLineEdit('00 00')  # '方向'
+		edit14 = QLineEdit('17 03 29 17 03 00')  # '时间'
+		edit15 = QLineEdit()  # '校验码'
+		edit16 = QLineEdit('7E')  # '标识位'
 		edit16.setEnabled(False)
-		self.edits = [edit01, edit02, edit03, edit04, edit05, edit06, edit07, edit08, edit09, edit10, edit11, edit12, edit13, edit14, edit15, edit16]
+		self.edits = [edit01, edit02, edit03, edit04, edit05, edit06, edit07, edit08, edit09, edit10, edit11, edit12,
+		              edit13, edit14, edit15, edit16]
 
 		# 添加labels和edits
 		i = 0
 		while i < 16:
-			grid.addWidget(self.labels[i],i,0)
-			grid.addWidget(self.edits[i],i,1)
+			grid.addWidget(self.labels[i], i, 0)
+			grid.addWidget(self.edits[i], i, 1)
 			i = i + 1
 
 		flow_button = QPushButton('加1')
-		grid.addWidget(flow_button,4,2)
+		grid.addWidget(flow_button, 4, 2)
 		# flow_button.resize(flow_button.sizeHint())
 		# width = flow_button.width() # 75
 
 		alarm_button = QPushButton('设置/清除')
-		grid.addWidget(alarm_button,6,2)
+		grid.addWidget(alarm_button, 6, 2)
 
 		time_button = QPushButton('设置(1)')
-		grid.addWidget(time_button,13,2)
+		grid.addWidget(time_button, 13, 2)
 
 		cs_button = QPushButton('计算(2)')
-		grid.addWidget(cs_button,14,2)
+		grid.addWidget(cs_button, 14, 2)
 
 		flow_button.clicked.connect(self.flowButtonClicked)
 		alarm_button.clicked.connect(self.alarmButtonClicked)
 		time_button.clicked.connect(self.timeButtonClicked)
 		cs_button.clicked.connect(self.csButtonClicked)
 
-		self.lat_input = QLineEdit('30') # 纬度
-		grid.addWidget(self.lat_input,8,2)
+		self.lat_input = QLineEdit('30')  # 纬度
+		grid.addWidget(self.lat_input, 8, 2)
 		self.lat_input.setFixedWidth(75)
 
-		self.lon_input = QLineEdit('114') # 经度
-		grid.addWidget(self.lon_input,9,2)
+		self.lon_input = QLineEdit('114')  # 经度
+		grid.addWidget(self.lon_input, 9, 2)
 		self.lon_input.setFixedWidth(75)
 
-		self.alt_input = QLineEdit('50') # 高程
-		grid.addWidget(self.alt_input,10,2)
+		self.alt_input = QLineEdit('50')  # 高程
+		grid.addWidget(self.alt_input, 10, 2)
 		self.alt_input.setFixedWidth(75)
 
-		self.spd_input = QLineEdit('0') # 速度
-		grid.addWidget(self.spd_input,11,2)
+		self.spd_input = QLineEdit('0')  # 速度
+		grid.addWidget(self.spd_input, 11, 2)
 		self.spd_input.setFixedWidth(75)
 
-		self.dir_input = QLineEdit('0') # 方向
-		grid.addWidget(self.dir_input,12,2)
+		self.dir_input = QLineEdit('0')  # 方向
+		grid.addWidget(self.dir_input, 12, 2)
 		self.dir_input.setFixedWidth(75)
 
 		self.lat_input.textChanged.connect(self.latChanged)
@@ -453,9 +459,9 @@ class LocReport(QWidget):
 		self.result_text = QTextEdit()
 		# self.result_text.setFixedHeight(80)
 		result_button = QPushButton('转义(3)')
-		grid.addWidget(result_label,16,0)
-		grid.addWidget(self.result_text,16,1)
-		grid.addWidget(result_button,16,2)
+		grid.addWidget(result_label, 16, 0)
+		grid.addWidget(self.result_text, 16, 1)
+		grid.addWidget(result_button, 16, 2)
 		result_button.clicked.connect(self.resultButtonClicked)
 
 		box = QVBoxLayout()
@@ -464,18 +470,18 @@ class LocReport(QWidget):
 
 		self.setLayout(box)
 		self.setWindowTitle('位置信息汇报')
-		self.move(1200,50)
+		self.move(1200, 50)
 		self.show()
 
 	def flowButtonClicked(self):
-		text = self.edits[4].text().strip().replace(' ','')
-		flow_num = int(text,16)
-		new_flow_num = flow_num+1
+		text = self.edits[4].text().strip().replace(' ', '')
+		flow_num = int(text, 16)
+		new_flow_num = flow_num + 1
 		new_text = inputToHexText.num2hex(new_flow_num, 4)
 		self.edits[4].setText(new_text)
 
 	def alarmButtonClicked(self):
-		text = self.edits[6].text().strip().replace(' ','')
+		text = self.edits[6].text().strip().replace(' ', '')
 		alarm = int(text)
 		if alarm == 0:
 			new_text = '00 00 00 01'
@@ -491,29 +497,29 @@ class LocReport(QWidget):
 	def csButtonClicked(self):
 		import checksum
 		i = 1
-		header_body = '' # 消息头+消息体
+		header_body = ''  # 消息头+消息体
 		while i < 14:
-			header_body += self.edits[i].text().strip().replace(' ','')
+			header_body += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
 		self.edits[14].setText(cs_text)
 
-		self.header_body_cs = header_body + cs_text # 消息头+消息体+校验码
+		self.header_body_cs = header_body + cs_text  # 消息头+消息体+校验码
 
 		# 自动显示完整消息
 		i = 0
 		result_text = ''
 		while i < 16:
-			result_text += self.edits[i].text().strip().replace(' ','')
+			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		self.result_text.setPlainText(result_text)
 
 	def resultButtonClicked(self):
 		import tran7e
-		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
+		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text) # 显示完整消息
+		self.result_text.setPlainText(result_text)  # 显示完整消息
 
 	def latChanged(self):
 		lat_input = self.lat_input.text().strip()
@@ -567,7 +573,7 @@ class Heartbeat(QWidget):
 		self.init_ui()
 
 	def init_ui(self):
-		grid = QGridLayout() # 创建网格布局
+		grid = QGridLayout()  # 创建网格布局
 
 		label01 = QLabel('=标识位=')
 		label02 = QLabel('头:消息ID')
@@ -579,35 +585,35 @@ class Heartbeat(QWidget):
 		label08 = QLabel('=标识位=')
 		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08]
 
-		edit01 = QLineEdit('7E') # '标识位'
+		edit01 = QLineEdit('7E')  # '标识位'
 		edit01.setEnabled(False)
-		edit02 = QLineEdit('00 02') # '消息ID'
+		edit02 = QLineEdit('00 02')  # '消息ID'
 		edit02.setEnabled(False)
-		edit03 = QLineEdit('00 00') # '消息体属性（长度）'
+		edit03 = QLineEdit('00 00')  # '消息体属性（长度）'
 		edit03.setEnabled(False)
-		edit04 = QLineEdit('01 20 00 18 71 48') # '终端手机号'
-		edit05 = QLineEdit('00 03') # '消息流水号'
+		edit04 = QLineEdit('01 20 00 18 71 48')  # '终端手机号'
+		edit05 = QLineEdit('00 03')  # '消息流水号'
 		p = self.palette()
 		c = QColor(Qt.red)
-		p.setColor(QPalette.Text,c)
+		p.setColor(QPalette.Text, c)
 		edit05.setPalette(p)
-		edit06 = QLineEdit() # '消息包封装项'
-		edit07 = QLineEdit() # '校验码'
-		edit08 = QLineEdit('7E') # '标识位'
+		edit06 = QLineEdit()  # '消息包封装项'
+		edit07 = QLineEdit()  # '校验码'
+		edit08 = QLineEdit('7E')  # '标识位'
 		self.edits = [edit01, edit02, edit03, edit04, edit05, edit06, edit07, edit08]
 
 		# 添加labels和edits
 		i = 0
 		while i < 8:
-			grid.addWidget(self.labels[i],i,0)
-			grid.addWidget(self.edits[i],i,1)
+			grid.addWidget(self.labels[i], i, 0)
+			grid.addWidget(self.edits[i], i, 1)
 			i = i + 1
 
 		flow_button = QPushButton('加1')
-		grid.addWidget(flow_button,4,2)
+		grid.addWidget(flow_button, 4, 2)
 
 		cs_button = QPushButton('计算(1)')
-		grid.addWidget(cs_button,6,2)
+		grid.addWidget(cs_button, 6, 2)
 
 		flow_button.clicked.connect(self.flowButtonClicked)
 		cs_button.clicked.connect(self.csButtonClicked)
@@ -617,9 +623,9 @@ class Heartbeat(QWidget):
 		self.result_text = QTextEdit()
 		# self.result_text.setFixedHeight(80)
 		result_button = QPushButton('转义(2)')
-		grid.addWidget(result_label,8,0)
-		grid.addWidget(self.result_text,8,1)
-		grid.addWidget(result_button,8,2)
+		grid.addWidget(result_label, 8, 0)
+		grid.addWidget(self.result_text, 8, 1)
+		grid.addWidget(result_button, 8, 2)
 		result_button.clicked.connect(self.resultButtonClicked)
 
 		box = QVBoxLayout()
@@ -628,42 +634,43 @@ class Heartbeat(QWidget):
 
 		self.setLayout(box)
 		self.setWindowTitle('心跳')
-		self.move(100,600)
+		self.move(100, 600)
 		self.show()
 
 	def flowButtonClicked(self):
-		text = self.edits[4].text().strip().replace(' ','')
-		flow_num = int(text,16)
-		new_flow_num = flow_num+1
+		text = self.edits[4].text().strip().replace(' ', '')
+		flow_num = int(text, 16)
+		new_flow_num = flow_num + 1
 		new_text = inputToHexText.num2hex(new_flow_num, 4)
 		self.edits[4].setText(new_text)
 
 	def csButtonClicked(self):
 		import checksum
 		i = 1
-		header_body = '' # 消息头+消息体
+		header_body = ''  # 消息头+消息体
 		while i < 6:
-			header_body += self.edits[i].text().strip().replace(' ','')
+			header_body += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
 		self.edits[6].setText(cs_text)
 
-		self.header_body_cs = header_body + cs_text # 消息头+消息体+校验码
+		self.header_body_cs = header_body + cs_text  # 消息头+消息体+校验码
 
 		# 自动显示完整消息
 		i = 0
 		result_text = ''
 		while i < 8:
-			result_text += self.edits[i].text().strip().replace(' ','')
+			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
 		self.result_text.setPlainText(result_text)
 
 	def resultButtonClicked(self):
 		import tran7e
-		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
+		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text) # 显示完整消息
+		self.result_text.setPlainText(result_text)  # 显示完整消息
+
 
 class MessageBreak(QWidget):
 	def __init__(self):
@@ -671,14 +678,14 @@ class MessageBreak(QWidget):
 		self.init_ui()
 
 	def init_ui(self):
-		grid = QGridLayout() # 创建网格布局
+		grid = QGridLayout()  # 创建网格布局
 
 		# '消息'
 		message_label = QLabel('消息')
 		self.message_text = QTextEdit()
 		# self.message_text.setFixedHeight(80)
-		grid.addWidget(message_label,0,0)
-		grid.addWidget(self.message_text,0,1)
+		grid.addWidget(message_label, 0, 0)
+		grid.addWidget(self.message_text, 0, 1)
 
 		label01 = QLabel('=标识位=')
 		label02 = QLabel('头:消息ID')
@@ -691,35 +698,35 @@ class MessageBreak(QWidget):
 		label09 = QLabel('=标识位=')
 		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08, label09]
 
-		self.p = self.palette() # 原颜色
-		self.p_red = self.palette() # 红色字体
+		self.p = self.palette()  # 原颜色
+		self.p_red = self.palette()  # 红色字体
 		c = QColor(Qt.red)
-		self.p_red.setColor(QPalette.Text,c)
+		self.p_red.setColor(QPalette.Text, c)
 
-		self.f = self.font() # 原字体
-		self.f_bold = self.font() # 加粗字体
+		self.f = self.font()  # 原字体
+		self.f_bold = self.font()  # 加粗字体
 		self.f_bold.setBold(True)
 
-		edit01 = QLineEdit() # '标识位'
+		edit01 = QLineEdit()  # '标识位'
 		edit01.setEnabled(False)
-		edit02 = QLineEdit() # '消息ID'
-		edit03 = QLineEdit() # '消息体属性（长度）'
-		edit04 = QLineEdit() # '终端手机号'
-		edit05 = QLineEdit() # '消息流水号'
+		edit02 = QLineEdit()  # '消息ID'
+		edit03 = QLineEdit()  # '消息体属性（长度）'
+		edit04 = QLineEdit()  # '终端手机号'
+		edit05 = QLineEdit()  # '消息流水号'
 		edit05.setPalette(self.p_red)
-		edit06 = QLineEdit() # '消息包封装项'
+		edit06 = QLineEdit()  # '消息包封装项'
 		edit07 = QTextEdit()
 		# edit07.setFixedHeight(60)
-		edit08 = QLineEdit() # '校验码'
-		edit09 = QLineEdit() # '标识位'
+		edit08 = QLineEdit()  # '校验码'
+		edit09 = QLineEdit()  # '标识位'
 		edit09.setEnabled(False)
 		self.edits = [edit01, edit02, edit03, edit04, edit05, edit06, edit07, edit08, edit09]
 
 		# 添加labels和edits
 		i = 0
 		while i < 9:
-			grid.addWidget(self.labels[i],i+1,0)
-			grid.addWidget(self.edits[i],i+1,1)
+			grid.addWidget(self.labels[i], i + 1, 0)
+			grid.addWidget(self.edits[i], i + 1, 1)
 			i = i + 1
 
 		break_button = QPushButton('分解↓')
@@ -733,16 +740,16 @@ class MessageBreak(QWidget):
 		vbox.addWidget(break_button)
 		vbox.addWidget(result_button)
 		vbox.addStretch()
-		grid.addLayout(vbox,0,2)
+		grid.addLayout(vbox, 0, 2)
 
 		len_button = QPushButton('重新计算(1)')
-		grid.addWidget(len_button,3,2)
+		grid.addWidget(len_button, 3, 2)
 
 		flow_button = QPushButton('加1')
-		grid.addWidget(flow_button,5,2)
+		grid.addWidget(flow_button, 5, 2)
 
 		cs_button = QPushButton('重新计算(2)')
-		grid.addWidget(cs_button,8,2)
+		grid.addWidget(cs_button, 8, 2)
 
 		break_button.clicked.connect(self.breakButtonClicked)
 		result_button.clicked.connect(self.resultButtonClicked)
@@ -756,14 +763,14 @@ class MessageBreak(QWidget):
 
 		self.setLayout(box)
 		self.setWindowTitle('分解消息')
-		self.move(650,450)
+		self.move(650, 450)
 		self.show()
 
 	def breakButtonClicked(self):
 		import tran7e
-		message = self.message_text.toPlainText().strip().replace(' ','') # 去掉空格
+		message = self.message_text.toPlainText().strip().replace(' ', '')  # 去掉空格
 		message = tran7e.detran7e(message)
-		chrstr = [message[i:i+2] for i in range(0,len(message),2)]
+		chrstr = [message[i:i + 2] for i in range(0, len(message), 2)]
 		msg_len = len(chrstr)
 
 		flag_field1 = chrstr[0]
@@ -774,9 +781,9 @@ class MessageBreak(QWidget):
 		cs = chrstr[-2]
 		flag_field2 = chrstr[-1]
 
-		body_len = int(''.join(chrstr[3:5]),16) & 0x3F
+		body_len = int(''.join(chrstr[3:5]), 16) & 0x3F
 		if body_len > 1:
-			body = ' '.join(chrstr[-body_len-2:-2])
+			body = ' '.join(chrstr[-body_len - 2:-2])
 		elif body_len == 1:
 			body = chrstr[-3]
 		else:
@@ -784,14 +791,14 @@ class MessageBreak(QWidget):
 
 		msg_pack_len = msg_len - body_len - 15
 		if msg_pack_len > 1:
-			msg_pack = ' '.join(chrstr[13:-body_len-2])
+			msg_pack = ' '.join(chrstr[13:-body_len - 2])
 		elif msg_pack_len == 1:
 			msg_pack = chrstr[13]
 		else:
 			msg_pack = ''
 
 		self.edits[0].setText(flag_field1)
-		if(flag_field1 != '7e' and flag_field1 != '7E'):
+		if (flag_field1 != '7e' and flag_field1 != '7E'):
 			self.edits[0].setPalette(self.p_red)
 			self.edits[0].setFont(self.f_bold)
 		else:
@@ -808,34 +815,34 @@ class MessageBreak(QWidget):
 
 	def lenButtonClicked(self):
 		i = 6
-		body = '' # 消息体
+		body = ''  # 消息体
 		while i < 7:
-			body += self.edits[i].toPlainText().strip().replace(' ','')
+			body += self.edits[i].toPlainText().strip().replace(' ', '')
 			i += 1
-		body_len = int(len(body)/2)
+		body_len = int(len(body) / 2)
 		new_text = inputToHexText.num2hex(body_len, 4)
 		self.edits[2].setText(new_text)
 
 	def flowButtonClicked(self):
-		text = self.edits[4].text().strip().replace(' ','')
-		flow_num = int(text,16)
-		new_flow_num = flow_num+1
+		text = self.edits[4].text().strip().replace(' ', '')
+		flow_num = int(text, 16)
+		new_flow_num = flow_num + 1
 		new_text = inputToHexText.num2hex(new_flow_num, 4)
 		self.edits[4].setText(new_text)
 
 	def csButtonClicked(self):
 		import checksum
 		i = 1
-		header_body = '' # 消息头+消息体
+		header_body = ''  # 消息头+消息体
 		while i < 6:
-			header_body += self.edits[i].text().strip().replace(' ','')
+			header_body += self.edits[i].text().strip().replace(' ', '')
 			i += 1
-		header_body += self.edits[6].toPlainText().strip().replace(' ','')
+		header_body += self.edits[6].toPlainText().strip().replace(' ', '')
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
 		self.edits[7].setText(cs_text)
 
-		self.header_body_cs = header_body + cs_text # 消息头+消息体+校验码
+		self.header_body_cs = header_body + cs_text  # 消息头+消息体+校验码
 
 		# 自动显示完整消息
 		i = 0
@@ -845,9 +852,10 @@ class MessageBreak(QWidget):
 
 	def resultButtonClicked(self):
 		import tran7e
-		tran_res = tran7e.tran7e(self.header_body_cs) # 转义处理消息头+消息体+校验码
+		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.message_text.setPlainText(result_text) # 显示完整消息
+		self.message_text.setPlainText(result_text)  # 显示完整消息
+
 
 class TabWindow(QTabWidget):
 	def __init__(self):
@@ -861,11 +869,11 @@ class TabWindow(QTabWidget):
 		self.mHeartbeat = Heartbeat()
 		self.mMessageBreak = MessageBreak()
 
-		self.addTab(self.mRegister,'注册')
-		self.addTab(self.mAuthorize,'鉴权')
-		self.addTab(self.mLocReport,'位置信息汇报')
-		self.addTab(self.mHeartbeat,'心跳')
-		self.addTab(self.mMessageBreak,'消息分解')
+		self.addTab(self.mRegister, '注册')
+		self.addTab(self.mAuthorize, '鉴权')
+		self.addTab(self.mLocReport, '位置信息汇报')
+		self.addTab(self.mHeartbeat, '心跳')
+		self.addTab(self.mMessageBreak, '消息分解')
 
 		self.setWindowTitle('JTT808')
 		self.setMinimumHeight(650)
