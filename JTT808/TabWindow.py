@@ -691,16 +691,18 @@ class MessageBreak(QWidget):
 		label09 = QLabel('=标识位=')
 		self.labels = [label01, label02, label03, label04, label05, label06, label07, label08, label09]
 
+		self.p = self.palette() # 原颜色
+		self.p_red = self.palette() # 红色字体
+		c = QColor(Qt.red)
+		self.p_red.setColor(QPalette.Text,c)
+
 		edit01 = QLineEdit() # '标识位'
 		edit01.setEnabled(False)
 		edit02 = QLineEdit() # '消息ID'
 		edit03 = QLineEdit() # '消息体属性（长度）'
 		edit04 = QLineEdit() # '终端手机号'
 		edit05 = QLineEdit() # '消息流水号'
-		p = self.palette()
-		c = QColor(Qt.red)
-		p.setColor(QPalette.Text,c)
-		edit05.setPalette(p)
+		edit05.setPalette(self.p_red)
 		edit06 = QLineEdit() # '消息包封装项'
 		edit07 = QTextEdit()
 		# edit07.setFixedHeight(60)
@@ -754,16 +756,19 @@ class MessageBreak(QWidget):
 		self.show()
 
 	def breakButtonClicked(self):
-		message = self.message_text.toPlainText().strip().replace(' ','')
+		import tran7e
+		message = self.message_text.toPlainText().strip().replace(' ','') # 去掉空格
+		message = tran7e.detran7e(message)
 		chrstr = [message[i:i+2] for i in range(0,len(message),2)]
 		msg_len = len(chrstr)
 
-		flag_field = chrstr[0]
+		flag_field1 = chrstr[0]
 		msg_id = ' '.join(chrstr[1:3])
 		msg_prop = ' '.join(chrstr[3:5])
 		cell = ' '.join(chrstr[5:11])
 		flow = ' '.join(chrstr[11:13])
 		cs = chrstr[-2]
+		flag_field2 = chrstr[-1]
 
 		body_len = int(''.join(chrstr[3:5]),16) & 0x3F
 		if body_len > 1:
@@ -781,7 +786,11 @@ class MessageBreak(QWidget):
 		else:
 			msg_pack = ''
 
-		self.edits[0].setText(flag_field)
+		self.edits[0].setText(flag_field1)
+		if(flag_field1 != '7e' and flag_field1 != '7E'):
+			self.edits[0].setPalette(self.p_red)
+		else:
+			self.edits[0].setPalette(self.p)
 		self.edits[1].setText(msg_id)
 		self.edits[2].setText(msg_prop)
 		self.edits[3].setText(cell)
@@ -789,7 +798,11 @@ class MessageBreak(QWidget):
 		self.edits[5].setText(msg_pack)
 		self.edits[6].setText(body)
 		self.edits[7].setText(cs)
-		self.edits[8].setText(flag_field)
+		self.edits[8].setText(flag_field2)
+		if(flag_field2 != '7e' and flag_field2 != '7E'):
+			self.edits[8].setPalette(self.p_red)
+		else:
+			self.edits[8].setPalette(self.p)
 
 	def lenButtonClicked(self):
 		i = 6
