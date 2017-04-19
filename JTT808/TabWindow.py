@@ -681,7 +681,7 @@ class MessageBreak(QWidget):
 		grid = QGridLayout()  # 创建网格布局
 
 		# '消息'
-		message_label = QLabel('消息')
+		message_label = QLabel('消息（可有空格）')
 		self.message_text = QTextEdit()
 		# self.message_text.setFixedHeight(80)
 		grid.addWidget(message_label, 0, 0)
@@ -804,6 +804,11 @@ class MessageBreak(QWidget):
 		else:
 			self.edits[0].setPalette(self.p)
 			self.edits[0].setFont(self.f)
+
+		# 根据msg_id调整body的格式（自动换行）
+		import autoFormat
+		body = autoFormat.formatBody(msg_id,body)
+
 		self.edits[1].setText(msg_id)
 		self.edits[2].setText(msg_prop)
 		self.edits[3].setText(cell)
