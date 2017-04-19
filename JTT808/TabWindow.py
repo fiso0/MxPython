@@ -696,6 +696,10 @@ class MessageBreak(QWidget):
 		c = QColor(Qt.red)
 		self.p_red.setColor(QPalette.Text,c)
 
+		self.f = self.font() # 原字体
+		self.f_bold = self.font() # 加粗字体
+		self.f_bold.setBold(True)
+
 		edit01 = QLineEdit() # '标识位'
 		edit01.setEnabled(False)
 		edit02 = QLineEdit() # '消息ID'
@@ -789,8 +793,10 @@ class MessageBreak(QWidget):
 		self.edits[0].setText(flag_field1)
 		if(flag_field1 != '7e' and flag_field1 != '7E'):
 			self.edits[0].setPalette(self.p_red)
+			self.edits[0].setFont(self.f_bold)
 		else:
 			self.edits[0].setPalette(self.p)
+			self.edits[0].setFont(self.f)
 		self.edits[1].setText(msg_id)
 		self.edits[2].setText(msg_prop)
 		self.edits[3].setText(cell)
@@ -799,10 +805,6 @@ class MessageBreak(QWidget):
 		self.edits[6].setText(body)
 		self.edits[7].setText(cs)
 		self.edits[8].setText(flag_field2)
-		if(flag_field2 != '7e' and flag_field2 != '7E'):
-			self.edits[8].setPalette(self.p_red)
-		else:
-			self.edits[8].setPalette(self.p)
 
 	def lenButtonClicked(self):
 		i = 6
