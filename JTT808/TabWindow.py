@@ -768,8 +768,10 @@ class MessageBreak(QWidget):
 		body_len = int(''.join(chrstr[3:5]),16) & 0x3F
 		if body_len > 1:
 			body = ' '.join(chrstr[-body_len-2:-2])
-		else:
+		elif body_len == 1:
 			body = chrstr[-3]
+		else:
+			body = ''
 
 		msg_pack_len = msg_len - body_len - 15
 		if msg_pack_len > 1:
