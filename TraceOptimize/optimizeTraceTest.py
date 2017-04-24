@@ -30,7 +30,7 @@ K_max = 5  # guess 5
 # DB_FILE = "866888020237229_0119-0120_单偏点.txt"
 # DB_FILE = "866888020237294_0119-0120_单偏点.txt"
 DB_FILE = "29_0213.txt"
-file = input("待分析数据库文件：")
+file = input("待分析数据库文件(.txt)：")
 
 # 以下为测试使用
 # print(tp.calc_distance(35, 114, 36, 115))  # lat1,lon1,lat2,lon2
@@ -42,13 +42,13 @@ file = input("待分析数据库文件：")
 
 def data_statics(key):
 	"""
-	检查第key个点是否为偏点
-	:param key: 关键点序号（第几个点，从1开始数）
+	检查第(key+1)个点(points[key])是否为偏点
+	:param key: 关键点序号（第一个点的key为0）
 	:return bias: 是否偏点（使用过滤方法A）
 	:return Q_avg: 得到此偏点结果，K_avg可取的最大值
 	:return Q_max: 得到此偏点结果，K_max可取的最大值
 	"""
-	logging.info('检查第%d个点（%s）>>>' % (key,points[key].time))
+	logging.info('检查第%d个点（%s）>>>' % ((key+1),points[key].time))
 
 	# 速度取绝对值
 	speeds_abs = [abs(s) for s in speeds]
@@ -56,19 +56,19 @@ def data_statics(key):
 	logging.debug(speeds_abs)
 
 	# 关键点的前后速度
-	S1 = speeds_abs[key - 2]
-	S2 = speeds_abs[key - 1]
+	S1 = speeds_abs[key - 1]
+	S2 = speeds_abs[key]
 	logging.debug('S1=%.4f S2=%.4f' % (S1, S2))
 
 	# 除关键点前后以外其他的速度（最多取前2个+后2个）
-	if key > 4:
-		speeds_front = speeds_abs[(key - 4):(key - 2)]
+	if key > 2:
+		speeds_front = speeds_abs[(key - 3):(key - 1)]
 	else:
-		speeds_front = speeds_abs[0:(key - 2)]
+		speeds_front = speeds_abs[0:(key - 1)]
 	if key < N - 3:
-		speeds_rear = speeds_abs[key:(key + 2)]
+		speeds_rear = speeds_abs[(key+1):(key + 3)]
 	else:
-		speeds_rear = speeds_abs[key:]
+		speeds_rear = speeds_abs[(key+1):]
 	speeds_others = speeds_front + speeds_rear
 	logging.debug('speeds_others:')
 	logging.debug(speeds_others)
@@ -128,14 +128,14 @@ def data_statics(key):
 
 
 def delete_point(n):
-	logging.info('！！！！！删除原第%d个点！！！！！' % n)
+	logging.info('！！！！！删除原第%d个点！！！！！' % (n + 1))
 
-	del points[n - 1]  # 删除第n个点
-	del speeds[n - 1]  # 删除第n个速度
-	del speeds[n - 2]  # 删除第n-1个速度
+	del points[n]  # 删除第n个点
+	del speeds[n]  # 删除第n个速度
+	del speeds[n - 1]  # 删除第n-1个速度
 
-	speed_new = tp.calc_speed(points[n - 2], points[n - 1])  # 计算第n-1个点和第n个点（新）之间的速度
-	speeds.insert(n - 2, speed_new)
+	speed_new = tp.calc_speed(points[n - 1], points[n])  # 计算第n-1个点和第n个点（新）之间的速度
+	speeds.insert(n - 1, speed_new)
 
 
 # 以下为执行部分
@@ -153,17 +153,17 @@ for i in range(N - 1):
 logging.debug('speeds:')
 logging.debug(speeds)
 
-i = 2  # 从第二个点开始检查 实际为数据文件中的第3个点（下标i从0开始）
+i = 1  # 从第2个点开始检查（下标i从1开始）
 bias_points = []  # 记录偏点
 Q_rec = []
 while True:
-	N = len(points)
-	if i >= N:
-		break  # 到倒数第二个点结束
+	N = len(points) # 可能有点被删除，需要重算总点数
+	if i >= N - 1:
+		break  # 到最后一个点结束
 	bias, Q1, Q2 = data_statics(i)  # 检查第i个点是否偏点
 	Q_rec.append((i, int(Q1), int(Q2)))
 	if bias: # 当前点偏，记录并删除，然后重新检查前面的点
-		bias_points.append(points[i - 1])  # 记录偏点
+		bias_points.append(points[i])  # 记录偏点
 		delete_point(i)  # 删除第i个点并重新整理速度列表结果
 		if i >= 5:
 			i -= 3  # 重新检查第i-3个点
@@ -176,7 +176,7 @@ while True:
 logging.info('=============\n所有不全为0的Q值:')
 for i in range(len(Q_rec)):
 	if (Q_rec[i][1] >= 1) or (Q_rec[i][2] >= 1):
-		logging.info('%d %d %d' % (Q_rec[i][0], Q_rec[i][1], Q_rec[i][2]))
+		logging.info('第%d个点: %d, %d' % (Q_rec[i][0] + 1, Q_rec[i][1], Q_rec[i][2]))
 
 # 打印所有偏点的信息
 if len(bias_points):
