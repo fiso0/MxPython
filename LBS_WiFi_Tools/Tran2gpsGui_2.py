@@ -27,7 +27,7 @@ class Tran2gpsGui(QWidget):
 		self.api_combo.setEnabled(False)
 
 		run_btn = QPushButton('转换')
-		clr_btn = QPushButton('清空')
+		clr_btn = QPushButton('清空结果')
 
 		hBox = QHBoxLayout()
 		hBox.addWidget(src_label)
