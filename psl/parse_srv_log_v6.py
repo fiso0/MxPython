@@ -1024,16 +1024,16 @@ def cmd_parse():
 		except Exception as e:
 			my_print(e)
 
+if __name__ == '__main__':
+	try:
+		BASIC()
+	except Exception as e:
+		my_print(e)
 
-try:
-	BASIC()
-except Exception as e:
-	my_print(e)
+	try:
+		ADVANCED()
+	except Exception as e:
+		my_print(e)
 
-try:
-	ADVANCED()
-except Exception as e:
-	my_print(e)
-
-my_print(my_help)
-cmd_parse()
+	my_print(my_help)
+	cmd_parse()
