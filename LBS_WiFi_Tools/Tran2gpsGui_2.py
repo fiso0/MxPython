@@ -29,6 +29,13 @@ class Tran2gpsGui(QWidget):
 		run_btn = QPushButton('转换')
 		clr_btn = QPushButton('清空结果')
 
+		lb_wifi = QLabel('纯WiFi：')
+		lb_lbs = QLabel('纯LBS：')
+		lb_mix = QLabel('混合：')
+		lb_wifi.setFixedWidth(40)
+		lb_lbs.setFixedWidth(40)
+		lb_mix.setFixedWidth(40)
+
 		hBox = QHBoxLayout()
 		hBox.addWidget(src_label)
 		hBox.addWidget(self.src_combo)
@@ -49,6 +56,7 @@ class Tran2gpsGui(QWidget):
 		self.out_wifi_text.setAcceptRichText(False)
 		self.out_wifi_text.setReadOnly(True)
 		hbox_wifi = QHBoxLayout()
+		hbox_wifi.addWidget(lb_wifi)
 		hbox_wifi.addWidget(self.req_wifi_text)
 		hbox_wifi.addWidget(self.out_wifi_text)
 
@@ -59,6 +67,7 @@ class Tran2gpsGui(QWidget):
 		self.out_lbs_text.setAcceptRichText(False)
 		self.out_lbs_text.setReadOnly(True)
 		hbox_lbs = QHBoxLayout()
+		hbox_lbs.addWidget(lb_lbs)
 		hbox_lbs.addWidget(self.req_lbs_text)
 		hbox_lbs.addWidget(self.out_lbs_text)
 
@@ -69,6 +78,7 @@ class Tran2gpsGui(QWidget):
 		self.out_mix_text.setAcceptRichText(False)
 		self.out_mix_text.setReadOnly(True)
 		hbox_mix = QHBoxLayout()
+		hbox_mix.addWidget(lb_mix)
 		hbox_mix.addWidget(self.req_mix_text)
 		hbox_mix.addWidget(self.out_mix_text)
 
