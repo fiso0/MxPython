@@ -27,6 +27,8 @@ def formatBody(msg_id, body):
 		body_sec_len = [4,4,10,40,14,2,0]
 	elif(msg_id == '8100'): # 终端注册应答
 		body_sec_len = [4,2,0]
+	else: # 其他消息不作处理
+		return body
 
 	i = 0
 	for len in body_sec_len:
