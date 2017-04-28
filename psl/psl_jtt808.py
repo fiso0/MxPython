@@ -22,7 +22,8 @@ def RS_result_csv():
 				# receive
 				ptn = re.compile(r'read \d* (.*)')
 				re_res = ptn.search(text)
-				result_mix.append(['receive', re_res.group(1)])
+				if re_res:
+					result_mix.append(['receive', re_res.group(1)])
 		elif line in time:
 			# time
 			t = text.split(',')
