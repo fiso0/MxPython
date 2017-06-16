@@ -28,7 +28,7 @@ SAMPLE_DATA = '''\
 114.39954156153658	30.503332807270766
 '''
 
-HTM_FILE = '\\test7_ok.htm'
+HTM_FILE = '\\test8_with_labels.htm'
 STATUS_TIP = '状态：'
 
 class ShowPoints(QWidget):
