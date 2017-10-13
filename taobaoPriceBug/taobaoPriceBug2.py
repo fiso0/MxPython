@@ -19,6 +19,7 @@ driver = webdriver.PhantomJS(executable_path="D:\\tools\\phantomjs-2.1.1-windows
 driver.maximize_window()
 
 url = input('商品地址：')
+# 测试：https://detail.tmall.com/item.htm?spm=a230r.1.14.8.5de81d2cSXh2qL&id=555790918859&cm_id=140105335569ed55e27b&abbucket=11
 driver.get(url)
 print('请等待...')
 time.sleep(1)
