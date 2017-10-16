@@ -14,22 +14,32 @@ def send_notice(product, prices):
 	print('已下发方糖消息')
 
 
-# 使用selenium
-driver = webdriver.PhantomJS(executable_path="D:\\tools\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe")
-driver.maximize_window()
+def price_bug(url):
+	print('请等待...')
+	
+	# 使用selenium
+	driver = webdriver.PhantomJS(executable_path="D:\\tools\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe")
+	driver.maximize_window()
 
-url = input('商品地址：')
-# 测试：https://detail.tmall.com/item.htm?spm=a230r.1.14.8.5de81d2cSXh2qL&id=555790918859&cm_id=140105335569ed55e27b&abbucket=11
-driver.get(url)
-print('请等待...')
-time.sleep(1)
+	driver.get(url)
+	time.sleep(1)
 
-try:
-	prices = [e.text for e in driver.find_elements_by_class_name('tm-price')]
 	try:
-		print('商品原价：' + prices[0] + '\n商品优惠价：' + prices[1])
-		send_notice(None, prices)
+		prices = [e.text for e in driver.find_elements_by_class_name('tm-price')]
+		try:
+			print('商品原价：' + prices[0] + '\n商品优惠价：' + prices[1])
+			send_notice(None, prices)
+		except:
+			print('查询结果：' + str(prices))
 	except:
-		print('查询结果：' + str(prices))
-except:
-	print('查询价格失败')
+		print('查询价格失败')
+
+		
+if __name__=='__main__':
+	url = input('商品地址：')
+	URL = 'https://detail.tmall.com/item.htm?spm=a230r.1.14.8.5de81d2cSXh2qL&id=555790918859&cm_id=140105335569ed55e27b&abbucket=11' # 测试
+	if url == '':
+		url = URL
+
+	price_bug(url)
+	input('完成')
