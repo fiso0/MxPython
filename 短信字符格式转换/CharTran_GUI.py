@@ -28,6 +28,7 @@ class Example(QWidget):
 		self.text2.setAcceptRichText(False)
 		self.btn1 = QPushButton('短信转中文 >>')
 		self.btn2 = QPushButton('ASCII转字符 >>')
+		self.btn3 = QPushButton('每2个字符加空格 >>')
 		self.btn_clr = QPushButton('清空')
 
 		leftGrid = QGridLayout()
@@ -42,6 +43,7 @@ class Example(QWidget):
 		rightVBox.addStretch()
 		rightVBox.addWidget(self.btn1)
 		rightVBox.addWidget(self.btn2)
+		rightVBox.addWidget(self.btn3)
 		rightVBox.addStretch()
 		rightVBox.addWidget(self.btn_clr)
 
@@ -54,7 +56,8 @@ class Example(QWidget):
 		# 按钮连接到槽
 		self.btn1.clicked.connect(self.button1Clicked)
 		self.btn2.clicked.connect(self.button2Clicked)
-		self.btn_clr.clicked.connect(self.button3Clicked)
+		self.btn3.clicked.connect(self.button3Clicked)
+		self.btn_clr.clicked.connect(self.buttonClrClicked)
 
 		self.setGeometry(200,300,600,350)
 		self.setWindowTitle('字符转换')
@@ -86,6 +89,20 @@ class Example(QWidget):
 			self.text2.setPlainText(EXAMPLE_4)
 
 	def button3Clicked(self):
+		string_origin = self.text1.toPlainText()
+		# try:
+		# 	string_result = addBlank(string_origin)
+		# 	self.text2.setPlainText(string_result)
+		if(string_origin is not ""):
+			try:
+				string_result = self.addBlank(string_origin)
+				self.text2.setPlainText(''.join(string_result))
+			except:
+				self.text2.setPlainText('ERROR!')
+		else:
+			self.text1.setPlainText(EXAMPLE_1)
+			self.text2.setPlainText(EXAMPLE_2)
+	def buttonClrClicked(self):
 		self.text1.setPlainText("")
 		self.text2.setPlainText("")
 
@@ -125,6 +142,11 @@ class Example(QWidget):
 			except Exception as e:
 				print(e)
 		return result
+
+	def addBlank(self,message):
+		# 每两个字符之间加一个空格
+		chrstr = [message[i:i + 2] for i in range(0, len(message), 2)]
+		return ' '.join(chrstr)
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
