@@ -10,6 +10,9 @@ import WebBug.WebBug
 import pprint
 
 def scan_all_new():
+	'''
+	获取高清FM首页的所有电影 返回分数大于7的电影信息
+	'''
 	url = 'https://gaoqing.fm'
 	soup = WebBug.WebBug.get_soup_of(url)
 	film_tags = soup("div", "item-desc pull-left")
@@ -27,6 +30,9 @@ def scan_all_new():
 	return(good_films)
 	
 def save_file(result):
+	'''
+	保存结果到gaoqing.fm 每次直接覆盖
+	'''
 	try:
 		with open('gaoqing.fm','w') as file:
 			file.write(result)
