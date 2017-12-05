@@ -27,6 +27,17 @@ def formatBody(msg_id, body):
 		body_sec_len = [4,4,10,40,14,2,0]
 	elif(msg_id == '8100'): # 终端注册应答
 		body_sec_len = [4,2,0]
+	elif(msg_id == '8103'): # 设置终端参数
+		para_num = int(body[0:2],16) # 参数总数
+		para_len = [0] * para_num # 参数长度
+		for i in range(para_num):
+			para_len_i_index = 2*sum(para_len[0:i])+10*(i+1)
+			para_len[i] = int(body[para_len_i_index:para_len_i_index+2],16)
+		body_sec_len = [2]
+		for i in range(para_num):
+			body_sec_len.append(8)
+			body_sec_len.append(2)
+			body_sec_len.append(para_len[i]*2)
 	else: # 其他消息不作处理
 		return body
 
