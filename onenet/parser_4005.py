@@ -179,4 +179,9 @@ if __name__=='__main__':
 	print(test)
 	for i in range(0,28):
 		if(results[i] != ''):
-			print(results[i]+'\t#'+descs[i])
+			try:
+				print(results[i]+'\t#'+descs[i])
+			except UnicodeEncodeError as e:
+				pass
+		
+	input()
