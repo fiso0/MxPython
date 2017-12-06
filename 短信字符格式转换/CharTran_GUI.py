@@ -63,7 +63,7 @@ class Example(QWidget):
 		self.setWindowTitle('字符转换')
 		self.show()
 
-	def button1Clicked(self):
+	def button1Clicked(self): # 短信转中文
 		string_origin = self.text1.toPlainText()
 		if(string_origin is not ""):
 			try:
@@ -76,7 +76,7 @@ class Example(QWidget):
 			self.text2.setPlainText(EXAMPLE_2)
 		# print(string_result)
 
-	def button2Clicked(self):
+	def button2Clicked(self): # ASCII转字符
 		string_origin = self.text1.toPlainText()
 		if(string_origin is not ""):
 			try:
@@ -88,11 +88,8 @@ class Example(QWidget):
 			self.text1.setPlainText(EXAMPLE_3)
 			self.text2.setPlainText(EXAMPLE_4)
 
-	def button3Clicked(self):
+	def button3Clicked(self): # 每2个字符加空格
 		string_origin = self.text1.toPlainText()
-		# try:
-		# 	string_result = addBlank(string_origin)
-		# 	self.text2.setPlainText(string_result)
 		if(string_origin is not ""):
 			try:
 				string_result = self.addBlank(string_origin)
@@ -100,25 +97,30 @@ class Example(QWidget):
 			except:
 				self.text2.setPlainText('ERROR!')
 		else:
-			self.text1.setPlainText(EXAMPLE_1)
-			self.text2.setPlainText(EXAMPLE_2)
+			pass
+
 	def buttonClrClicked(self):
 		self.text1.setPlainText("")
 		self.text2.setPlainText("")
 
 	def u2c(self,data_str):
+		'''
+		转换unicode为字符
+		unicode格式：每2个字节对应1个字符，字节间可以以空格、换行分隔，字节为十六进制，前面带或不带0x均可
+		:param data_str:待转换内容
+		:return:转换结果
+		'''
 		result=[]
-		if('\n' in data_str):
-			data = data_str.split('\n')
-		elif(' ' in data_str):
-			data = data_str.split(' ')
-		else:
-			data = [data_str]
-		# print(data)
+
+		if(len(data_str) < 3):
+			return ''
+
+		data = data_str.split() # If sep is not specified or is None, any whitespace string is a separator and empty strings are removed from the result.
+
 		for i in range(0,len(data)-1,2):
 			try:
-				a = int(data[i].strip().replace("0x",""),16)
-				b = int(data[i+1].strip().replace("0x",""),16)
+				a = int(data[i],16)
+				b = int(data[i+1],16)
 				res=b'\\u%02x%02x'%(a,b)
 				res1=res.decode('unicode_escape')
 				result.append(res1)
@@ -128,13 +130,16 @@ class Example(QWidget):
 		return result
 
 	def a2c(self,data_str):
+		'''
+		转换ascii为字符
+		ascii格式：每1个字节对应1个字符，字节间可以以空格、换行分隔，字节为十六进制，前面带或不带0x均可
+		:param data_str:待转换内容
+		:return:转换结果
+		'''
 		result=[]
-		if('\n' in data_str):
-			data = data_str.split('\n')
-		elif(' ' in data_str):
-			data = data_str.split(' ')
-		else:
-			data = [data_str]
+
+		data = data_str.split()
+
 		for i in data:
 			try:
 				a = int(i,16)
