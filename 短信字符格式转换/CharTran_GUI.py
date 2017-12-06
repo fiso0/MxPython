@@ -28,6 +28,7 @@ class Example(QWidget):
 		self.text2.setAcceptRichText(False)
 		self.btn1 = QPushButton('短信转中文 >>')
 		self.btn2 = QPushButton('ASCII转字符 >>')
+		self.btn4 = QPushButton('<< 字符转ASCII')
 		self.btn3 = QPushButton('每2个字符加空格 >>')
 		self.btn_clr = QPushButton('清空')
 
@@ -43,6 +44,7 @@ class Example(QWidget):
 		rightVBox.addStretch()
 		rightVBox.addWidget(self.btn1)
 		rightVBox.addWidget(self.btn2)
+		rightVBox.addWidget(self.btn4)
 		rightVBox.addWidget(self.btn3)
 		rightVBox.addStretch()
 		rightVBox.addWidget(self.btn_clr)
@@ -56,6 +58,7 @@ class Example(QWidget):
 		# 按钮连接到槽
 		self.btn1.clicked.connect(self.button1Clicked)
 		self.btn2.clicked.connect(self.button2Clicked)
+		self.btn4.clicked.connect(self.button4Clicked)
 		self.btn3.clicked.connect(self.button3Clicked)
 		self.btn_clr.clicked.connect(self.buttonClrClicked)
 
@@ -84,6 +87,18 @@ class Example(QWidget):
 				self.text2.setPlainText(''.join(string_result))
 			except:
 				self.text2.setPlainText('ERROR!')
+		else:
+			self.text1.setPlainText(EXAMPLE_3)
+			self.text2.setPlainText(EXAMPLE_4)
+
+	def button4Clicked(self): # 字符转ASCII
+		string_origin = self.text2.toPlainText()
+		if(string_origin is not ""):
+			try:
+				string_result = self.c2a(string_origin)
+				self.text1.setPlainText(' '.join(string_result))
+			except:
+				self.text1.setPlainText('ERROR!')
 		else:
 			self.text1.setPlainText(EXAMPLE_3)
 			self.text2.setPlainText(EXAMPLE_4)
@@ -131,7 +146,7 @@ class Example(QWidget):
 
 	def a2c(self,data_str):
 		'''
-		转换ascii为字符
+		转换ascii码为字符
 		ascii格式：每1个字节对应1个字符，字节间可以以空格、换行分隔，字节为十六进制，前面带或不带0x均可
 		:param data_str:待转换内容
 		:return:转换结果
@@ -144,6 +159,24 @@ class Example(QWidget):
 			try:
 				a = int(i,16)
 				result.append(chr(a))
+			except Exception as e:
+				print(e)
+		return result
+
+	def c2a(self,data_str):
+		'''
+		转换字符为ascii码
+		:param data_str: 待转换内容
+		:return: 转换结果
+		'''
+		result=[]
+
+		data = data_str
+
+		for i in data:
+			try:
+				a = ord(i)
+				result.append('0x%x'%a)
 			except Exception as e:
 				print(e)
 		return result
