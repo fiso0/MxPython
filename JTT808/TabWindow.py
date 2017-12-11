@@ -822,7 +822,7 @@ class MessageBreak(QWidget):
 		i = 6
 		body = ''  # 消息体
 		while i < 7:
-			body += self.edits[i].toPlainText().strip().replace(' ', '')
+			body += self.edits[i].toPlainText().strip().replace(' ', '').replace('\n', '')
 			i += 1
 		body_len = int(len(body) / 2)
 		new_text = inputToHexText.num2hex(body_len, 4)
@@ -837,22 +837,23 @@ class MessageBreak(QWidget):
 
 	def csButtonClicked(self):
 		import checksum
+		import autoFormat
 		i = 1
 		header_body = ''  # 消息头+消息体
 		while i < 6:
-			header_body += self.edits[i].text().strip().replace(' ', '')
+			header_body += self.edits[i].text()
 			i += 1
-		header_body += self.edits[6].toPlainText().strip().replace(' ', '')
+		header_body += self.edits[6].toPlainText()
 		cs = checksum.checksum(header_body)
-		cs_text = '%02X' % cs
+		cs_text = '%02x' % cs
 		self.edits[7].setText(cs_text)
 
 		self.header_body_cs = header_body + cs_text  # 消息头+消息体+校验码
 
 		# 自动显示完整消息
 		i = 0
-		result_text = ''
 		result_text = self.edits[0].text() + self.header_body_cs + self.edits[8].text()
+		result_text = autoFormat.addBlank(''.join(result_text.split()))
 		self.message_text.setPlainText(result_text)
 
 	def resultButtonClicked(self):
