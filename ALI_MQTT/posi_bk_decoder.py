@@ -30,7 +30,7 @@ def save_basic_result_to_csv(res):
 
 
 def basic_parse():
-	file = input('待解析文件地址：')
+	file = input('待解析posi_bk.txt文件地址：')
 	try:
 		log = open_file(file)
 	except Exception as e:

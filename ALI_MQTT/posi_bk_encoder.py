@@ -31,7 +31,7 @@ def write_wr(f,wr):
 	f.write(struct.pack('>I', wr)) # big-endian unsigned int (4 bytes)
 
 def basic():
-	file = input('数据文件地址：')
+	file = input('数据文件(.txt)地址：')
 	try:
 		data = open_file(file)
 	except Exception as e:
@@ -55,5 +55,13 @@ def basic():
 	write_wr(f,total_len)
 	f.close()
 
+note='''
+输入txt文件，每行一条数据，格式为：数据类型 数据长度 数据内容
+示例：
+14	277	{"devicename":"135790246811230","wifi":[{"mac":"02:bd:5f:15:b9:dd","rssi":"-49"},{"mac":"50:bd:5f:15:b9:dd","rssi":"-50"},{"mac":"b8:08:d7:86:6c:50","rssi":"-54"},{"mac":"02:27:1d:1a:59:2e","rssi":"-58"},{"mac":"12:27:1d:1a:59:2e","rssi":"-58"}],"datetime":"2015-4-1 00:09:30"}
+13	101	{"devicename":"135790246811230","lng":"114.394017","lat":"30.504774","datetime":"2018-6-29 10:32:25"}
+14	278	{"devicename":"135790246811230","wifi":[{"mac":"02:27:1d:1a:59:2e","rssi":"-57"},{"mac":"00:27:1d:1a:59:2e","rssi":"-57"},{"mac":"50:bd:5f:15:b9:dd","rssi":"-57"},{"mac":"02:bd:5f:15:b9:dd","rssi":"-57"},{"mac":"12:27:1d:1a:59:2e","rssi":"-58"}],"datetime":"2018-6-29 10:33:28"}
+'''
+print(note)
 basic()
 input('done')
