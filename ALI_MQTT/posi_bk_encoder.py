@@ -22,13 +22,13 @@ def open_result():
 	return f
 
 def write_msg(f,header,content):
-	f.write(struct.pack('>H', header))
+	f.write(struct.pack('>H', header)) # big-endian unsigned short (2 bytes)
 	f.write(content.encode('ascii'))
 	return
 
 def write_wr(f,wr):
 	f.seek(0)
-	f.write(struct.pack('>I', wr))
+	f.write(struct.pack('>I', wr)) # big-endian unsigned int (4 bytes)
 
 def basic():
 	file = input('数据文件地址：')
