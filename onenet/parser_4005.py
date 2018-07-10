@@ -177,11 +177,21 @@ if __name__=='__main__':
 	(results, descs) = parser_4005(test)
 
 	print(test)
+	print('=====解析结果=====')
 	for i in range(0,28):
 		if(results[i] != ''):
 			try:
-				print(results[i]+'\t#'+descs[i])
-			except UnicodeEncodeError as e:
-				pass
+				print(results[i], end='')
+			except Exception as e:
+				print(e, end='')
+			print('\t#', end='')
+			try:
+				print(descs[i])
+			except Exception as e:
+				print(e)
+			#except UnicodeEncodeError as e:
+			#	results[i] = results[i].encode('gbk','ignore').decode('utf-8','ignore')
+			#	descs[i] = descs[i].encode('gbk','ignore').decode('utf-8','ignore')
+			#	print(results[i]+'\t#'+descs[i])
 		
 	input()
