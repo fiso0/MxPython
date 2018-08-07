@@ -39,7 +39,7 @@ def basic():
 		return
 
 	f=open_result()
-	total_len=16
+	total_len=0
 	for line in data:
 		try:
 			(msg_type,msg_len,msg_content) = line.strip().split(maxsplit=2) #空字符分隔，3段
