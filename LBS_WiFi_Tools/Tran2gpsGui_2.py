@@ -7,7 +7,10 @@ from PyQt5.QtWidgets import QWidget, QLabel, QApplication, QPushButton, QHBoxLay
 	QTextEdit, QComboBox
 
 
-EXAMPLE_INPUT = '''mx_srv_send_handle[337][4005]:&&&& 331 000000000866888a2a237294 <4005> <00-00-00 000000 0.000000 0.000000 0 0 0 0xff 0x00 46 E N 0x00 460:00:28730:20736 0x00 -63 17-01-24 09:52:09 0x00 0x00 50:bd:5f:15:b9:dd,-53,ap1|02:bd:5f:15:b9:dd,-53,ap2|00:27:1d:1a:59:2e,-58,ap3|12:27:1d:1a:59:2e,-58,ap4|02:27:1d:1a:59:2e,-58,ap5;20170124095209 460,00,28730,45271,-90|460,00,28730,45273,-95|460,00,28730,55271,-96|460,00,28730,63401,-98|460,00,28730,46075,-104> 00 05 0x9b'''
+EXAMPLE_SRVLOG = '''mx_srv_send_handle[337][4005]:&&&& 331 000000000866888a2a237294 <4005> <00-00-00 000000 0.000000 0.000000 0 0 0 0xff 0x00 46 E N 0x00 460:00:28730:20736 0x00 -63 17-01-24 09:52:09 0x00 0x00 50:bd:5f:15:b9:dd,-53,ap1|02:bd:5f:15:b9:dd,-53,ap2|00:27:1d:1a:59:2e,-58,ap3|12:27:1d:1a:59:2e,-58,ap4|02:27:1d:1a:59:2e,-58,ap5;20170124095209 460,00,28730,45271,-90|460,00,28730,45273,-95|460,00,28730,55271,-96|460,00,28730,63401,-98|460,00,28730,46075,-104> 00 05 0x9b'''
+EXAMPLE_DB = '''4060	866888020237294	2017-01-28 14:49:31	1999-11-30 00:00:00	113.4465818	30.3695405	0	0	0	15	0	28	460	0	28914	51012	68	2017-01-28 14:49:18	460077171327454	2	0a:18:d6:5f:a4:b5,-77,ap1|48:28:2f:32:71:64,-84,ap2|1a:25:93:8e:5c:65,-88,ap3|0a:25:93:8e:5c:65,-88,ap4|1a:25:93:8e:5c:c9,-88,ap5;20170128144918	460,00,28914,60002,-59|460,00,28914,54642,-72|460,00,28914,56613,-76|460,00,28914,51013,-78|460,00,28914,60053,-78|460,00,28914,52793,-79'''
+EXAMPLE_INPUT_LBS = '''460,00,28699,452,-73|460,00,28699,45932,-77|460,00,28699,451,-78|460,00,28699,32286,-83|460,00,28699,10453,-86|460,00,28699,32284,-86'''
+EXAMPLE_INPUT_WIFI = '''50:bd:5f:15:b9:dd,-53,ap1|02:bd:5f:15:b9:dd,-53,ap2|00:27:1d:1a:59:2e,-58,ap3|12:27:1d:1a:59:2e,-58,ap4|02:27:1d:1a:59:2e,-58,ap5'''
 
 class Tran2gpsGui(QWidget):
 	def __init__(self):
@@ -118,12 +121,22 @@ class Tran2gpsGui(QWidget):
 		self.req_mix_text.setEnabled(True)
 		self.out_mix_text.setEnabled(True)
 	
+		src = self.src_combo.currentText()
+
 		log = self.in_text.toPlainText()
 		if log == '':
-			self.in_text.setPlainText('[示例数据]'+EXAMPLE_INPUT)
-			log = EXAMPLE_INPUT
-
-		src = self.src_combo.currentText()
+			if src == self.src_combo.itemText(0):
+				self.in_text.setPlainText('[示例数据]' + EXAMPLE_SRVLOG)
+				log = EXAMPLE_SRVLOG
+			elif src == self.src_combo.itemText(1):
+				self.in_text.setPlainText('[示例数据]' + EXAMPLE_DB)
+				log = EXAMPLE_DB
+			elif src == self.src_combo.itemText(2):
+				self.in_text.setPlainText('[示例数据]' + EXAMPLE_INPUT_WIFI)
+				log = EXAMPLE_INPUT_WIFI
+			elif src == self.src_combo.itemText(3):
+				self.in_text.setPlainText('[示例数据]' + EXAMPLE_INPUT_LBS)
+				log = EXAMPLE_INPUT_LBS
 
 		try:
 			req, res = tran2GPS_2.transfer(log, src, 'WiFi')
@@ -153,6 +166,8 @@ class Tran2gpsGui(QWidget):
 			self.out_mix_text.setPlainText('错误')
 
 	def clrButtonClicked(self):
+		self.in_text.setPlainText('')
+
 		self.req_wifi_text.setPlainText('WiFi请求')
 		self.out_wifi_text.setPlainText('WiFi结果')
 		self.req_lbs_text.setPlainText('LBS请求')

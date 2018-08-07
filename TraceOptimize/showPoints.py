@@ -36,7 +36,7 @@ class ShowPoints(QWidget):
 		super().__init__()
 		self.webView = QtWebEngineWidgets.QWebEngineView()
 		self.sourceType = QComboBox()
-		self.sourceType.addItems(['国测局坐标（google/MX数据库）','GPS设备坐标（wgs-84/NMEA0183）'])
+		self.sourceType.addItems(['国测局坐标GCJ02（MX数据库/高德）','GPS坐标（wgs84/NMEA0183）'])
 		self.inputText = QTextEdit()
 		self.inputText.setFixedWidth(280)
 		self.runButton = QPushButton('确定')
