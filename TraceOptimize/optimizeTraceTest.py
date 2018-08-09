@@ -96,7 +96,7 @@ def data_statics(key):
 		Q_max = min(S1 / S_max, S2 / S_max)
 	else:
 		Q_max = 0
-	logging.info("Q_avg=%d Q_max=%d" % (Q_avg, Q_max))
+	logging.info("Q_avg=%.4f Q_max=%.4f" % (Q_avg, Q_max))
 
 	# filter A
 	if S1 > STOP_avg and S1 > STOP_max and S2 > STOP_avg and S2 > STOP_max:
@@ -161,7 +161,7 @@ while True:
 	if i >= N - 1:
 		break  # 到最后一个点结束
 	bias, Q1, Q2 = data_statics(i)  # 检查第i个点是否偏点
-	Q_rec.append((i, int(Q1), int(Q2)))
+	Q_rec.append((i, (Q1), (Q2)))
 	if bias: # 当前点偏，记录并删除，然后重新检查前面的点
 		bias_points.append(points[i])  # 记录偏点
 		delete_point(i)  # 删除第i个点并重新整理速度列表结果
@@ -173,10 +173,12 @@ while True:
 		i += 1
 
 # 打印所有不全为0的Q值
-logging.info('=============\n所有不全为0的Q值:')
+logging.info('=============\n所有不全为0的Q值:（最终过滤参数K不能大于Q）')
 for i in range(len(Q_rec)):
 	if (Q_rec[i][1] >= 1) or (Q_rec[i][2] >= 1):
-		logging.info('第%d个点: %d, %d' % (Q_rec[i][0] + 1, Q_rec[i][1], Q_rec[i][2]))
+		logging.info('第%d个点: %.4f, %.4f (*)' % (Q_rec[i][0] + 1, Q_rec[i][1], Q_rec[i][2]))
+	elif (Q_rec[i][1] > 0) or (Q_rec[i][2] > 0):
+		logging.info('第%d个点: %.4f, %.4f' % (Q_rec[i][0] + 1, Q_rec[i][1], Q_rec[i][2]))
 
 # 打印所有偏点的信息
 if len(bias_points):
