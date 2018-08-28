@@ -172,8 +172,36 @@ def parser_4005(msg):
 	
 	return (results, descs)
 
+def parser_break(msg, lens):
+	results = []
+
+	message = msg.strip().replace(' ', '').upper()  # 去掉空格 转为大写
+	chrstr = [message[i:i + 2] for i in range(0, len(message), 2)]
+
+	i = 0
+	rd_len = 0
+	for alen in lens:
+		if(alen > 0):
+			res = chrstr[rd_len:rd_len+alen]
+		elif(alen == 0):
+			res = chrstr[rd_len:]
+		elif(alen == -1): # 上一项标识此项的长度
+			alen=int(results[i-1][0])
+			res = chrstr[rd_len:rd_len+alen]
+
+		i += 1
+		rd_len += alen
+		results.append(res)
+
+	return (results)
+
 if __name__=='__main__':
 	test='262626260057000000000866888a2a41732640050000000a2e28742a0933275957180000000010003d454e0001cc0010be927b003c110b1c122e29046aaaa684253458000002000000003b3230313731313238313834363431ff002185'
+	test1='262626260041000000000866888a2a556172400703ffff800d606412081c09050c72173f11211e1e20095f110033e6006e00a001040302000401280000000000004dffff0004bd'
+	lens = [4,2,12,2,1,-1,1,1,1,6,5,5,1,3,2,2,2,1,1,2,2,1,1,1,1,2,1,0,0]
+	lens = [18,2,1,-1,1,1,1,6,5,5,1,3,2,2,2,1,1,2,2,1,1,1,1,2,1,0,0]
+
+	res = parser_break(test1,lens)
 	(results, descs) = parser_4005(test)
 
 	print(test)
