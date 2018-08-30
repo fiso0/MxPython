@@ -183,17 +183,21 @@ def parser_break(msg, lens):
 	for alen in lens:
 		if(alen > 0):
 			res = chrstr[rd_len:rd_len+alen]
-		elif(alen == 0):
-			res = chrstr[rd_len:]
-		elif(alen == -1): # 上一项标识此项的长度
+		elif(alen == 0): # 特殊情况0：该字段跳过
+			res = chrstr[rd_len:rd_len+alen]
+		elif(alen == -1): # 特殊情况1：上一项标识此项的长度
 			alen=int(results[i-1][0])
+			res = chrstr[rd_len:rd_len+alen]
+		elif(alen == -2): # 特殊情况2：以FF结尾
+			ind = chrstr[rd_len:].index('FF')
+			alen = ind+1
 			res = chrstr[rd_len:rd_len+alen]
 
 		i += 1
 		rd_len += alen
 		results.append(res)
 
-	return (results)
+	return results
 
 if __name__=='__main__':
 	test='262626260057000000000866888a2a41732640050000000a2e28742a0933275957180000000010003d454e0001cc0010be927b003c110b1c122e29046aaaa684253458000002000000003b3230313731313238313834363431ff002185'

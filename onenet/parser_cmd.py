@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import parser_4005
-import alignPrint
 
 '''
 根据配置解析协议
