@@ -42,40 +42,70 @@ import parser_4005
 		>0表示长度
 		0表示该字段跳过
 		-1表示长度由前一个字段决定
-		-2表示该字段以0xFF结束
+		-2表示该字段以0xFF（包含）结束
+		-3表示该字段到最后（流水号之前）结束
 '''
 
-FORMAT_FILE = 'format.txt'
+DEFAULT_FORMAT_FILE = 'format.txt'
 
-def read_format():
+def read_format(f):
 	'''
 	读取配置文件
+	若文件不存在，改读取默认配置文件DEFAULT_FORMAT_FILE
+	若读取失败，返回None,None
 	:return: 字段名（列表），字段长度（列表）
 	'''
 	labels = []
 	lens = []
 	try:
-		with open(FORMAT_FILE, encoding='utf-8') as file:
+		print('读取配置文件：'+f)
+		with open(f, encoding='utf-8') as file:
 			for line in file.readlines():
-				label,len = (line.strip().split())[:2] # 每行必须至少2个字符串，取前两项
-				labels.append(label)
-				lens.append(int(len))
+				try:
+					label,len = (line.strip().split())[:2] # 每行必须至少2个字符串，取前两项
+					labels.append(label)
+					lens.append(int(len))
+				except Exception as e:
+					# print(e)
+					pass
 		return labels,lens
+	except FileNotFoundError:
+		# 未找到配置文件，改用默认配置文件
+		if(f != DEFAULT_FORMAT_FILE):
+			return read_format(DEFAULT_FORMAT_FILE)
+		else:
+			print('无法读取默认配置文件：'+DEFAULT_FORMAT_FILE)
+			return None,None
 	except Exception as e:
 		print(e)
-		return None
+		return None,None
 
 def main():
-	# 读取配置文件
-	labels,lens = read_format()
-
 	# 获取待解析内容
 	text = input('待解析内容：')
-	if(len(text)==0):
+	if(text == ''):
 		text = '262626260041000000000866888a2a556172400703ffff800d606412081c09050c72173f11211e1e20095f110033e6006e00a001040302000401280000000000004dffff0004bd'
+		print('使用示例内容：'+text)
+	text = text.strip().replace(' ', '').upper()  # 去掉空格 转为大写
 
-	# 自动判断是否仅参数部分：没有消息头，仅参数部分，修改字段长度，跳过部分字段
-	if(text[:8]!='26262626'):
+	# 尝试解析指令类别
+	if(text[:8] == '26262626'):
+		try:
+			cmd = text[36:40]
+		except:
+			cmd = ''
+			print('尝试解析指令类别失败，将使用默认指令类别')
+	else:
+		# 不包含指令头，无指令类别，要求手动输入
+		cmd = input('指令类别：')
+
+	# 根据指令类别读取配置文件
+	file = 'format'+cmd+'.txt'
+	labels,lens = read_format(file)
+
+	# 若没有消息头，仅参数部分，则修改字段长度，跳过相应字段
+	if(text[:8] != '26262626'):
+		print('仅参数部分，将跳过相应字段')
 		lens[0]=0 # 帧头
 		lens[1]=0 # 长度
 		lens[2]=0 # 终端ID
@@ -87,11 +117,18 @@ def main():
 	break_res = parser_4005.parser_break(text, lens)
 	fields = [' '.join(a) for a in break_res]
 
-	# 打印结果
-	for label,alen,field in zip(labels,lens,fields):
-		if(alen!=0): # 只输出长度不为0的字段
-			print("{l:<{width}}\t{f}".format(l=label, f=field, width=16 - len(label.encode('GBK')) + len(label))) # 为了输出对齐
+	# 打印解析结果
+	print('解析结果：')
+	try:
+		for label,alen,field in zip(labels,lens,fields):
+			if(alen!=0): # 只输出长度不为0的字段
+				# print("{l:<{width}}\t{f}".format(l=label, f=field, width=16 - len(label.encode('GBK')) + len(label))) # 为了输出对齐
+				print("{label:.<{width}}{field}".format(label=label, field=field, width=16-len(label.encode('GBK'))+len(label))) # 为了输出对齐
+	except:
+		print('失败')
 
+	print('')
 
 if __name__=='__main__':
-	main()
+	while(True):
+		main()

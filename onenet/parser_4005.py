@@ -192,6 +192,11 @@ def parser_break(msg, lens):
 			ind = chrstr[rd_len:].index('FF')
 			alen = ind+1
 			res = chrstr[rd_len:rd_len+alen]
+		elif(alen == -3):
+			res = chrstr[rd_len:]
+			if(len(res)>=3): # 包含流水号、校验码
+				res = chrstr[rd_len:-3]
+			alen = len(res)
 
 		i += 1
 		rd_len += alen
