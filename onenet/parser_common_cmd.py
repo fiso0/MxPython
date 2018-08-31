@@ -83,9 +83,7 @@ def read_format(f):
 		print(e)
 		return None,None
 
-def main():
-	# 获取待解析内容
-	text = input('待解析内容：')
+def get_cmd(text):
 	if(text == ''):
 		text = '262626260041000000000866888a2a556172400703ffff800d606412081c09050c72173f11211e1e20095f110033e6006e00a001040302000401280000000000004dffff0004bd'
 		print('使用示例内容：'+text)
@@ -100,8 +98,10 @@ def main():
 			print('尝试解析指令类别失败，将使用默认指令类别')
 	else:
 		# 不包含指令头，无指令类别，要求手动输入
-		cmd = input('指令类别：')
+		cmd = None
+	return cmd
 
+def parser_common(text,cmd):
 	# 根据指令类别读取配置文件
 	file = 'format'+cmd+'.txt'
 	labels,lens = read_format(file)
@@ -125,13 +125,23 @@ def main():
 	try:
 		for label,alen,field in zip(labels,lens,fields):
 			if(alen!=0): # 只输出长度不为0的字段
-				# print("{l:<{width}}\t{f}".format(l=label, f=field, width=16 - len(label.encode('GBK')) + len(label))) # 为了输出对齐
 				print("{label:.<{width}}{field}".format(label=label, field=field, width=16-len(label.encode('GBK'))+len(label))) # 为了输出对齐
 	except:
 		print('失败')
 
-	print('')
+	return zip(labels,lens,fields)
+
 
 if __name__=='__main__':
 	while(True):
-		main()
+		# 获取待解析内容
+		text = input('待解析内容：')
+
+		# 获取指令类别
+		cmd = get_cmd(text)
+		if cmd == None:
+			# 无指令类别，要求手动输入
+			cmd = input('指令类别：')
+
+		parser_common(text,cmd)
+		print('')
