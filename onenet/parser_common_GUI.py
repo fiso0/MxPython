@@ -22,6 +22,8 @@ class msgxxxx(QWidget):
 		self.cmdCombo = QComboBox()
 		self.cmdCombo.addItems(['自动','4005','4007'])
 
+		break_button.setMaximumWidth(100)
+		self.cmdCombo.setMaximumWidth(100)
 
 		self.message_in.setMaximumHeight(100)
 		self.message_out.setMinimumHeight(500)
@@ -86,6 +88,7 @@ class TabWindow(QTabWidget):
 		# self.setMinimumSize(700, 900)
 		# self.setGeometry(300,300,700,900)
 		# self.resize(self.sizeHint())
+		self.setMinimumWidth(350)
 		self.show()
 
 
