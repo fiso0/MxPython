@@ -69,7 +69,7 @@ class msgxxxx(QWidget):
 		try:
 			for label,alen,field in res:
 				if(alen!=0): # 只输出长度不为0的字段
-					res_str = res_str+("{label:.<{width}}{field}".format(label=label, field=field, width=16-len(label.encode('GBK'))+len(label)))+'\n' # 为了输出对齐
+					res_str = res_str+("{label:.<{width}}{field}".format(label=label, field=field if len(field)>0 else "空", width=16-len(label.encode('GBK'))+len(label)))+'\n' # 为了输出对齐
 		except:
 			res_str = '失败\n'
 		self.message_out.setText(res_str)
