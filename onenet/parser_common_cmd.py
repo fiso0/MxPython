@@ -101,7 +101,7 @@ def get_cmd(text):
 		cmd = None
 	return cmd
 
-def parser_common(text,cmd):
+def parser_common_onenet(text, cmd):
 	# 根据指令类别读取配置文件
 	file = 'format'+cmd+'.txt'
 	labels,lens = read_format(file)
@@ -131,6 +131,37 @@ def parser_common(text,cmd):
 
 	return zip(labels,lens,fields)
 
+def parser_common(text, cmd):
+	# 根据指令类别读取配置文件
+	file = 'format'+cmd+'.txt'
+	labels,lens = read_format(file)
+
+	# # 若没有消息头，仅参数部分，则修改字段长度，跳过相应字段
+	# if(text[:8] != '26262626'):
+	# 	print('仅参数部分，将跳过相应字段')
+	# 	lens[0]=0 # 帧头
+	# 	lens[1]=0 # 长度
+	# 	lens[2]=0 # 终端ID
+	# 	lens[3]=0 # 指令类别
+	# 	lens[-2]=0 # 流水号
+	# 	lens[-1]=0 # 校验码
+
+	# 按字段长度解析内容
+	break_res = parser_4005.parser_break(text, lens)
+	fields = [' '.join(a) for a in break_res]
+
+	# 打印解析结果
+	print('解析结果：')
+	try:
+		for label,alen,field in zip(labels,lens,fields):
+			if(alen!=0): # 只输出长度不为0的字段
+				print("{label:.<{width}}{field}".format(label=label, field=field, width=16-len(label.encode('GBK'))+len(label))) # 为了输出对齐
+	except Exception as e:
+		print(e)
+		print('失败')
+
+	return zip(labels,lens,fields)
+
 
 if __name__=='__main__':
 	while(True):
@@ -143,5 +174,5 @@ if __name__=='__main__':
 			# 无指令类别，要求手动输入
 			cmd = input('指令类别：')
 
-		parser_common(text,cmd)
+		parser_common_onenet(text, cmd)
 		print('')
