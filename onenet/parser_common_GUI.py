@@ -138,6 +138,10 @@ class MsgCommon(QWidget):
 	def breakButtonClicked(self):
 		import parser_common_cmd
 
+		# 下拉选项恢复默认值
+		self.transF.setCurrentIndex(0)
+		self.transT.setCurrentIndex(0)
+
 		# 获取输入
 		text = self.message_in.toPlainText()
 
@@ -173,9 +177,11 @@ class MsgCommon(QWidget):
 
 	def transItemChanged(self):
 		import transFormat
-		print('here!')
+
+		# 获取解析结果
 		res = self.getRes()
 
+		# 获取格式转换需求
 		f_from = self.transF.currentText()
 		f_to = self.transT.currentText()
 
@@ -183,7 +189,7 @@ class MsgCommon(QWidget):
 		res_str = ''
 		try:
 			for label,alen,field in res:
-				# field_new = str(int(field.replace(' ',''),16))
+				# 格式转换
 				field_new = ''.join(transFormat.transformat(field,f_from,f_to))
 				if(alen!=0): # 只输出长度不为0的字段
 					res_str = res_str+("{label:.<{width}}{field}".format(label=label, field=field_new if len(field_new)>0 else "空", width=16-len(label.encode('GBK'))+len(label)))+'\n' # 为了输出对齐
