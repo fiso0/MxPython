@@ -15,12 +15,13 @@ class DataBreaker(PyQt5.QtWidgets.QWidget):
 
 	def init_ui(self):
 		layout = PyQt5.QtWidgets.QHBoxLayout()
-		layout.addWidget(PyQt5.QtWidgets.QLabel("税前："))
+		layout.addWidget(PyQt5.QtWidgets.QLabel("应发工资 I："))
 		layout.addWidget(self.income)
-		layout.addWidget(PyQt5.QtWidgets.QLabel("税："))
+		layout.addWidget(PyQt5.QtWidgets.QLabel("税额 T："))
 		layout.addWidget(self.tax)
-		layout.addWidget(PyQt5.QtWidgets.QLabel("税后："))
+		layout.addWidget(PyQt5.QtWidgets.QLabel("实发薪资 P："))
 		layout.addWidget(self.outcome)
+		layout.addWidget(PyQt5.QtWidgets.QLabel("（纳税基数=T+P）"))
 
 		self.income.textChanged.connect(self.calcP)
 		self.outcome.textChanged.connect(self.calcI)
