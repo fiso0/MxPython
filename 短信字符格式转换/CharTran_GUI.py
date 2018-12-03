@@ -30,6 +30,8 @@ class Example(QWidget):
 		self.btn2 = QPushButton('ASCII转字符 >>')
 		self.btn4 = QPushButton('<< 字符转ASCII')
 		self.btn3 = QPushButton('每2个字符加空格 >>')
+		self.btn5 = QPushButton('HEX386格式处理 >>')
+		self.btn6 = QPushButton('去掉所有空字符 >>')
 		self.btn_clr = QPushButton('清空')
 
 		leftGrid = QGridLayout()
@@ -46,6 +48,8 @@ class Example(QWidget):
 		rightVBox.addWidget(self.btn2)
 		rightVBox.addWidget(self.btn4)
 		rightVBox.addWidget(self.btn3)
+		rightVBox.addWidget(self.btn5)
+		rightVBox.addWidget(self.btn6)
 		rightVBox.addStretch()
 		rightVBox.addWidget(self.btn_clr)
 
@@ -60,6 +64,8 @@ class Example(QWidget):
 		self.btn2.clicked.connect(self.button2Clicked)
 		self.btn4.clicked.connect(self.button4Clicked)
 		self.btn3.clicked.connect(self.button3Clicked)
+		self.btn5.clicked.connect(self.button5Clicked)
+		self.btn6.clicked.connect(self.button6Clicked)
 		self.btn_clr.clicked.connect(self.buttonClrClicked)
 
 		self.setGeometry(200,300,600,350)
@@ -109,6 +115,28 @@ class Example(QWidget):
 			try:
 				string_result = self.addBlank(string_origin)
 				self.text2.setPlainText(''.join(string_result))
+			except:
+				self.text2.setPlainText('ERROR!')
+		else:
+			pass
+
+	def button5Clicked(self): # HEX386格式处理
+		string_origin = self.text1.toPlainText()
+		if(string_origin is not ""):
+			try:
+				string_result = self.hex386(string_origin)
+				self.text2.setPlainText('\n'.join(string_result))
+			except:
+				self.text2.setPlainText('ERROR!')
+		else:
+			pass
+
+	def button6Clicked(self): # 去掉所有空字符
+		string_origin = self.text1.toPlainText()
+		if(string_origin is not ""):
+			try:
+				string_result = self.removeBlank(string_origin)
+				self.text2.setPlainText(string_result)
 			except:
 				self.text2.setPlainText('ERROR!')
 		else:
@@ -185,6 +213,23 @@ class Example(QWidget):
 		# 每两个字符之间加一个空格
 		chrstr = [message[i:i + 2] for i in range(0, len(message), 2)]
 		return ' '.join(chrstr)
+
+	def hex386(self,data_str):
+		# 去掉第一行和最后两行
+		# 每行格式为:LLAAAARRDD...DDDDCC，去掉开头9个字符和最后2个字符
+		result=[]
+		data = data_str.split('\n')
+		for i in data[1:-2]: # 去掉第一行和最后两行
+			try:
+				a = i[9:-2] # 去掉开头9个字符和最后2个字符
+				result.append(a)
+			except Exception as e:
+				print(e)
+		return result
+
+	def removeBlank(self,message):
+		# 去掉所有空字符（空格、换行）
+		return ''.join(message.split())
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
