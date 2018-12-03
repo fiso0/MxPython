@@ -7,6 +7,7 @@ import re
 
 RS_KEY_WORDS = ['mx_srv_send_handle', 'mxapp_srv_ind']
 
+# 搜索RS_KEY_WORDS，并保存csv结果到log文件同目录下
 def RS_result_csv():
 	(res_time, res, time) = ORt(RS_KEY_WORDS, save=False)
 
@@ -35,13 +36,7 @@ def RS_result_csv():
 
 if __name__ == '__main__':
 	# 程序开始
-	start()
-
-	try:
-		log = open_file()
-	except Exception as e:
-		input('读取文件失败,' + str(e))
-		sys.exit(0)
-
+	log = open_file()
+	# 搜索关键字并保存结果
 	RS_result_csv()
 	sys.exit(0)

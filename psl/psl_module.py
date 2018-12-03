@@ -25,18 +25,19 @@ def my_print(*objects, sep=' ', end='\n', flush=False):
 		f.close()
 
 
-def start():
-	global file
-	file = input('待解析文件地址：')
-	return file
-
-
+# 程序开始的地方：读取log文件
 def open_file():
+	import sys
 	global file, log
-	with open(file, 'r', encoding='utf-8', errors='ignore') as f:
-		for line in f.readlines():
-			log.append(line)
-	return log
+	file = input('待解析文件地址：')
+	try:
+		with open(file, 'r', encoding='utf-8', errors='ignore') as f:
+			for line in f.readlines():
+				log.append(line)
+		return log
+	except Exception as e:
+		input('读取文件失败,' + str(e))
+		sys.exit(0)
 
 
 def string_has_time(string):
