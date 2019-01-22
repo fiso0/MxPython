@@ -46,8 +46,9 @@ RESULT_FILE_CSV = 'psl_basic_result.csv'
 # 一些枚举类型
 from enum import Enum, unique
 
+
 @unique
-class LOG_LEVEL(Enum): # log级别
+class LOG_LEVEL(Enum):  # log级别
 	NONE = 0
 	ASSERT = 1
 	ERROR = 2
@@ -709,78 +710,106 @@ def get_rtc(line):
 # 	print("Step: others are 0")
 # 	return res
 
+def get_log(lines_list):
+	return [log[line] for line in lines_list]
+
+
 def get_all_lines():
-	return list(range(1,len(log)))
+	return list(range(0, len(log)))
+
 
 def get_log_lines(log_type):
 	"""
-	获取所有指定log级别的log行号
-	:param log_type: log级别（LOG_LEVEL枚举类型 或 LOG_MOD）
+	获取所有指定log类型的log行号
+	:param log_type: log类型（级别或模块或功能）
 	:return: log行号列表
 	"""
-	if log_type in [a.name for a in LOG_LEVEL]:
-		return log_level_line_lists[log_type.value]
-	# todo: LOG_MOD
+	if log_type in log_level_line_dicts.keys():
+		return log_level_line_dicts.get(log_type)
+	elif log_type in log_mod_line_dicts.keys():
+		return log_mod_line_dicts.get(log_type)
+	elif log_type in log_function_line_dicts.keys():
+		return log_function_line_dicts.get(log_type)
 	else:
 		my_print('输入参数有误！')
+		return []
+
 
 def get_log_levels():
-	return LOG_LEVEL
+	return log_level_line_dicts
+
 
 def get_log_mods():
-	return log_mod_line_dicts.keys()
+	return log_mod_line_dicts
+
+
+def get_log_funcs():
+	return log_function_line_dicts
+
 
 def parse_log_level(line_no):
 	"""
-	判断该行log属于哪种LOG_LEVEL，同时按级别分别记录行号
+	判断该行log属于哪种级别，同时按级别分别记录行号
 	:param line_no: 行号
-	:return: 该行log的级别
+	:return: 无
 	"""
-	line = log[line_no]
-	if '|ASSERT>' in line:
-		log_level = LOG_LEVEL.ASSERT
-	elif '|ERROR>' in line:
-		log_level = LOG_LEVEL.ERROR
-	elif '|WARN>' in line:
-		log_level = LOG_LEVEL.WARN
-	elif '|INFO>' in line:
-		log_level = LOG_LEVEL.INFO
-	elif '|DEBUG>' in line:
-		log_level = LOG_LEVEL.DEBUG
-	else:
-		log_level = LOG_LEVEL.NONE
-
+	ptn = r'\|\S*\|(\S*)>'
 	try:
-		log_level_line_lists[log_level.value].append(line_no) # 按级别记录行号
-	except Exception as e:
-		my_print(e)
+		level_name = re.search(ptn, log[line_no]).group(1)
+		line_list = log_level_line_dicts.get(level_name, [])
+		line_list.append(line_no)
+		log_level_line_dicts[level_name] = line_list
+	except:
+		pass
+	return
 
-	return log_level
 
 def parse_log_mod(line_no):
 	"""
 	判断该行log所属的模块，同时按模块分别记录行号
 	:param line_no: 行号
-	:return: 该行log的模块
+	:return: 无
 	"""
 	ptn = r'> (\S*)'
 	try:
-		mod_name = re.search(ptn, log[line_no]).group(1) # try to find mod_name
-		line_list = log_mod_line_dicts.get(mod_name,[]) # get line list
-		line_list.append(line_no) # update line lists
-		log_mod_line_dicts[mod_name] = line_list # set line list
+		mod_name = re.search(ptn, log[line_no]).group(1)  # try to find mod_name
+		line_list = log_mod_line_dicts.get(mod_name, [])  # get line list
+		line_list.append(line_no)  # update line lists
+		log_mod_line_dicts[mod_name] = line_list  # set line list
 	except:
-		pass # not find mod_name
+		pass  # not find mod_name
 	return
+
+
+def parse_function_log(line_no, key_words, log_name):
+	'''
+	查找该行内是否包含关键词内容（任一即可），包含则将该行号记录到log_function_line_dicts[log_name]中
+	:param line_no:行号
+	:param key_words:关键词
+	:param log_name:字典索引
+	:return:无
+	'''
+	line_list = log_function_line_dicts.get(log_name, [])
+	try:
+		for key in key_words:
+			if key in log[line_no]:
+				line_list.append(line_no)
+				log_function_line_dicts[log_name] = line_list
+				return
+	except:
+		return
+
 
 def parse_locate_log(line_no):
 	'''
-	判断是否定位相关log，如果是，则将该行号记录到locate_log中
+	判断是否定位相关log，如果是，则将该行号记录到log_function_line_dicts中
 	:param line_no: 行号
 	:return: 无
 	'''
-	key_words = ['']
-	# todo: 待实现
+	key_words = ['[GPS]']
+	log_name = '定位'
+	parse_function_log(line_no, key_words, log_name)
+
 
 def parse_GNSS_type(line_no):
 	'''
@@ -958,13 +987,16 @@ def BASIC(inFile=None, hint=True):
 	global file, log
 	# global fw, stop, stop_1, stop_all, stop_hold, drv_start, period, start, locate, stop_2, stop_pos, stop_ack, time_fin, agps_start, agps_ok, agps_fail, time_fin_int, locate_info_list, imei, first_date, first_time, last_date, last_time
 
-	global log_level_line_lists # 按log级别分类保存行号
-	log_level_line_lists = [[] for i in range(len(LOG_LEVEL))]
+	global log_level_line_dicts  # 按log级别分类保存行号
+	log_level_line_dicts = dict()
 
-	global log_mod_line_dicts # 按log模块分类保存行号
+	global log_mod_line_dicts  # 按log模块分类保存行号
 	log_mod_line_dicts = dict()
 
-	if(inFile == None):
+	global log_function_line_dicts  # 按log功能分类保存行号
+	log_function_line_dicts = dict()
+
+	if (inFile == None):
 		file = input('待解析文件地址：')
 	else:
 		file = inFile
@@ -976,8 +1008,8 @@ def BASIC(inFile=None, hint=True):
 		return
 
 	# 遍历所有log
-	for line_no in range(0,len(log)):
-		line = log[line_no] # log内容
+	for line_no in range(0, len(log)):
+		line = log[line_no]  # log内容
 
 		# log级别
 		parse_log_level(line_no)
@@ -985,14 +1017,20 @@ def BASIC(inFile=None, hint=True):
 		# log模块
 		parse_log_mod(line_no)
 
-	# 输出结果
-	my_print('各级别log统计结果：')
-	for i in range(1,len(LOG_LEVEL)): # 不显示NONE
-		my_print(LOG_LEVEL(i).name+':\t'+str(len(log_level_line_lists[i])))
+		# 其他功能
+		parse_locate_log(line_no)
 
-	my_print('各模块log统计结果：')
+	# 输出结果
+	print_log = ''
+	print_log += ('各级别log统计结果：\n')
+	for level_name in log_level_line_dicts.keys():
+		print_log += (level_name + ': ' + str(len(log_level_line_dicts.get(level_name, []))) + '\n')
+	print_log += '\n'
+	print_log += ('各模块log统计结果：\n')
 	for mod_name in log_mod_line_dicts.keys():
-		my_print(mod_name+':\t'+str(len(log_mod_line_dicts.get(mod_name,[]))))
+		print_log += (mod_name + ': ' + str(len(log_mod_line_dicts.get(mod_name, []))) + '\n')
+
+	my_print(print_log)
 
 	# # 寻找imei，日期，时间
 	# my_print('\n')
@@ -1179,8 +1217,10 @@ def BASIC(inFile=None, hint=True):
 	# # 图形输出
 	# # plot_analyse()
 
-	if(hint):
+	if (hint):
 		input('\n基础分析到此完毕\n')
+
+	return print_log
 
 
 # 基础异常检测
