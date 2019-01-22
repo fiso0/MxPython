@@ -75,7 +75,7 @@ class Example(QWidget):
 		toolBtn1.clicked.connect(self.copy_result)
 		toolBtn2.clicked.connect(self.save_result)
 
-		self.setGeometry(200, 300, 600, 350)
+		self.setGeometry(200, 300, 700, 500)
 		self.setWindowTitle('log解析工具')
 		self.show()
 

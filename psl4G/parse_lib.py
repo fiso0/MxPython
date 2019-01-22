@@ -806,9 +806,14 @@ def parse_locate_log(line_no):
 	:param line_no: 行号
 	:return: 无
 	'''
-	key_words = ['[GPS]']
-	log_name = '定位'
-	parse_function_log(line_no, key_words, log_name)
+	import getConfig
+	config = getConfig.get_config()
+	for item in config:
+		parse_function_log(line_no, config[item], item)
+
+	# key_words = ['[GPS]']
+	# log_name = '定位'
+	# parse_function_log(line_no, key_words, log_name)
 
 
 def parse_GNSS_type(line_no):
@@ -1011,14 +1016,18 @@ def BASIC(inFile=None, hint=True):
 	for line_no in range(0, len(log)):
 		line = log[line_no]  # log内容
 
-		# log级别
-		parse_log_level(line_no)
+		try:
+			# log级别
+			parse_log_level(line_no)
 
-		# log模块
-		parse_log_mod(line_no)
+			# log模块
+			parse_log_mod(line_no)
 
-		# 其他功能
-		parse_locate_log(line_no)
+			# 其他功能
+			parse_locate_log(line_no)
+
+		except Exception as e:
+			print(e)
 
 	# 输出结果
 	print_log = ''
