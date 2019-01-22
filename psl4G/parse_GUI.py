@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, \
+	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QTextCursor
 import parse_lib as pl
+
 
 class Example(QWidget):
 	def __init__(self):
@@ -35,11 +38,13 @@ class Example(QWidget):
 		label1 = QLabel('3.筛选：')
 		levelLabel = QLabel('log级别')
 		self.levelCombo = QComboBox()
+		self.levelCombo.setMinimumWidth(100)
 		modLabel = QLabel('log模块')
 		self.modCombo = QComboBox()
 		self.modCombo.setMinimumWidth(100)
 		funLabel = QLabel('功能')
 		self.funCombo = QComboBox()
+		self.funCombo.setMinimumWidth(100)
 		menuBox.addWidget(label1)
 		menuBox.addWidget(levelLabel)
 		menuBox.addWidget(self.levelCombo)
@@ -58,8 +63,8 @@ class Example(QWidget):
 		self.statusLabel = QLabel('')
 		toolBox.addWidget(toolBtn1)
 		toolBox.addWidget(toolBtn2)
-		toolBox.addWidget(toolBtn3)
-		toolBox.addWidget(toolBtn4)
+		# toolBox.addWidget(toolBtn3)
+		# toolBox.addWidget(toolBtn4)
 		toolBox.addStretch()
 		toolBox.addWidget(self.statusLabel)
 
@@ -68,6 +73,7 @@ class Example(QWidget):
 		# 按钮连接到槽
 		openFileBtn.clicked.connect(self.open_file)
 		parseFileBtn.clicked.connect(self.parse_file)
+
 		self.levelCombo.activated.connect(self.show_lines)
 		self.modCombo.activated.connect(self.show_lines)
 		self.funCombo.activated.connect(self.show_lines)
@@ -80,7 +86,7 @@ class Example(QWidget):
 		self.show()
 
 	def open_file(self):
-		file = QFileDialog.getOpenFileName(self,'选择log文件','')
+		file = QFileDialog.getOpenFileName(self, '选择log文件', '')
 		filename = file[0]
 		self.fileNameEdit.setText(filename)
 
@@ -110,35 +116,55 @@ class Example(QWidget):
 		self.funCombo.addItems(log_funcs)
 
 	def show_lines(self):
+		'''
+		筛选框操作后，显示结果
+		'''
 		self.please_wait()
 
 		selLevel = self.levelCombo.currentText()
 		selMod = self.modCombo.currentText()
 		selFun = self.funCombo.currentText()
-		
-		if(selLevel != '全部'):
+
+		if (selLevel != '全部'):
 			resLevel = pl.get_log_lines(selLevel)
 		else:
 			resLevel = pl.get_all_lines()
-			
-		if(selMod != '全部'):
+
+		if (selMod != '全部'):
 			resMod = pl.get_log_lines(selMod)
 		else:
 			resMod = pl.get_all_lines()
 
-		if(selFun != '全部'):
+		if (selFun != '全部'):
 			resFun = pl.get_log_lines(selFun)
 		else:
 			resFun = pl.get_all_lines()
 
-		resLines = set(resLevel).intersection(set(resMod)).intersection(set(resFun))
-		resLinesList1 = list(resLines)
-		resLinesList = sorted(resLinesList1)
-		logs = pl.get_log(resLinesList)
-		self.outEdit.setText(''.join(logs)) # show logs in outEdit
+		# 循环显示
+		# self.outEdit.setEnabled(False) # 防止移动cursor（使用insertPlainText需保证cursor在末尾）
+		# self.outEdit.setFocusPolicy(Qt.NoFocus) # 无效
+		# self.outEdit.setReadOnly(True) # 无效
+		self.outEdit.clear()
+		lines_num = 0
+		for i in range(0, pl.get_line_number()):
+			if (i in resLevel and i in resMod and i in resFun):
+				self.outEdit.moveCursor(QTextCursor.End) # 使用insertPlainText需保证cursor在末尾
+				self.outEdit.insertPlainText(pl.get_log(i))
+				# self.outEdit.append(pl.get_log(i)) # 有额外换行
+				lines_num = lines_num + 1
+				self.show_status('当前' + str(lines_num) + '条')
+				QApplication.processEvents()
+		self.show_status('共' + str(lines_num) + '条')
+		# self.outEdit.setEnabled(True)
 
-		lines_num = len(resLinesList)
-		self.show_status('共'+str(lines_num)+'条')
+		# 一次性显示，会卡住
+		# resLines = set(resLevel).intersection(set(resMod)).intersection(set(resFun))
+		# resLinesList1 = list(resLines)
+		# resLinesList = sorted(resLinesList1)
+		# logs = pl.get_log(resLinesList)
+		# self.outEdit.setText(''.join(logs))
+		# lines_num = len(resLinesList)
+		# self.show_status('共'+str(lines_num)+'条')
 
 	def please_wait(self):
 		self.outEdit.setText('处理中，请等待...')
@@ -155,10 +181,10 @@ class Example(QWidget):
 		self.show_status('复制成功')
 
 	def save_result(self):
-		file = QFileDialog.getSaveFileName(self,'保存log文件','')
+		file = QFileDialog.getSaveFileName(self, '保存log文件', '')
 		filename = file[0]
 		try:
-			with open(filename,'w+') as f:
+			with open(filename, 'w+') as f:
 				result = self.outEdit.toPlainText()
 				f.write(result)
 			self.show_status('保存成功')

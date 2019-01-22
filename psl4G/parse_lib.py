@@ -711,12 +711,20 @@ def get_rtc(line):
 # 	return res
 
 def get_log(lines_list):
-	return [log[line] for line in lines_list]
-
+	if isinstance(lines_list, list):
+		return [log[line] for line in lines_list]
+	elif isinstance(lines_list, int):
+		return log[lines_list]
+	else:
+		my_print('输入参数有误！')
+		return ''
 
 def get_all_lines():
 	return list(range(0, len(log)))
 
+
+def get_line_number():
+	return len(log)
 
 def get_log_lines(log_type):
 	"""
