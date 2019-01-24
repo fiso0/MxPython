@@ -789,7 +789,7 @@ def parse_log_mod(line_no):
 	return
 
 
-def parse_function_log(line_no, key_words, log_name):
+def parse_log_func(line_no, key_words, log_name):
 	'''
 	查找该行内是否包含关键词内容（任一即可），包含则将该行号记录到log_function_line_dicts[log_name]中
 	:param line_no:行号
@@ -808,16 +808,16 @@ def parse_function_log(line_no, key_words, log_name):
 		return
 
 
-def parse_locate_log(line_no):
+def parse_log_all_func(line_no):
 	'''
-	判断是否定位相关log，如果是，则将该行号记录到log_function_line_dicts中
+	读取配置文件，得到所有预置功能关键词，按照功能关键词条件解析该行log
 	:param line_no: 行号
 	:return: 无
 	'''
 	import getConfig
 	config = getConfig.get_config()
 	for item in config:
-		parse_function_log(line_no, config[item], item)
+		parse_log_func(line_no, config[item], item)
 
 	# key_words = ['[GPS]']
 	# log_name = '定位'
@@ -1032,7 +1032,7 @@ def BASIC(inFile=None, hint=True):
 			parse_log_mod(line_no)
 
 			# 其他功能
-			parse_locate_log(line_no)
+			parse_log_all_func(line_no)
 
 		except Exception as e:
 			print(e)
