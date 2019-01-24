@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPush
 	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QTextCursor
-import parse_lib as pl
 import parse_lib_o as plo
 
 class Example(QWidget):
@@ -94,31 +93,31 @@ class Example(QWidget):
 		self.please_wait()
 		filename = self.fileNameEdit.text()
 
-		L = plo.Parser(filename)
-		for line_no in range(0,L.lines): # 遍历所有log
-			self.outEdit.setText('解析中，请等待...('+str(line_no)+'/'+str(L.lines)+')')
+		self.L = plo.Parser(filename)
+		for line_no in range(0,self.L.lines): # 遍历所有log
+			self.outEdit.setText('解析中，请等待...('+str(line_no)+'/'+str(self.L.lines)+')')
 			try:
-				L.parse_log_level(line_no) # log级别
-				L.parse_log_mod(line_no) # log模块
-				L.parse_log_all_func(line_no) # 其他功能
+				self.L.parse_log_level(line_no) # log级别
+				self.L.parse_log_mod(line_no) # log模块
+				self.L.parse_log_all_func(line_no) # 其他功能
 			except Exception as e:
 				print(e)
 			QApplication.processEvents()
 
 		# log级别
-		log_levels = L.get_levels()
+		log_levels = self.L.get_levels()
 		self.levelCombo.clear()
 		self.levelCombo.addItem('全部')
 		self.levelCombo.addItems(log_levels.keys())
 
 		# log模块
-		log_mods = L.get_mods()
+		log_mods = self.L.get_mods()
 		self.modCombo.clear()
 		self.modCombo.addItem('全部')
 		self.modCombo.addItems(log_mods.keys())
 
 		# log功能
-		log_funcs = L.get_funcs()
+		log_funcs = self.L.get_funcs()
 		self.funCombo.clear()
 		self.funCombo.addItem('全部')
 		self.funCombo.addItems(log_funcs.keys())
@@ -139,63 +138,33 @@ class Example(QWidget):
 		self.parse_result = print_log # 保存解析结果
 		self.outEdit.setText(print_log)
 
-		# 使用pl库
-		# printLog = pl.BASIC(filename, False)
-		# self.outEdit.setText(printLog)
-		#
-		# # log级别
-		# log_levels = pl.get_log_levels().keys()
-		# self.levelCombo.clear()
-		# self.levelCombo.addItem('全部')
-		# self.levelCombo.addItems(log_levels)
-		#
-		# # log模块
-		# log_mods = pl.get_log_mods().keys()
-		# self.modCombo.clear()
-		# self.modCombo.addItem('全部')
-		# self.modCombo.addItems(log_mods)
-		#
-		# # log功能
-		# log_funcs = pl.get_log_funcs().keys()
-		# self.funCombo.clear()
-		# self.funCombo.addItem('全部')
-		# self.funCombo.addItems(log_funcs)
-
 	def show_lines(self):
 		'''
 		筛选框操作后，显示结果
 		'''
-		self.please_wait()
-
 		selLevel = self.levelCombo.currentText()
 		selMod = self.modCombo.currentText()
 		selFun = self.funCombo.currentText()
 
 		if(selLevel == '全部' and selMod == '全部' and selFun == '全部'): # 不要显示全部log
 			self.outEdit.setText(self.parse_result)
+			return
+
+		self.please_wait()
 
 		if (selLevel != '全部'):
-			resLevel = pl.get_log_lines(selLevel)
-		# else:
-		# 	resLevel = pl.get_all_lines()
+			resLevel = self.L.get_log_lines(selLevel)
 
 		if (selMod != '全部'):
-			resMod = pl.get_log_lines(selMod)
-		# else:
-		# 	resMod = pl.get_all_lines()
+			resMod = self.L.get_log_lines(selMod)
 
 		if (selFun != '全部'):
-			resFun = pl.get_log_lines(selFun)
-		# else:
-		# 	resFun = pl.get_all_lines()
+			resFun = self.L.get_log_lines(selFun)
 
 		# 逐行显示
-		# self.outEdit.setEnabled(False) # 防止移动cursor（使用insertPlainText需保证cursor在末尾）
-		# self.outEdit.setFocusPolicy(Qt.NoFocus) # 无效
-		# self.outEdit.setReadOnly(True) # 无效
 		self.outEdit.clear()
 		lines_num = 0
-		for i in range(0, pl.get_line_number()):
+		for i in range(0, self.L.lines):
 			if (selLevel != '全部' and i not in resLevel): # 不满足等级筛选条件
 				continue
 			if (selMod != '全部' and i not in resMod): # 不满足模块筛选条件
@@ -204,22 +173,11 @@ class Example(QWidget):
 				continue
 			# i满足所有筛选条件
 			self.outEdit.moveCursor(QTextCursor.End) # 使用insertPlainText需保证cursor在末尾
-			self.outEdit.insertPlainText(pl.get_log(i))
-			# self.outEdit.append(pl.get_log(i)) # 有额外换行
+			self.outEdit.insertPlainText(self.L.log[i])
 			lines_num = lines_num + 1
 			self.show_status('当前' + str(lines_num) + '条')
 			QApplication.processEvents()
 		self.show_status('共' + str(lines_num) + '条')
-		# self.outEdit.setEnabled(True)
-
-		# 一次性显示，会卡住
-		# resLines = set(resLevel).intersection(set(resMod)).intersection(set(resFun))
-		# resLinesList1 = list(resLines)
-		# resLinesList = sorted(resLinesList1)
-		# logs = pl.get_log(resLinesList)
-		# self.outEdit.setText(''.join(logs))
-		# lines_num = len(resLinesList)
-		# self.show_status('共'+str(lines_num)+'条')
 
 	def please_wait(self):
 		self.outEdit.setText('解析中，请等待...')

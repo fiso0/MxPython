@@ -103,5 +103,21 @@ class Parser(object):
 	def get_funcs(self):
 		return self.__log_function_line_dicts
 
+	def get_log_lines(self, log_type):
+		"""
+		获取所有指定log类型的log行号
+		:param log_type: log类型（级别或模块或功能）
+		:return: log行号列表
+		"""
+		if log_type in self.__log_level_line_dicts.keys():
+			return self.__log_level_line_dicts.get(log_type)
+		elif log_type in self.__log_mod_line_dicts.keys():
+			return self.__log_mod_line_dicts.get(log_type)
+		elif log_type in self.__log_function_line_dicts.keys():
+			return self.__log_function_line_dicts.get(log_type)
+		else:
+			print('输入参数有误！')
+			return []
+
 if __name__ == '__main__':
 	input()
