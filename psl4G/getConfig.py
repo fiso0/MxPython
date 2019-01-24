@@ -15,7 +15,10 @@ def get_config():
 	# reformat 2
 	dd = dict()
 	for k in d:
-		dd[d[k]['name']] = d[k]['keywords'].split(',')
+		try:
+			dd[d[k]['name']] = list(eval(d[k]['keywords'])) # for example: dd['GNSS'] = '[GPS]'.split(',')
+		except:
+			dd[d[k]['name']] = [d[k]['keywords']]
 
 	return dd
 
