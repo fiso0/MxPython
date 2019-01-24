@@ -27,6 +27,11 @@ class Parser(object):
 			for line in f.readlines():
 				self.log.append(line)
 		self.lines = len(self.log)
+
+		# 读取配置文件，得到所有预置功能关键词
+		import getConfig
+		self.config = getConfig.get_config()
+
 		return self.log  # string list
 
 
@@ -62,36 +67,45 @@ class Parser(object):
 			mod_name = ''
 		return mod_name
 
-	def parse_log_func(self, line_no, key_words, log_name):
+	def parse_log_func(self, line_no, key_words, log_name, method='or'):
 		'''
-		查找该行内是否包含关键词内容（任一即可），包含则将该行号记录到log_function_line_dicts[log_name]中
+		查找该行内是否包含关键词内容，包含则将该行号记录到log_function_line_dicts[log_name]中
 		:param line_no:行号
 		:param key_words:关键词
 		:param log_name:字典索引
+		:param method:默认'or'按或进行搜索，若为'and'则按与进行搜索
 		:return: log是否包含关键词
 		'''
 		line_list = self.__log_function_line_dicts.get(log_name, [])
 		try:
 			for key in key_words:
-				if key in self.log[line_no]:
-					line_list.append(line_no)
-					self.__log_function_line_dicts[log_name] = line_list
-					return True
-		except:
+				if method == 'or':
+					if key in self.log[line_no]:
+						line_list.append(line_no)
+						self.__log_function_line_dicts[log_name] = line_list
+						return True
+				elif method == 'and':
+					if key not in self.log[line_no]:
+						return False
+			if method == 'or': # 到这里说明所有关键词都无
+				return False
+			elif method == 'and': # 到这里说明所有关键词都有
+				line_list.append(line_no)
+				self.__log_function_line_dicts[log_name] = line_list
+				return True
+		except Exception as e:
+			print(e)
 			return False
 
 	def parse_log_all_func(self, line_no):
 		'''
-		读取配置文件，得到所有预置功能关键词，按照功能关键词条件解析该行log
+		按照功能关键词条件解析该行log
 		:param line_no: 行号
 		:return: 无
 		'''
-		import getConfig
-		self.config = getConfig.get_config()
-
 		for log_name in self.config:
 			key_words = self.config[log_name]
-			self.parse_log_func(line_no, key_words, log_name)
+			self.parse_log_func(line_no, key_words, log_name, 'and')
 
 
 	def get_levels(self):
