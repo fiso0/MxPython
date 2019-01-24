@@ -67,7 +67,7 @@ class Parser(object):
 			mod_name = ''
 		return mod_name
 
-	def parse_log_func(self, line_no, key_words, log_name, method='or'):
+	def parse_log_func(self, line_no, key_words, log_name, method='and'):
 		'''
 		查找该行内是否包含关键词内容，包含则将该行号记录到log_function_line_dicts[log_name]中
 		:param line_no:行号
@@ -105,7 +105,7 @@ class Parser(object):
 		'''
 		for log_name in self.config:
 			key_words = self.config[log_name]
-			self.parse_log_func(line_no, key_words, log_name, 'and')
+			self.parse_log_func(line_no, key_words, log_name)
 
 
 	def get_levels(self):
