@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPush
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QTextCursor
 import parse_lib_o as plo
+import time
 
 class Example(QWidget):
 	def __init__(self):
@@ -93,6 +94,8 @@ class Example(QWidget):
 		self.please_wait()
 		filename = self.fileNameEdit.text()
 
+		start = time.time() # 计时开始
+
 		self.L = plo.Parser(filename)
 		for line_no in range(0,self.L.lines): # 遍历所有log
 			self.outEdit.setText('解析中，请等待...('+str(line_no)+'/'+str(self.L.lines)+')')
@@ -103,6 +106,8 @@ class Example(QWidget):
 			except Exception as e:
 				print(e)
 			QApplication.processEvents()
+
+		end = time.time() # 计时结束
 
 		# log级别
 		log_levels = self.L.get_levels()
@@ -124,6 +129,7 @@ class Example(QWidget):
 
 		# 输出结果
 		print_log = ''
+		print_log += '解析时间：%.2fs\n' % (end-start)
 		print_log += ('各级别log统计结果：\n')
 		for level_name in log_levels.keys():
 			print_log += (level_name + ': ' + str(len(log_levels.get(level_name, []))) + '\n')
