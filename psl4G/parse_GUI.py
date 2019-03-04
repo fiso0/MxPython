@@ -98,14 +98,15 @@ class Example(QWidget):
 
 		self.L = plo.Parser(filename)
 		for line_no in range(0,self.L.lines): # 遍历所有log
-			self.outEdit.setText('解析中，请等待...('+str(line_no)+'/'+str(self.L.lines)+')')
 			try:
 				self.L.parse_log_level(line_no) # log级别
 				self.L.parse_log_mod(line_no) # log模块
 				self.L.parse_log_all_func(line_no) # 其他功能
 			except Exception as e:
 				print(e)
-			QApplication.processEvents()
+			if line_no%1000 == 0 or line_no == self.L.lines - 1: # 每100行和最后一行执行一次刷新，可大大加快解析速度！
+				self.outEdit.setText('解析中，请等待...('+str(line_no)+'/'+str(self.L.lines)+')')
+				QApplication.processEvents()
 
 		end = time.time() # 计时结束
 

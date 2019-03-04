@@ -24,8 +24,7 @@ class Parser(object):
 		:return: log内容
 		'''
 		with open(file, 'r', encoding='utf-8', errors='ignore') as f:
-			for line in f.readlines():
-				self.log.append(line)
+			self.log = f.readlines()
 		self.lines = len(self.log)
 
 		# 读取配置文件，得到所有预置功能关键词
