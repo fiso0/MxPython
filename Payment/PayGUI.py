@@ -11,6 +11,7 @@ class DataBreaker(PyQt5.QtWidgets.QWidget):
 		self.income = PyQt5.QtWidgets.QLineEdit()
 		self.tax = PyQt5.QtWidgets.QLineEdit()
 		self.outcome = PyQt5.QtWidgets.QLineEdit()
+		self.base = PyQt5.QtWidgets.QLineEdit()
 		self.init_ui()
 
 	def init_ui(self):
@@ -22,9 +23,11 @@ class DataBreaker(PyQt5.QtWidgets.QWidget):
 		layout.addWidget(PyQt5.QtWidgets.QLabel("实发薪资 P："))
 		layout.addWidget(self.outcome)
 		layout.addWidget(PyQt5.QtWidgets.QLabel("（纳税基数=T+P）"))
+		layout.addWidget(self.base)
 
 		self.income.textChanged.connect(self.calcP)
 		self.outcome.textChanged.connect(self.calcI)
+		self.base.setEnabled(False)
 
 		self.setLayout(layout)
 		self.setWindowTitle('计算器')
@@ -33,12 +36,14 @@ class DataBreaker(PyQt5.QtWidgets.QWidget):
 	def calcP(self):
 		try:
 			I = float(self.income.text())
-			P = '{:.2f}'.format(PayCalc.calc_payment(I))
-			T = '{:.2f}'.format(PayCalc.calc_tax(I))
+			P = PayCalc.calc_payment(I)
+			T = PayCalc.calc_tax(I)
+			B = P+T
 			if(self.outcome.hasFocus() == False):
-				self.outcome.setText(P)
+				self.outcome.setText('{:.2f}'.format(P))
 			if(self.tax.hasFocus() == False):
-				self.tax.setText(T)
+				self.tax.setText('{:.2f}'.format(T))
+			self.base.setText('{:.2f}'.format(B))
 		except Exception as e:
 			print(e)
 
@@ -48,6 +53,7 @@ class DataBreaker(PyQt5.QtWidgets.QWidget):
 		# T = str(PayCalc.calc_tax(I))
 		if(self.income.hasFocus() == False):
 			self.income.setText(I)
+		# self.base.setText(P+T)
 		# if(self.tax.hasFocus() == False):
 		# 	self.tax.setText(T)
 
