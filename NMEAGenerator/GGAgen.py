@@ -75,6 +75,13 @@ class GGA(object):
 		self.lat = '%010.6f' % lat
 		self.lon = '%011.6f' % lon
 		return
+	
+	def set_pos_with(self, lat, lon):
+		self.lat = '%010.6f' % lat
+		self.lon = '%011.6f' % lon
+		
+	def set_header(self, header):
+		self.header = header + 'GGA'
 
 	def checksum(self,data):
 		CS = 0
@@ -141,11 +148,24 @@ def man_mode():
 		time.sleep(1)
 	save(gga)
 
+def more_para():
+	gga = []
+	lat = float(input('lat:'))
+	lon = float(input('lon:'))
+	talker_ID = input('talker_ID:')
+	quality = '1'
+	g = GGA(quality)
+	g.set_pos_with(lat, lon)
+	g.set_header(talker_ID)
+	gga.append(g.gen())
+	print(gga)
+	save(gga)
 
 # GGA()
 # GGA().checksum('GNGGA,000000.000,0000.000000,N,00000.000000,E,,00,0.000,0.000,M,0,M,,')
-cmd_mode()
+# cmd_mode()
 # man_mode()
+more_para()
 input('=== Finished ===\n')
 
 # print(gga)
