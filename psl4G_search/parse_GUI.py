@@ -163,12 +163,35 @@ class Parser(object):
 			
 import sys
 from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, \
-	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout
-from PyQt5.QtCore import Qt
+	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser
+from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QTextCursor
 import time
 
-class Example(QWidget):
+class OpenFileThread(QThread):
+	signal = pyqtSignal(str)
+	def __init__(self, filename):
+		super().__init__()
+		self.filename = filename
+
+	def __del__(self):
+		self.wait()
+
+	def run(self):
+		# 显示文件全部内容
+
+		# with open(self.filename, 'r', encoding='utf-8', errors='ignore') as f:
+		# 	for data in f.readlines():
+		# 		self.signal.emit(data)
+
+		# for data in open(self.filename, 'r', encoding='utf-8', errors='ignore'):
+		# 	self.signal.emit(data)
+
+		with open(self.filename, 'r', encoding='utf-8', errors='ignore') as f:
+			data = f.read()
+		self.signal.emit(data)
+
+class GUI(QWidget):
 	def __init__(self):
 		super().__init__()
 		self.initUI()
@@ -178,7 +201,7 @@ class Example(QWidget):
 		fileBox = QHBoxLayout()
 		menuBox = QHBoxLayout()
 		resBox = QHBoxLayout()
-		self.outEdit = QTextEdit()
+		self.outEdit = QTextBrowser() # 筛选结果输出框
 		toolBox = QVBoxLayout()
 		searchBox = QHBoxLayout()
 		searchResBox = QVBoxLayout()
@@ -278,9 +301,14 @@ class Example(QWidget):
 		self.show()
 
 	def open_file(self):
-		file = QFileDialog.getOpenFileName(self, '选择log文件', '')
+		file = QFileDialog.getOpenFileName(self, '选择log文件', 'D://log//sCRTlog')
 		filename = file[0]
 		self.fileNameEdit.setText(filename)
+
+		# 使用另一线程读取文件，发信号显示文件全部内容，结果会卡死
+		# t = OpenFileThread(filename)
+		# t.signal.connect(self.show_result)
+		# t.start()
 
 	def parse_file(self):
 		self.please_wait()
@@ -322,7 +350,7 @@ class Example(QWidget):
 
 		# 输出结果
 		print_log = ''
-		print_log += '解析时间：%.2fs\n' % (end-start)
+		print_log += '解析时间：%.2fs\n\n' % (end-start)
 		print_log += ('各级别log统计结果：\n')
 		for level_name in log_levels.keys():
 			print_log += (level_name + ': ' + str(len(log_levels.get(level_name, []))) + '\n')
@@ -404,6 +432,14 @@ class Example(QWidget):
 			print(e)
 			self.show_status('保存失败')
 
+	def append_result(self, data):
+		self.outEdit.moveCursor(QTextCursor.End) # 使用insertPlainText需保证cursor在末尾
+		self.outEdit.insertPlainText(data)
+		QApplication.processEvents()
+
+	def show_result(self, data):
+		self.outEdit.setText(data)
+
 	def get_search_ptn(self):
 		a = self.searchInput.currentText()
 		return a
@@ -421,5 +457,5 @@ class Example(QWidget):
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	ex = Example()
+	ex = GUI()
 	sys.exit(app.exec_())
