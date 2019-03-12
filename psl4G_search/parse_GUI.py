@@ -4,6 +4,10 @@
 import configparser
 
 def get_config():
+	'''
+	读取配置文件config.ini
+	:return:配置内容（字典）
+	'''
 	cf = configparser.ConfigParser()
 	cf.read('config.ini', 'utf-8')
 
@@ -26,6 +30,9 @@ def get_config():
 import re
 
 class Parser(object):
+	'''
+	解析器类
+	'''
 	def __init__(self, filename):
 		self.filename = filename # log文件名
 		self.log = [] # log内容
