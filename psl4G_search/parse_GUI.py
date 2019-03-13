@@ -3,6 +3,7 @@
 
 import configparser
 
+
 def get_config():
 	'''
 	读取配置文件config.ini
@@ -20,31 +21,32 @@ def get_config():
 	dd = dict()
 	for k in d:
 		try:
-			dd[d[k]['name']] = list(eval(d[k]['keywords'])) # for example: dd['GNSS'] = '[GPS]'.split(',')
+			dd[d[k]['name']] = list(eval(d[k]['keywords']))  # for example: dd['GNSS'] = '[GPS]'.split(',')
 		except:
 			dd[d[k]['name']] = [d[k]['keywords']]
 
 	return dd
 
-	
+
 import re
+
 
 class Parser(object):
 	'''
 	解析器类
 	'''
-	def __init__(self, filename):
-		self.filename = filename # log文件名
-		self.log = [] # log内容
-		self.lines = 0 # log总行数
-		self.config = None # 功能关键词配置
 
-		self.__log_level_line_dicts = dict() # 按log级别分类保存行号
-		self.__log_mod_line_dicts = dict() # 按log模块分类保存行号
-		self.__log_function_line_dicts = dict() # 按log功能分类保存行号
+	def __init__(self, filename):
+		self.filename = filename  # log文件名
+		self.log = []  # log内容
+		self.lines = 0  # log总行数
+		self.config = None  # 功能关键词配置
+
+		self.__log_level_line_dicts = dict()  # 按log级别分类保存行号
+		self.__log_mod_line_dicts = dict()  # 按log模块分类保存行号
+		self.__log_function_line_dicts = dict()  # 按log功能分类保存行号
 
 		self.__open_file(filename)
-
 
 	def __open_file(self, file):
 		'''
@@ -61,7 +63,6 @@ class Parser(object):
 
 		return self.log  # string list
 
-
 	def parse_log_level(self, line_no):
 		'''
 		判断该行log属于哪种级别，同时按级别分别记录行号
@@ -71,6 +72,8 @@ class Parser(object):
 		ptn = r'\|\S*\|(\S*)>'
 		try:
 			level_name = re.search(ptn, self.log[line_no]).group(1)
+			# 注：使用列表而不是集合，因为列表有序，集合无序
+			# todo:但是集合比列表操作快很多很多，还是改为集合
 			line_list = self.__log_level_line_dicts.get(level_name, [])
 			line_list.append(line_no)
 			self.__log_level_line_dicts[level_name] = line_list
@@ -114,9 +117,9 @@ class Parser(object):
 				elif method == 'and':
 					if key not in self.log[line_no]:
 						return False
-			if method == 'or': # 到这里说明所有关键词都无
+			if method == 'or':  # 到这里说明所有关键词都无
 				return False
-			elif method == 'and': # 到这里说明所有关键词都有
+			elif method == 'and':  # 到这里说明所有关键词都有
 				line_list.append(line_no)
 				self.__log_function_line_dicts[log_name] = line_list
 				return True
@@ -133,7 +136,6 @@ class Parser(object):
 		for log_name in self.config:
 			key_words = self.config[log_name]
 			self.parse_log_func(line_no, key_words, log_name)
-
 
 	def get_levels(self):
 		return self.__log_level_line_dicts
@@ -160,19 +162,23 @@ class Parser(object):
 			print('输入参数有误！')
 			return []
 
-			
+
 import sys
 from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, \
-	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser
+	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser, QMessageBox
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QTextCursor
 import time
+import threading
+
 
 class OpenFileThread(QThread):
 	signal = pyqtSignal(str)
+
 	def __init__(self, filename):
 		super().__init__()
 		self.filename = filename
+		self.__stop = threading.Event()
 
 	def __del__(self):
 		self.wait()
@@ -184,12 +190,20 @@ class OpenFileThread(QThread):
 		# 	for data in f.readlines():
 		# 		self.signal.emit(data)
 
-		# for data in open(self.filename, 'r', encoding='utf-8', errors='ignore'):
-		# 	self.signal.emit(data)
+		for data in open(self.filename, 'r', encoding='utf-8', errors='ignore'):
+			if self.__stop.isSet(): # 如果设置了stop标识，则停止循环，等于停止线程
+				break
+			else:
+				self.signal.emit(data)
+				time.sleep(0.001) # 必须有延时，否则会卡死
 
-		with open(self.filename, 'r', encoding='utf-8', errors='ignore') as f:
-			data = f.read()
-		self.signal.emit(data)
+		# with open(self.filename, 'r', encoding='utf-8', errors='ignore') as f:
+		# 	data = f.read()
+		# self.signal.emit(data)
+
+	def stop(self):
+		self.__stop.set()
+
 
 class GUI(QWidget):
 	def __init__(self):
@@ -201,7 +215,7 @@ class GUI(QWidget):
 		fileBox = QHBoxLayout()
 		menuBox = QHBoxLayout()
 		resBox = QHBoxLayout()
-		self.outEdit = QTextBrowser() # 筛选结果输出框
+		self.outEdit = QTextBrowser()  # 筛选结果输出框
 		toolBox = QVBoxLayout()
 		searchBox = QHBoxLayout()
 		searchResBox = QVBoxLayout()
@@ -246,6 +260,14 @@ class GUI(QWidget):
 		menuBox.addWidget(self.funCombo)
 		menuBox.addStretch()
 
+		# tip
+		self.levelCombo.addItem('请先解析')
+		self.modCombo.addItem('请先解析')
+		self.funCombo.addItem('请先解析')
+		self.levelCombo.setEnabled(False)
+		self.modCombo.setEnabled(False)
+		self.funCombo.setEnabled(False)
+
 		toolBtn1 = QPushButton('复制')
 		toolBtn2 = QPushButton('保存')
 		# toolBtn3 = QPushButton('')
@@ -262,9 +284,9 @@ class GUI(QWidget):
 		self.searchInput = QComboBox()
 		self.searchInput.setEditable(True)
 		self.searchInput.setSizeAdjustPolicy(1)
-		self.searchOutput = QTextEdit() # 搜索结果输出框
+		self.searchOutput = QTextEdit()  # 搜索结果输出框
 		searchInputBox.addWidget(searchLabel)
-		searchInputBox.addWidget(self.searchInput, 1) # 使用stretch参数修改控件大小，填满空间
+		searchInputBox.addWidget(self.searchInput, 1)  # 使用stretch参数修改控件大小，填满空间
 		searchResBox.addWidget(self.searchOutput)
 
 		# test rich text
@@ -306,29 +328,39 @@ class GUI(QWidget):
 		self.fileNameEdit.setText(filename)
 
 		# 使用另一线程读取文件，发信号显示文件全部内容，结果会卡死
-		# t = OpenFileThread(filename)
-		# t.signal.connect(self.show_result)
-		# t.start()
+		t = OpenFileThread(filename)
+		t.signal.connect(self.append_result)
+		t.start()
+
+		# 弹窗-停止读取线程
+		msgBox = QMessageBox(self) # 指定parent为self，用于居中
+		msgBox.setWindowTitle('请等待')
+		msgBox.setText('正在读取文件（可选）')
+		abort = msgBox.addButton('放弃', QMessageBox.ActionRole) # 自定义内容按键
+		msgBox.exec()
+		if(msgBox.clickedButton() == abort):
+			t.stop()
+			QApplication.processEvents()
 
 	def parse_file(self):
 		self.please_wait()
 		filename = self.fileNameEdit.text()
 
-		start = time.time() # 计时开始
+		start = time.time()  # 计时开始
 
 		self.L = Parser(filename)
-		for line_no in range(0,self.L.lines): # 遍历所有log
+		for line_no in range(0, self.L.lines):  # 遍历所有log
 			try:
-				self.L.parse_log_level(line_no) # log级别
-				self.L.parse_log_mod(line_no) # log模块
-				self.L.parse_log_all_func(line_no) # 其他功能
+				self.L.parse_log_level(line_no)  # log级别
+				self.L.parse_log_mod(line_no)  # log模块
+				self.L.parse_log_all_func(line_no)  # 其他功能
 			except Exception as e:
 				print(e)
-			if line_no%1000 == 0 or line_no == self.L.lines - 1: # 每100行和最后一行执行一次刷新，可大大加快解析速度！
-				self.outEdit.setText('解析中，请等待...('+str(line_no)+'/'+str(self.L.lines)+')')
+			if line_no % 1000 == 0 or line_no == self.L.lines - 1:  # 每1000行和最后一行执行一次刷新，可大大加快解析速度！
+				self.outEdit.setText('解析中，请等待...(' + str(line_no) + '/' + str(self.L.lines) + ')')
 				QApplication.processEvents()
 
-		end = time.time() # 计时结束
+		end = time.time()  # 计时结束
 
 		# log级别
 		log_levels = self.L.get_levels()
@@ -348,9 +380,14 @@ class GUI(QWidget):
 		self.funCombo.addItem('全部')
 		self.funCombo.addItems(log_funcs.keys())
 
+		self.levelCombo.setEnabled(True)
+		self.modCombo.setEnabled(True)
+		self.funCombo.setEnabled(True)
+
 		# 输出结果
 		print_log = ''
-		print_log += '解析时间：%.2fs\n\n' % (end-start)
+		print_log += 'log行数：%d\n' % self.L.lines
+		print_log += '解析时间：%.2fs\n\n' % (end - start)
 		print_log += ('各级别log统计结果：\n')
 		for level_name in log_levels.keys():
 			print_log += (level_name + ': ' + str(len(log_levels.get(level_name, []))) + '\n')
@@ -362,23 +399,25 @@ class GUI(QWidget):
 		print_log += ('各功能统计结果：\n')
 		for func_name in log_funcs.keys():
 			print_log += (func_name + ': ' + str(len(log_funcs.get(func_name, []))) + '\n')
-		self.parse_result = print_log # 保存解析结果
+		self.parse_result = print_log  # 保存解析结果
 		self.outEdit.setText(print_log)
 
 	def show_lines(self):
 		'''
 		筛选框操作后，显示结果
+		此函数与三个QComboBox的activated事件绑定
 		'''
 		selLevel = self.levelCombo.currentText()
 		selMod = self.modCombo.currentText()
 		selFun = self.funCombo.currentText()
 
-		if(selLevel == '全部' and selMod == '全部' and selFun == '全部'): # 不要显示全部log
+		if (selLevel == '全部' and selMod == '全部' and selFun == '全部'):  # 不要显示全部log
 			self.outEdit.setText(self.parse_result)
 			return
 
 		self.please_wait()
 
+		# 取得筛选结果
 		if (selLevel != '全部'):
 			resLevel = self.L.get_log_lines(selLevel)
 
@@ -391,19 +430,20 @@ class GUI(QWidget):
 		# 逐行显示
 		self.outEdit.clear()
 		lines_num = 0
-		for i in range(0, self.L.lines):
-			if (selLevel != '全部' and i not in resLevel): # 不满足等级筛选条件
+		for line_no in range(0, self.L.lines):
+			if (selLevel != '全部' and line_no not in resLevel):  # 不满足等级筛选条件
 				continue
-			if (selMod != '全部' and i not in resMod): # 不满足模块筛选条件
+			if (selMod != '全部' and line_no not in resMod):  # 不满足模块筛选条件
 				continue
-			if (selFun != '全部' and i not in resFun): # 不满足功能筛选条件
+			if (selFun != '全部' and line_no not in resFun):  # 不满足功能筛选条件
 				continue
 			# i满足所有筛选条件
-			self.outEdit.moveCursor(QTextCursor.End) # 使用insertPlainText需保证cursor在末尾
-			self.outEdit.insertPlainText(self.L.log[i])
+			self.outEdit.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
+			self.outEdit.insertPlainText(self.L.log[line_no])
 			lines_num = lines_num + 1
-			self.show_status('当前' + str(lines_num) + '条')
-			QApplication.processEvents()
+			if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
+				self.show_status('当前' + str(lines_num) + '条')
+				QApplication.processEvents()
 		self.show_status('共' + str(lines_num) + '条')
 
 	def please_wait(self):
@@ -433,7 +473,7 @@ class GUI(QWidget):
 			self.show_status('保存失败')
 
 	def append_result(self, data):
-		self.outEdit.moveCursor(QTextCursor.End) # 使用insertPlainText需保证cursor在末尾
+		self.outEdit.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
 		self.outEdit.insertPlainText(data)
 		QApplication.processEvents()
 
@@ -446,7 +486,7 @@ class GUI(QWidget):
 
 	def new_search(self):
 		search_ptn = self.get_search_ptn()
-		resLine = self.L.search_log_lines(search_ptn) # 搜索包含查找目标的行
+		resLine = self.L.search_log_lines(search_ptn)  # todo:搜索包含查找目标的行
 
 	def add_search(self):
 		pass
