@@ -73,10 +73,10 @@ class Parser(object):
 		try:
 			level_name = re.search(ptn, self.log[line_no]).group(1)
 			# 注：使用列表而不是集合，因为列表有序，集合无序
-			# todo:但是集合比列表操作快很多很多，还是改为集合
-			line_list = self.__log_level_line_dicts.get(level_name, [])
-			line_list.append(line_no)
-			self.__log_level_line_dicts[level_name] = line_list
+			# 但是集合比列表操作快很多很多，还是改为集合
+			line_set = self.__log_level_line_dicts.get(level_name, set())
+			line_set.add(line_no)
+			self.__log_level_line_dicts[level_name] = line_set
 		except:
 			level_name = ''
 		return level_name
@@ -90,9 +90,9 @@ class Parser(object):
 		ptn = r'> (\S*)'
 		try:
 			mod_name = re.search(ptn, self.log[line_no]).group(1)  # try to find mod_name
-			line_list = self.__log_mod_line_dicts.get(mod_name, [])  # get line list
-			line_list.append(line_no)  # update line lists
-			self.__log_mod_line_dicts[mod_name] = line_list  # set line list
+			line_set = self.__log_mod_line_dicts.get(mod_name, set())  # get line set
+			line_set.add(line_no)  # update line set
+			self.__log_mod_line_dicts[mod_name] = line_set  # set line set
 		except:
 			mod_name = ''
 		return mod_name
@@ -106,13 +106,13 @@ class Parser(object):
 		:param method:默认'or'按或进行搜索，若为'and'则按与进行搜索
 		:return: log是否包含关键词
 		'''
-		line_list = self.__log_function_line_dicts.get(log_name, [])
+		line_set = self.__log_function_line_dicts.get(log_name, set())
 		try:
 			for key in key_words:
 				if method == 'or':
 					if key in self.log[line_no]:
-						line_list.append(line_no)
-						self.__log_function_line_dicts[log_name] = line_list
+						line_set.add(line_no)
+						self.__log_function_line_dicts[log_name] = line_set
 						return True
 				elif method == 'and':
 					if key not in self.log[line_no]:
@@ -120,8 +120,8 @@ class Parser(object):
 			if method == 'or':  # 到这里说明所有关键词都无
 				return False
 			elif method == 'and':  # 到这里说明所有关键词都有
-				line_list.append(line_no)
-				self.__log_function_line_dicts[log_name] = line_list
+				line_set.add(line_no)
+				self.__log_function_line_dicts[log_name] = line_set
 				return True
 		except Exception as e:
 			print(e)
@@ -150,7 +150,7 @@ class Parser(object):
 		"""
 		获取所有指定log类型的log行号
 		:param log_type: log类型（级别或模块或功能）
-		:return: log行号列表
+		:return: log行号集合
 		"""
 		if log_type in self.__log_level_line_dicts.keys():
 			return self.__log_level_line_dicts.get(log_type)
@@ -162,11 +162,24 @@ class Parser(object):
 			print('输入参数有误！')
 			return []
 
+	def search_log_lines(self, line_set, search_ptn):
+		'''
+		在指定的行号范围内搜索指定内容
+		:param line_set: 行号范围
+		:param search_ptn: 待搜索内容
+		:return: 包含搜索内容的行号集合
+		'''
+		search_res = set()
+		for line_no in line_set:
+			if(re.search(search_ptn, self.log[line_no]) != None):
+				# 符合搜索要求
+				search_res.add(line_no)
+		return search_res
 
 import sys
 from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, \
-	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser, QMessageBox
-from PyQt5.QtCore import QThread, pyqtSignal
+	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser, QMessageBox, QStatusBar
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QTextCursor
 import time
 import threading
@@ -209,6 +222,7 @@ class GUI(QWidget):
 	def __init__(self):
 		super().__init__()
 		self.initUI()
+		self.__stop_show = False
 
 	def initUI(self):
 		mainBox = QVBoxLayout()
@@ -268,23 +282,27 @@ class GUI(QWidget):
 		self.modCombo.setEnabled(False)
 		self.funCombo.setEnabled(False)
 
+		toolBtn3 = QPushButton('停止筛选')
 		toolBtn1 = QPushButton('复制')
 		toolBtn2 = QPushButton('保存')
-		# toolBtn3 = QPushButton('')
 		# toolBtn4 = QPushButton('')
-		self.statusLabel = QLabel('')
+		# self.statusLabel = QLabel('')
+		# self.statusLabel.setAlignment(Qt.AlignHCenter)
+		self.statusLabel = QStatusBar()
+		self.statusLabel.showMessage('Ready')
+		toolBox.addWidget(toolBtn3)
 		toolBox.addWidget(toolBtn1)
 		toolBox.addWidget(toolBtn2)
 		# toolBox.addWidget(toolBtn3)
 		# toolBox.addWidget(toolBtn4)
 		toolBox.addStretch()
-		toolBox.addWidget(self.statusLabel)
+		mainBox.addWidget(self.statusLabel)
 
 		searchLabel = QLabel('搜索内容：')
 		self.searchInput = QComboBox()
 		self.searchInput.setEditable(True)
 		self.searchInput.setSizeAdjustPolicy(1)
-		self.searchOutput = QTextEdit()  # 搜索结果输出框
+		self.searchOutput = QTextBrowser()  # 搜索结果输出框
 		searchInputBox.addWidget(searchLabel)
 		searchInputBox.addWidget(self.searchInput, 1)  # 使用stretch参数修改控件大小，填满空间
 		searchResBox.addWidget(self.searchOutput)
@@ -311,6 +329,7 @@ class GUI(QWidget):
 		self.modCombo.activated.connect(self.show_lines)
 		self.funCombo.activated.connect(self.show_lines)
 
+		toolBtn3.clicked.connect(self.stop_show)
 		toolBtn1.clicked.connect(self.copy_result)
 		toolBtn2.clicked.connect(self.save_result)
 
@@ -407,6 +426,10 @@ class GUI(QWidget):
 		筛选框操作后，显示结果
 		此函数与三个QComboBox的activated事件绑定
 		'''
+		self.__stop_show = False # 重置
+
+		# sender = self.sender() # 获取触发此函数的信号发送者
+
 		selLevel = self.levelCombo.currentText()
 		selMod = self.modCombo.currentText()
 		selFun = self.funCombo.currentText()
@@ -417,42 +440,86 @@ class GUI(QWidget):
 
 		self.please_wait()
 
-		# 取得筛选结果
-		if (selLevel != '全部'):
+		# 取筛选结果
+		self.resMatch = set([a for a in range(0, self.L.lines)])  # 重置筛选结果为所有行号
+		if selLevel != '全部':
 			resLevel = self.L.get_log_lines(selLevel)
+			self.resMatch = self.resMatch & resLevel
 
-		if (selMod != '全部'):
+		if selMod != '全部':
 			resMod = self.L.get_log_lines(selMod)
+			self.resMatch = self.resMatch & resMod
 
-		if (selFun != '全部'):
+		if selFun != '全部':
 			resFun = self.L.get_log_lines(selFun)
+			self.resMatch = self.resMatch & resFun
 
-		# 逐行显示
-		self.outEdit.clear()
+		# 逐行显示筛选结果
+		self.show_result_by_line(self.outEdit, self.resMatch)
+		# self.outEdit.clear()
+		# lines_num = 0
+		# for line_no in range(0, self.L.lines):
+		# 	# if selLevel != '全部' and line_no not in resLevel:  # 不满足等级筛选条件
+		# 	# 	continue
+		# 	# if selMod != '全部' and line_no not in resMod:  # 不满足模块筛选条件
+		# 	# 	continue
+		# 	# if selFun != '全部' and line_no not in resFun:  # 不满足功能筛选条件
+		# 	# 	continue
+		# 	if self.__stop_show == True:
+		# 		break
+		# 	if line_no not in self.resMatch: # 不满足筛选条件
+		# 		continue
+		# 	# i满足所有筛选条件
+		# 	self.outEdit.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
+		# 	self.outEdit.insertPlainText(self.L.log[line_no])
+		# 	lines_num = lines_num + 1 # 统计满足条件的log条数
+		# 	if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
+		# 		self.show_status('当前' + str(lines_num) + '条')
+		# 		QApplication.processEvents()
+		# self.show_status('共' + str(lines_num) + '条')
+		# if self.__stop_show == True:
+		# 	self.statusLabel.setText(self.statusLabel.text() + '\n（已停止）')
+
+	def show_result_by_line(self, container, line_set):
+		'''
+		逐行显示
+		:param line_set:
+		:return:
+		'''
+		container.clear()
 		lines_num = 0
 		for line_no in range(0, self.L.lines):
-			if (selLevel != '全部' and line_no not in resLevel):  # 不满足等级筛选条件
-				continue
-			if (selMod != '全部' and line_no not in resMod):  # 不满足模块筛选条件
-				continue
-			if (selFun != '全部' and line_no not in resFun):  # 不满足功能筛选条件
+			if self.__stop_show == True:
+				break
+			if line_no not in line_set: # 不满足筛选条件
 				continue
 			# i满足所有筛选条件
-			self.outEdit.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
-			self.outEdit.insertPlainText(self.L.log[line_no])
-			lines_num = lines_num + 1
+			container.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
+			container.insertPlainText(self.L.log[line_no])
+			lines_num = lines_num + 1 # 统计满足条件的log条数
 			if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
 				self.show_status('当前' + str(lines_num) + '条')
 				QApplication.processEvents()
 		self.show_status('共' + str(lines_num) + '条')
+		if self.__stop_show == True:
+			# self.statusLabel.showMessage(self.statusLabel.currentMessage() + '\n（已停止）')
+			self.show_status('\n（已停止）', True)
+
+	def stop_show(self):
+		# 设置标识，停止show_lines操作
+		self.__stop_show = True
+		pass
 
 	def please_wait(self):
 		self.outEdit.setText('解析中，请等待...')
 		QApplication.processEvents()
 		self.show_status('')
 
-	def show_status(self, status):
-		self.statusLabel.setText(status)
+	def show_status(self, status, append = False):
+		if append:
+			self.statusLabel.showMessage(self.statusLabel.currentMessage() + status)
+		else:
+			self.statusLabel.showMessage(status)
 		QApplication.processEvents()
 
 	def copy_result(self):
@@ -485,8 +552,12 @@ class GUI(QWidget):
 		return a
 
 	def new_search(self):
+		line_set = self.resMatch # 在筛选范围内搜索
 		search_ptn = self.get_search_ptn()
-		resLine = self.L.search_log_lines(search_ptn)  # todo:搜索包含查找目标的行
+		resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
+
+		# 逐行显示查找结果
+		self.show_result_by_line(self.searchOutput, resLine)
 
 	def add_search(self):
 		pass
