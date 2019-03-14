@@ -171,14 +171,16 @@ class Parser(object):
 		'''
 		search_res = set()
 		for line_no in line_set:
-			if(re.search(search_ptn, self.log[line_no]) != None):
+			if re.search(search_ptn, self.log[line_no]) is not None:
 				# 符合搜索要求
 				search_res.add(line_no)
 		return search_res
 
+
 import sys
 from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, \
-	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser, QMessageBox, QStatusBar
+	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser, QMessageBox, QStatusBar, \
+	QCheckBox
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QTextCursor
 import time
@@ -204,15 +206,15 @@ class OpenFileThread(QThread):
 		# 		self.signal.emit(data)
 
 		for data in open(self.filename, 'r', encoding='utf-8', errors='ignore'):
-			if self.__stop.isSet(): # 如果设置了stop标识，则停止循环，等于停止线程
+			if self.__stop.isSet():  # 如果设置了stop标识，则停止循环，等于停止线程
 				break
 			else:
 				self.signal.emit(data)
-				time.sleep(0.001) # 必须有延时，否则会卡死
+				time.sleep(0.001)  # 必须有延时，否则会卡死
 
-		# with open(self.filename, 'r', encoding='utf-8', errors='ignore') as f:
-		# 	data = f.read()
-		# self.signal.emit(data)
+			# with open(self.filename, 'r', encoding='utf-8', errors='ignore') as f:
+			# 	data = f.read()
+			# self.signal.emit(data)
 
 	def stop(self):
 		self.__stop.set()
@@ -273,6 +275,8 @@ class GUI(QWidget):
 		menuBox.addWidget(funLabel)
 		menuBox.addWidget(self.funCombo)
 		menuBox.addStretch()
+		toolBtn3 = QPushButton('停止筛选')
+		menuBox.addWidget(toolBtn3)
 
 		# tip
 		self.levelCombo.addItem('请先解析')
@@ -282,19 +286,12 @@ class GUI(QWidget):
 		self.modCombo.setEnabled(False)
 		self.funCombo.setEnabled(False)
 
-		toolBtn3 = QPushButton('停止筛选')
 		toolBtn1 = QPushButton('复制')
 		toolBtn2 = QPushButton('保存')
-		# toolBtn4 = QPushButton('')
-		# self.statusLabel = QLabel('')
-		# self.statusLabel.setAlignment(Qt.AlignHCenter)
 		self.statusLabel = QStatusBar()
 		self.statusLabel.showMessage('Ready')
-		toolBox.addWidget(toolBtn3)
 		toolBox.addWidget(toolBtn1)
 		toolBox.addWidget(toolBtn2)
-		# toolBox.addWidget(toolBtn3)
-		# toolBox.addWidget(toolBtn4)
 		toolBox.addStretch()
 		mainBox.addWidget(self.statusLabel)
 
@@ -302,9 +299,11 @@ class GUI(QWidget):
 		self.searchInput = QComboBox()
 		self.searchInput.setEditable(True)
 		self.searchInput.setSizeAdjustPolicy(1)
+		self.regex = QCheckBox('正则表达式')
 		self.searchOutput = QTextBrowser()  # 搜索结果输出框
 		searchInputBox.addWidget(searchLabel)
 		searchInputBox.addWidget(self.searchInput, 1)  # 使用stretch参数修改控件大小，填满空间
+		searchInputBox.addWidget(self.regex)
 		searchResBox.addWidget(self.searchOutput)
 
 		# test rich text
@@ -346,18 +345,21 @@ class GUI(QWidget):
 		filename = file[0]
 		self.fileNameEdit.setText(filename)
 
+		# self.show_file(filename)  # 显示文件内容
+
+	def show_file(self, filename):
 		# 使用另一线程读取文件，发信号显示文件全部内容，结果会卡死
 		t = OpenFileThread(filename)
 		t.signal.connect(self.append_result)
 		t.start()
 
 		# 弹窗-停止读取线程
-		msgBox = QMessageBox(self) # 指定parent为self，用于居中
+		msgBox = QMessageBox(self)  # 指定parent为self，用于居中
 		msgBox.setWindowTitle('请等待')
 		msgBox.setText('正在读取文件（可选）')
-		abort = msgBox.addButton('放弃', QMessageBox.ActionRole) # 自定义内容按键
+		abort = msgBox.addButton('放弃', QMessageBox.ActionRole)  # 自定义内容按键
 		msgBox.exec()
-		if(msgBox.clickedButton() == abort):
+		if (msgBox.clickedButton() == abort):
 			t.stop()
 			QApplication.processEvents()
 
@@ -368,6 +370,7 @@ class GUI(QWidget):
 		start = time.time()  # 计时开始
 
 		self.L = Parser(filename)
+		self.resMatch = set([a for a in range(0, self.L.lines)])  # 重置筛选结果为所有行号
 		for line_no in range(0, self.L.lines):  # 遍历所有log
 			try:
 				self.L.parse_log_level(line_no)  # log级别
@@ -426,7 +429,7 @@ class GUI(QWidget):
 		筛选框操作后，显示结果
 		此函数与三个QComboBox的activated事件绑定
 		'''
-		self.__stop_show = False # 重置
+		self.__stop_show = False  # 重置
 
 		# sender = self.sender() # 获取触发此函数的信号发送者
 
@@ -456,34 +459,36 @@ class GUI(QWidget):
 
 		# 逐行显示筛选结果
 		self.show_result_by_line(self.outEdit, self.resMatch)
-		# self.outEdit.clear()
-		# lines_num = 0
-		# for line_no in range(0, self.L.lines):
-		# 	# if selLevel != '全部' and line_no not in resLevel:  # 不满足等级筛选条件
-		# 	# 	continue
-		# 	# if selMod != '全部' and line_no not in resMod:  # 不满足模块筛选条件
-		# 	# 	continue
-		# 	# if selFun != '全部' and line_no not in resFun:  # 不满足功能筛选条件
-		# 	# 	continue
-		# 	if self.__stop_show == True:
-		# 		break
-		# 	if line_no not in self.resMatch: # 不满足筛选条件
-		# 		continue
-		# 	# i满足所有筛选条件
-		# 	self.outEdit.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
-		# 	self.outEdit.insertPlainText(self.L.log[line_no])
-		# 	lines_num = lines_num + 1 # 统计满足条件的log条数
-		# 	if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
-		# 		self.show_status('当前' + str(lines_num) + '条')
-		# 		QApplication.processEvents()
-		# self.show_status('共' + str(lines_num) + '条')
-		# if self.__stop_show == True:
-		# 	self.statusLabel.setText(self.statusLabel.text() + '\n（已停止）')
+
+	# self.outEdit.clear()
+	# lines_num = 0
+	# for line_no in range(0, self.L.lines):
+	# 	# if selLevel != '全部' and line_no not in resLevel:  # 不满足等级筛选条件
+	# 	# 	continue
+	# 	# if selMod != '全部' and line_no not in resMod:  # 不满足模块筛选条件
+	# 	# 	continue
+	# 	# if selFun != '全部' and line_no not in resFun:  # 不满足功能筛选条件
+	# 	# 	continue
+	# 	if self.__stop_show == True:
+	# 		break
+	# 	if line_no not in self.resMatch: # 不满足筛选条件
+	# 		continue
+	# 	# i满足所有筛选条件
+	# 	self.outEdit.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
+	# 	self.outEdit.insertPlainText(self.L.log[line_no])
+	# 	lines_num = lines_num + 1 # 统计满足条件的log条数
+	# 	if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
+	# 		self.show_status('当前' + str(lines_num) + '条')
+	# 		QApplication.processEvents()
+	# self.show_status('共' + str(lines_num) + '条')
+	# if self.__stop_show == True:
+	# 	self.statusLabel.setText(self.statusLabel.text() + '\n（已停止）')
 
 	def show_result_by_line(self, container, line_set):
 		'''
 		逐行显示
-		:param line_set:
+		:param container: 输出内容的容器
+		:param line_set: 要显示内容的行号
 		:return:
 		'''
 		container.clear()
@@ -491,12 +496,12 @@ class GUI(QWidget):
 		for line_no in range(0, self.L.lines):
 			if self.__stop_show == True:
 				break
-			if line_no not in line_set: # 不满足筛选条件
+			if line_no not in line_set:  # 不满足筛选条件
 				continue
 			# i满足所有筛选条件
 			container.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
 			container.insertPlainText(self.L.log[line_no])
-			lines_num = lines_num + 1 # 统计满足条件的log条数
+			lines_num = lines_num + 1  # 统计满足条件的log条数
 			if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
 				self.show_status('当前' + str(lines_num) + '条')
 				QApplication.processEvents()
@@ -515,7 +520,7 @@ class GUI(QWidget):
 		QApplication.processEvents()
 		self.show_status('')
 
-	def show_status(self, status, append = False):
+	def show_status(self, status, append=False):
 		if append:
 			self.statusLabel.showMessage(self.statusLabel.currentMessage() + status)
 		else:
@@ -548,11 +553,32 @@ class GUI(QWidget):
 		self.outEdit.setText(data)
 
 	def get_search_ptn(self):
-		a = self.searchInput.currentText()
+		'''
+		获得待搜索内容，可能需要格式处理
+		:return:
+		'''
+		a = self.searchInput.currentText()  # 获取输入
+		regex = self.regex.isChecked()  # 获取是否正则表达式
+		if not regex:
+			# 转换正则表达式中的特殊字符
+			a = a.replace('\\', '\\\\') # 放最前面
+			a = a.replace('^', '\^')
+			a = a.replace('$', '\$')
+			a = a.replace('.', '\.')
+			a = a.replace('[', '\[')
+			a = a.replace(']', '\]')
+			a = a.replace('*', '\*')
+			a = a.replace('?', '\?')
+			a = a.replace('+', '\+')
+			a = a.replace('{', '\{')
+			a = a.replace('}', '\}')
+			a = a.replace('|', '\|')
+			a = a.replace('(', '\(')
+			a = a.replace(')', '\)')
 		return a
 
 	def new_search(self):
-		line_set = self.resMatch # 在筛选范围内搜索
+		line_set = self.resMatch  # 在筛选范围内搜索
 		search_ptn = self.get_search_ptn()
 		resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
 
