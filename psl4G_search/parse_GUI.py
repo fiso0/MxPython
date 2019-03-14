@@ -239,6 +239,9 @@ class GUI(QWidget):
 		super().__init__()
 		self.initUI()
 		self.__stop_show = False
+		self.L = None
+		self.resMatch = set()
+		self.history = []
 
 	def initUI(self):
 		mainBox = QVBoxLayout()
@@ -289,8 +292,9 @@ class GUI(QWidget):
 		menuBox.addWidget(funLabel)
 		menuBox.addWidget(self.funCombo)
 		menuBox.addStretch()
-		toolBtn3 = QPushButton('停止筛选')
-		menuBox.addWidget(toolBtn3)
+		self.toolBtn3 = QPushButton('停止筛选')
+		self.toolBtn3.setEnabled(False)
+		menuBox.addWidget(self.toolBtn3)
 
 		# tip
 		self.levelCombo.addItem('请先解析')
@@ -314,6 +318,7 @@ class GUI(QWidget):
 		searchLabel = QLabel('4.搜索内容：')
 		self.searchInput = QComboBox()
 		self.searchInput.setEditable(True)
+		self.searchInput.setInsertPolicy(QComboBox.NoInsert)  # 回车时不自动插入，由按键处理
 		self.searchInput.setSizeAdjustPolicy(1)
 		self.searchInput.setToolTip('Python正则表达式：\n^ 开始位置\n$ 结尾位置\n. 任意字符\n| 或\n\ 特殊字符\n'\
 		                            '[] 多种字符\n() 子表达式\n{} 匹配次数\n? 0 次或 1 次\n+ 至少 1次\n* 0次或任意次')
@@ -352,7 +357,7 @@ class GUI(QWidget):
 		self.modCombo.activated.connect(self.show_lines)
 		self.funCombo.activated.connect(self.show_lines)
 
-		toolBtn3.clicked.connect(self.stop_show)
+		self.toolBtn3.clicked.connect(self.stop_show)
 		toolBtn1.clicked.connect(self.copy_result)
 		searchBtn4.clicked.connect(self.copy_result)
 		toolBtn2.clicked.connect(self.save_result)
@@ -370,6 +375,11 @@ class GUI(QWidget):
 		file = QFileDialog.getOpenFileName(self, '选择log文件', 'D://log//sCRTlog')
 		filename = file[0]
 		self.fileNameEdit.setText(filename)
+
+		# # 直接打开文件并显示，会卡，暂取消
+		# with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
+		# 	data = f.read()
+		# self.outEdit.setText(data)
 
 		# self.show_file(filename)  # 显示文件内容（没意义，暂取消）
 
@@ -452,10 +462,11 @@ class GUI(QWidget):
 
 	def show_lines(self):
 		'''
-		筛选框操作后，显示结果
+		筛选框操作后，处理并显示结果
 		此函数与三个QComboBox的activated事件绑定
 		'''
 		self.__stop_show = False  # 重置
+		self.toolBtn3.setEnabled(True)
 
 		# sender = self.sender() # 获取触发此函数的信号发送者
 
@@ -486,6 +497,8 @@ class GUI(QWidget):
 		# 逐行显示筛选结果
 		self.show_result_by_line(self.outEdit, self.resMatch)
 
+		self.toolBtn3.setEnabled(False)
+
 	def show_result_by_line(self, container, line_set):
 		'''
 		逐行显示
@@ -514,7 +527,7 @@ class GUI(QWidget):
 	def stop_show(self):
 		# 设置标识，停止show_lines操作
 		self.__stop_show = True
-		pass
+		self.toolBtn3.setEnabled(False)
 
 	def please_wait(self):
 		self.outEdit.setText('解析中，请等待...')
@@ -563,10 +576,22 @@ class GUI(QWidget):
 
 	def get_search_ptn(self):
 		'''
-		获得待搜索内容，可能需要格式处理
+		获得待搜索内容，可能需要格式处理，同时将搜索内容加入下拉框列表中（搜索历史）
 		:return:
 		'''
 		a = self.searchInput.currentText()  # 获取输入
+
+		# 搜索历史
+		try:
+			self.history.remove(a)
+		except Exception as e:
+			pass
+		self.history.append(a)
+
+		self.searchInput.clear()
+		for c in self.history:
+			self.searchInput.insertItem(0, c)  # 插入到下拉框列表
+
 		regex = self.regex.isChecked()  # 获取是否正则表达式
 		if not regex:
 			# 转换正则表达式中的特殊字符
@@ -593,6 +618,10 @@ class GUI(QWidget):
 		'''
 		line_set = self.resMatch  # 在筛选范围内搜索
 		search_ptn = self.get_search_ptn()
+
+		if len(line_set) == 0 or len(search_ptn) == 0:
+			return
+
 		self.resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
 
 		# 逐行显示查找结果
@@ -605,6 +634,10 @@ class GUI(QWidget):
 		'''
 		line_set = self.resMatch  # 在筛选范围内搜索
 		search_ptn = self.get_search_ptn()
+
+		if len(line_set) == 0 or len(search_ptn) == 0:
+			return
+
 		new_resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
 		self.resLine = self.resLine | new_resLine # 求搜索结果的并集
 
@@ -613,9 +646,13 @@ class GUI(QWidget):
 
 	def clr_search(self):
 		self.searchOutput.setText('')
+		self.show_status('已清空')
 
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	ex = GUI()
+	try:
+		ex = GUI()
+	except Exception as e:
+		print(e)
 	sys.exit(app.exec_())
