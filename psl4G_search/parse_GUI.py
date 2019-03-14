@@ -162,11 +162,12 @@ class Parser(object):
 			print('输入参数有误！')
 			return []
 
-	def search_log_lines(self, line_set, search_ptn):
+	def search_log_lines(self, line_set, search_ptn, mark = False):
 		'''
 		在指定的行号范围内搜索指定内容
 		:param line_set: 行号范围
 		:param search_ptn: 待搜索内容
+		:param mark: 是否添加格式（加粗）
 		:return: 包含搜索内容的行号集合
 		'''
 		search_res = set()
@@ -174,6 +175,19 @@ class Parser(object):
 			if re.search(search_ptn, self.log[line_no]) is not None:
 				# 符合搜索要求
 				search_res.add(line_no)
+
+				if mark:  # 添加格式（加粗），显示时会比较慢，暂不使用
+					search_iter = re.finditer(search_ptn, self.log[line_no])
+					pos = []
+					for i in search_iter:
+						pos.append((i.start(),i.end()))
+					pos.reverse()  # 插入时必须按逆序处理
+					for (s,e) in pos:
+						str_f = self.log[line_no][:s]
+						str_m = self.log[line_no][s:e]
+						str_r = self.log[line_no][e:]
+						str_new = str_f + '<b>' + str_m + '</b>' + str_r
+						self.log[line_no] = str_new
 		return search_res
 
 
@@ -287,18 +301,22 @@ class GUI(QWidget):
 		self.funCombo.setEnabled(False)
 
 		toolBtn1 = QPushButton('复制')
+		toolBtn1.setObjectName('copy_filt')
 		toolBtn2 = QPushButton('保存')
+		toolBtn2.setObjectName('save_filt')
 		self.statusLabel = QStatusBar()
-		self.statusLabel.showMessage('Ready')
+		# self.statusLabel.showMessage('Ready')
 		toolBox.addWidget(toolBtn1)
 		toolBox.addWidget(toolBtn2)
 		toolBox.addStretch()
 		mainBox.addWidget(self.statusLabel)
 
-		searchLabel = QLabel('搜索内容：')
+		searchLabel = QLabel('4.搜索内容：')
 		self.searchInput = QComboBox()
 		self.searchInput.setEditable(True)
 		self.searchInput.setSizeAdjustPolicy(1)
+		self.searchInput.setToolTip('Python正则表达式：\n^ 开始位置\n$ 结尾位置\n. 任意字符\n| 或\n\ 特殊字符\n'\
+		                            '[] 多种字符\n() 子表达式\n{} 匹配次数\n? 0 次或 1 次\n+ 至少 1次\n* 0次或任意次')
 		self.regex = QCheckBox('正则表达式')
 		self.searchOutput = QTextBrowser()  # 搜索结果输出框
 		searchInputBox.addWidget(searchLabel)
@@ -306,16 +324,22 @@ class GUI(QWidget):
 		searchInputBox.addWidget(self.regex)
 		searchResBox.addWidget(self.searchOutput)
 
-		# test rich text
-		self.searchOutput.setText("123<b>345</b>456")
-		self.searchOutput.setText('123<span style="background-color: red">345</span>456')
+		# # test rich text
+		# self.searchOutput.setText("123<b>345</b>456")
+		# self.searchOutput.setText('123<span style="background-color: red">345</span>456')
 
 		searchBtn1 = QPushButton('新建搜索')
-		searchBtn2 = QPushButton('合并搜索')
+		searchBtn2 = QPushButton('追加搜索')
 		searchBtn3 = QPushButton('清空')
+		searchBtn4 = QPushButton('复制')
+		searchBtn4.setObjectName('copy_search')
+		searchBtn5 = QPushButton('保存')
+		searchBtn5.setObjectName('save_search')
 		searchToolBox.addWidget(searchBtn1)
 		searchToolBox.addWidget(searchBtn2)
 		searchToolBox.addWidget(searchBtn3)
+		searchToolBox.addWidget(searchBtn4)
+		searchToolBox.addWidget(searchBtn5)
 		searchToolBox.addStretch()
 
 		self.setLayout(mainBox)
@@ -330,7 +354,9 @@ class GUI(QWidget):
 
 		toolBtn3.clicked.connect(self.stop_show)
 		toolBtn1.clicked.connect(self.copy_result)
+		searchBtn4.clicked.connect(self.copy_result)
 		toolBtn2.clicked.connect(self.save_result)
+		searchBtn5.clicked.connect(self.save_result)
 
 		searchBtn1.clicked.connect(self.new_search)
 		searchBtn2.clicked.connect(self.add_search)
@@ -345,7 +371,7 @@ class GUI(QWidget):
 		filename = file[0]
 		self.fileNameEdit.setText(filename)
 
-		# self.show_file(filename)  # 显示文件内容
+		# self.show_file(filename)  # 显示文件内容（没意义，暂取消）
 
 	def show_file(self, filename):
 		# 使用另一线程读取文件，发信号显示文件全部内容，结果会卡死
@@ -460,30 +486,6 @@ class GUI(QWidget):
 		# 逐行显示筛选结果
 		self.show_result_by_line(self.outEdit, self.resMatch)
 
-	# self.outEdit.clear()
-	# lines_num = 0
-	# for line_no in range(0, self.L.lines):
-	# 	# if selLevel != '全部' and line_no not in resLevel:  # 不满足等级筛选条件
-	# 	# 	continue
-	# 	# if selMod != '全部' and line_no not in resMod:  # 不满足模块筛选条件
-	# 	# 	continue
-	# 	# if selFun != '全部' and line_no not in resFun:  # 不满足功能筛选条件
-	# 	# 	continue
-	# 	if self.__stop_show == True:
-	# 		break
-	# 	if line_no not in self.resMatch: # 不满足筛选条件
-	# 		continue
-	# 	# i满足所有筛选条件
-	# 	self.outEdit.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
-	# 	self.outEdit.insertPlainText(self.L.log[line_no])
-	# 	lines_num = lines_num + 1 # 统计满足条件的log条数
-	# 	if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
-	# 		self.show_status('当前' + str(lines_num) + '条')
-	# 		QApplication.processEvents()
-	# self.show_status('共' + str(lines_num) + '条')
-	# if self.__stop_show == True:
-	# 	self.statusLabel.setText(self.statusLabel.text() + '\n（已停止）')
-
 	def show_result_by_line(self, container, line_set):
 		'''
 		逐行显示
@@ -500,14 +502,13 @@ class GUI(QWidget):
 				continue
 			# i满足所有筛选条件
 			container.moveCursor(QTextCursor.End)  # 使用insertPlainText需保证cursor在末尾
-			container.insertPlainText(self.L.log[line_no])
+			container.insertPlainText(self.L.log[line_no])  # 如果带格式，需使用insertHTML
 			lines_num = lines_num + 1  # 统计满足条件的log条数
 			if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
 				self.show_status('当前' + str(lines_num) + '条')
 				QApplication.processEvents()
 		self.show_status('共' + str(lines_num) + '条')
 		if self.__stop_show == True:
-			# self.statusLabel.showMessage(self.statusLabel.currentMessage() + '\n（已停止）')
 			self.show_status('\n（已停止）', True)
 
 	def stop_show(self):
@@ -528,16 +529,24 @@ class GUI(QWidget):
 		QApplication.processEvents()
 
 	def copy_result(self):
+		sender = self.sender()
 		clipboard = QApplication.clipboard()
-		clipboard.setText(self.outEdit.toPlainText())
+		if sender.objectName() == 'copy_filt':
+			clipboard.setText(self.outEdit.toPlainText())
+		elif sender.objectName() == 'copy_search':
+			clipboard.setText(self.searchOutput.toPlainText())
 		self.show_status('复制成功')
 
 	def save_result(self):
+		sender = self.sender()
 		file = QFileDialog.getSaveFileName(self, '保存log文件', '')
 		filename = file[0]
 		try:
 			with open(filename, 'w+') as f:
-				result = self.outEdit.toPlainText()
+				if sender.objectName() == 'save_filt':
+					result = self.outEdit.toPlainText()
+				elif sender.objectName() == 'save_search':
+					result = self.searchOutput.toPlainText()
 				f.write(result)
 			self.show_status('保存成功')
 		except Exception as e:
@@ -578,15 +587,29 @@ class GUI(QWidget):
 		return a
 
 	def new_search(self):
+		'''
+		新建搜索，并显示搜索结果（会按行号顺序显示）
+		:return:
+		'''
 		line_set = self.resMatch  # 在筛选范围内搜索
 		search_ptn = self.get_search_ptn()
-		resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
+		self.resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
 
 		# 逐行显示查找结果
-		self.show_result_by_line(self.searchOutput, resLine)
+		self.show_result_by_line(self.searchOutput, self.resLine)
 
 	def add_search(self):
-		pass
+		'''
+		在目前搜索结果的基础上，追加搜索，并显示搜索结果（会按行号顺序显示）
+		:return:
+		'''
+		line_set = self.resMatch  # 在筛选范围内搜索
+		search_ptn = self.get_search_ptn()
+		new_resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
+		self.resLine = self.resLine | new_resLine # 求搜索结果的并集
+
+		# 逐行显示查找结果
+		self.show_result_by_line(self.searchOutput, self.resLine)
 
 	def clr_search(self):
 		self.searchOutput.setText('')
