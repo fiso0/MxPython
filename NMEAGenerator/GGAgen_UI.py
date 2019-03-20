@@ -3,6 +3,8 @@
 
 import sys
 from PyQt5.QtWidgets import *
+import time
+from PyQt5.QtCore import QTimer
 
 INIT_DATA = '$GNGGA,063203.000,3029.284071,N,11433.425580,E,4,18,0.85,76.747,M,0,M,2,3689*50'
 
@@ -19,6 +21,8 @@ class Example(QWidget):
 
 		self.check = QCheckBox('位置有效')
 		self.check.setChecked(True)
+
+		self.autoTime = QCheckBox('自动时间')
 
 		lb0 = QLabel('talker')
 		lb1 = QLabel('UTC')
@@ -57,20 +61,30 @@ class Example(QWidget):
 
 		lb_res = QLabel('GGA生成结果：')
 		self.res = QLineEdit()
+		copy = QPushButton('复制')
 
 		# add widgets
 		grid.addWidget(self.check, 0, 0)
+		grid.addWidget(self.autoTime, 0, 1)
 		for i in range(0, self.N):  # i: 0~14
 			grid.addWidget(eval('lb' + str(i)), 1, i)
 			grid.addWidget(eval('self.text' + str(i)), 2, i)
 		grid.addWidget(lb_res, 3, 0)
-		grid.addWidget(self.res, 3, 1, 1, self.N-1)
+		grid.addWidget(self.res, 3, 1, 1, self.N-3)
+		grid.addWidget(copy, 3, self.N-2, 1, 2)
+
+		# change width
+		self.text2.setMinimumWidth(85)  # lat
+		self.text4.setMinimumWidth(85)  # lon
 
 		# connect
 		self.check.stateChanged.connect(self.invalid)
 		for i in range(0, self.N-2):
 			eval('self.text' + str(i)).textChanged.connect(self.gen)
 			self.text1.text()
+
+		self.autoTime.stateChanged.connect(self.autoTimeChanged)
+		copy.clicked.connect(self.copyRes)
 
 		self.setLayout(grid)
 		self.setWindowTitle('生成GGA')
@@ -122,6 +136,22 @@ class Example(QWidget):
 		else:
 			self.init_data()
 
+	def autoTimeChanged(self):
+		if self.autoTime.checkState():
+			self.text1.setEnabled(False)
+			self.timer = QTimer()
+			self.timer.timeout.connect(self.updateTime)
+			self.timer.start(1000)
+		else:
+			self.timer.stop()
+
+	def updateTime(self):
+		time_str = time.strftime("%H%M%S.00", time.gmtime())
+		self.text1.setText(time_str)
+
+	def copyRes(self):
+		clipboard = QApplication.clipboard()
+		clipboard.setText(self.res.text())
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
