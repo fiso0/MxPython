@@ -194,7 +194,7 @@ class Parser(object):
 import sys
 from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, \
 	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser, QMessageBox, QStatusBar, \
-	QCheckBox, QListWidget, QDesktopWidget, QScrollBar
+	QCheckBox, QListWidget, QDesktopWidget, QScrollBar, QMenu
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QTextCursor
 import time
@@ -237,47 +237,23 @@ class OpenFileThread(QThread):
 class GUI(QWidget):
 	def __init__(self):
 		super().__init__()
-		self.initUI()
+		self.ui_init()
 		self.__stop_show = False
 		self.L = None  # 解析器对象
 		self.filterRes = set()  # 筛选结果
 		self.searchRes = set()  # 搜索结果
 		self.searchHistory = []  # 搜索历史
 		self.context_lines = []  # 上下文显示结果
-
-	def initUI(self):
-		mainBox = QVBoxLayout()
-		fileBox = QHBoxLayout()
-		menuBox = QHBoxLayout()
-		resBox = QHBoxLayout()
-		self.contextOut = QListWidget()  # 上下文内容显示框
-		self.filterResOut = QListWidget()  # 筛选结果输出框
-		# self.filterResOut.setContextMenuPolicy(Qt.DefaultContextMenu)
 		self.filterResInvalid = True  # 当前筛选结果是否为全部
 
-		toolBox = QVBoxLayout()
-		searchBox = QHBoxLayout()
-		searchResBox = QVBoxLayout()
-		searchInputBox = QHBoxLayout()
-		searchToolBox = QVBoxLayout()
+	def ui_init(self):
+		self.contextOut = QListWidget()  # 上下文内容显示框
+		self.filterResOut = QListWidget()  # 筛选结果输出框
+		self.searchResOut = QListWidget()  # 搜索结果输出框
 
-		mainBox.addLayout(fileBox)
-		mainBox.addWidget(self.contextOut)
-		mainBox.addLayout(menuBox)
-		mainBox.addLayout(resBox)
-		mainBox.addLayout(searchBox)
-		resBox.addWidget(self.filterResOut)
-		resBox.addLayout(toolBox)
-		searchBox.addLayout(searchResBox)
-		searchResBox.addLayout(searchInputBox)
-		searchBox.addLayout(searchToolBox)
-
-		openFileBtn = QPushButton('1.选择文件')
 		self.fileNameEdit = QLineEdit()
+		openFileBtn = QPushButton('1.选择文件')
 		parseFileBtn = QPushButton('2.开始解析')
-		fileBox.addWidget(openFileBtn)
-		fileBox.addWidget(self.fileNameEdit)
-		fileBox.addWidget(parseFileBtn)
 
 		label1 = QLabel('3.筛选：')
 		levelLabel = QLabel('log级别')
@@ -289,21 +265,10 @@ class GUI(QWidget):
 		funLabel = QLabel('功能')
 		self.funCombo = QComboBox()
 		self.funCombo.setMinimumWidth(100)
-		menuBox.addWidget(label1)
-		menuBox.addWidget(levelLabel)
-		menuBox.addWidget(self.levelCombo)
-		menuBox.addSpacing(15)
-		menuBox.addWidget(modLabel)
-		menuBox.addWidget(self.modCombo)
-		menuBox.addSpacing(15)
-		menuBox.addWidget(funLabel)
-		menuBox.addWidget(self.funCombo)
-		menuBox.addStretch()
 		self.toolBtn3 = QPushButton('停止筛选')
 		self.toolBtn3.setEnabled(False)
-		menuBox.addWidget(self.toolBtn3)
 
-		# tip
+		# 初始状态
 		self.levelCombo.addItem('请先解析')
 		self.modCombo.addItem('请先解析')
 		self.funCombo.addItem('请先解析')
@@ -316,11 +281,6 @@ class GUI(QWidget):
 		toolBtn2 = QPushButton('保存')
 		toolBtn2.setObjectName('save_filt')
 		self.statusLabel = QStatusBar()
-		# self.statusLabel.showMessage('Ready')
-		toolBox.addWidget(toolBtn1)
-		toolBox.addWidget(toolBtn2)
-		toolBox.addStretch()
-		mainBox.addWidget(self.statusLabel)
 
 		searchLabel = QLabel('4.搜索内容：')
 		self.searchInput = QComboBox()
@@ -330,15 +290,6 @@ class GUI(QWidget):
 		self.searchInput.setToolTip('Python正则表达式：\n^ 开始位置\n$ 结尾位置\n. 任意字符\n| 或\n\ 特殊字符\n'\
 		                            '[] 多种字符\n() 子表达式\n{} 匹配次数\n? 0 次或 1 次\n+ 至少 1次\n* 0次或任意次')
 		self.regex = QCheckBox('正则表达式')
-		self.searchResOut = QListWidget()  # 搜索结果输出框
-		searchInputBox.addWidget(searchLabel)
-		searchInputBox.addWidget(self.searchInput, 1)  # 使用stretch参数修改控件大小，填满空间
-		searchInputBox.addWidget(self.regex)
-		searchResBox.addWidget(self.searchResOut)
-
-		# # test rich text
-		# self.searchOutput.setText("123<b>345</b>456")
-		# self.searchOutput.setText('123<span style="background-color: red">345</span>456')
 
 		searchBtn1 = QPushButton('新建搜索')
 		searchBtn2 = QPushButton('追加搜索')
@@ -347,14 +298,6 @@ class GUI(QWidget):
 		searchBtn4.setObjectName('copy_search')
 		searchBtn5 = QPushButton('保存')
 		searchBtn5.setObjectName('save_search')
-		searchToolBox.addWidget(searchBtn1)
-		searchToolBox.addWidget(searchBtn2)
-		searchToolBox.addWidget(searchBtn3)
-		searchToolBox.addWidget(searchBtn4)
-		searchToolBox.addWidget(searchBtn5)
-		searchToolBox.addStretch()
-
-		self.setLayout(mainBox)
 
 		# 按钮连接到槽
 		openFileBtn.clicked.connect(self.open_file)
@@ -377,6 +320,79 @@ class GUI(QWidget):
 		self.filterResOut.itemClicked.connect(self.filter_item_clicked)  # 选中某条筛选结果时显示上下文
 		self.contextOut.itemClicked.connect(self.context_item_clicked)  # 选中某条上下文时刷新显示上下文
 		self.searchResOut.itemClicked.connect(self.search_item_clicked)  # 选中某条搜索结果时显示上下文
+
+		# ListWidget右键菜单
+		self.filterResOut.setContextMenuPolicy(Qt.CustomContextMenu)
+		self.filterResOut.customContextMenuRequested.connect(self.right_click_menu)
+		self.contextOut.setContextMenuPolicy(Qt.CustomContextMenu)
+		self.contextOut.customContextMenuRequested.connect(self.right_click_menu)
+		self.searchResOut.setContextMenuPolicy(Qt.CustomContextMenu)
+		self.searchResOut.customContextMenuRequested.connect(self.right_click_menu)
+
+		# ListWidget选择模式
+		self.filterResOut.setSelectionMode(3)
+		self.contextOut.setSelectionMode(3)
+		self.searchResOut.setSelectionMode(3)
+
+		# 布局
+		mainBox = QVBoxLayout()
+		resBox = QHBoxLayout()
+		fileBox = QHBoxLayout()
+		menuBox = QHBoxLayout()
+		toolBox = QVBoxLayout()
+		searchBox = QHBoxLayout()
+		searchResBox = QVBoxLayout()
+		searchInputBox = QHBoxLayout()
+		searchToolBox = QVBoxLayout()
+
+		mainBox.addLayout(fileBox)
+		mainBox.addWidget(self.contextOut)
+		mainBox.addLayout(menuBox)
+		mainBox.addLayout(resBox)
+		mainBox.addLayout(searchBox)
+		mainBox.addWidget(self.statusLabel)
+
+		resBox.addWidget(self.filterResOut)
+		resBox.addLayout(toolBox)
+
+		fileBox.addWidget(openFileBtn)
+		fileBox.addWidget(self.fileNameEdit)
+		fileBox.addWidget(parseFileBtn)
+
+		menuBox.addWidget(label1)
+		menuBox.addWidget(levelLabel)
+		menuBox.addWidget(self.levelCombo)
+		menuBox.addSpacing(15)
+		menuBox.addWidget(modLabel)
+		menuBox.addWidget(self.modCombo)
+		menuBox.addSpacing(15)
+		menuBox.addWidget(funLabel)
+		menuBox.addWidget(self.funCombo)
+		menuBox.addStretch()
+		menuBox.addWidget(self.toolBtn3)
+
+		toolBox.addWidget(toolBtn1)
+		toolBox.addWidget(toolBtn2)
+		toolBox.addStretch()
+
+		searchBox.addLayout(searchResBox)
+		searchBox.addLayout(searchToolBox)
+
+		searchResBox.addLayout(searchInputBox)
+		searchResBox.addWidget(self.searchResOut)
+
+		searchInputBox.addWidget(searchLabel)
+		searchInputBox.addWidget(self.searchInput, 1)  # 使用stretch参数修改控件大小，填满空间
+		searchInputBox.addWidget(self.regex)
+
+		searchToolBox.addWidget(searchBtn1)
+		searchToolBox.addWidget(searchBtn2)
+		searchToolBox.addWidget(searchBtn3)
+		searchToolBox.addWidget(searchBtn4)
+		searchToolBox.addWidget(searchBtn5)
+		searchToolBox.addStretch()
+
+		self.setLayout(mainBox)
 
 		self.setGeometry(50, 50, 700, 800)
 		self.setWindowTitle('log解析工具')
@@ -482,7 +498,6 @@ class GUI(QWidget):
 			print_log += (func_name + ': ' + str(len(log_funcs.get(func_name, []))) + '\n')
 		self.parse_result = print_log  # 保存解析结果
 		self.show_filter_result(print_log)
-		self.filterResOut.addScrollBarWidget(QScrollBar(), Qt.AlignRight)
 
 	def filter_activated(self):
 		'''
@@ -590,9 +605,13 @@ class GUI(QWidget):
 			self.statusLabel.showMessage(status)
 		QApplication.processEvents()
 
+	def copy(self, data):
+		clipboard = QApplication.clipboard()
+		clipboard.setText(data)
+		self.show_status('复制成功')
+
 	def copy_result(self):
 		sender = self.sender()
-		clipboard = QApplication.clipboard()
 		text = ''
 		if sender.objectName() == 'copy_filt':
 			# clipboard.setText(self.filterResOut.toPlainText())
@@ -602,8 +621,7 @@ class GUI(QWidget):
 			# clipboard.setText(self.searchResOut.toPlainText())
 			for i in range(0, self.searchResOut.count()):
 				text += self.searchResOut.item(i).text() + '\n'
-		clipboard.setText(text)
-		self.show_status('复制成功')
+		self.copy(text)
 
 	def save_result(self):
 		sender = self.sender()
@@ -743,6 +761,14 @@ class GUI(QWidget):
 		# 逐行显示上下文内容
 		self.show_lines(self.contextOut, self.context_lines)
 		self.contextOut.setCurrentRow(row)  # 选中对应行
+
+	def right_click_menu(self, pos):
+		menu = QMenu()
+		opt_copy = menu.addAction('复制')
+		action = menu.exec_(self.sender().mapToGlobal(pos))
+		if action == opt_copy:
+			text = self.sender().itemAt(pos).text()
+			self.copy(text)
 
 
 if __name__ == '__main__':
