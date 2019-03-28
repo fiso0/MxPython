@@ -162,7 +162,7 @@ class Parser(object):
 			print('输入参数有误！')
 			return []
 
-	def search_log_lines(self, line_set, search_ptn, mark = False):
+	def search_log_lines(self, line_set, search_ptn, mark=False):
 		'''
 		在指定的行号范围内搜索指定内容
 		:param line_set: 行号范围
@@ -180,9 +180,9 @@ class Parser(object):
 					search_iter = re.finditer(search_ptn, self.log[line_no])
 					pos = []
 					for i in search_iter:
-						pos.append((i.start(),i.end()))
+						pos.append((i.start(), i.end()))
 					pos.reverse()  # 插入时必须按逆序处理
-					for (s,e) in pos:
+					for (s, e) in pos:
 						str_f = self.log[line_no][:s]
 						str_m = self.log[line_no][s:e]
 						str_r = self.log[line_no][e:]
@@ -192,11 +192,9 @@ class Parser(object):
 
 
 import sys
-from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QButtonGroup, QRadioButton, \
-	QComboBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout, QTextBrowser, QMessageBox, QStatusBar, \
-	QCheckBox, QListWidget, QDesktopWidget, QScrollBar, QMenu
+from PyQt5.QtWidgets import QWidget, QFileDialog, QLineEdit, QApplication, QPushButton, QComboBox, QLabel, QVBoxLayout, \
+	QHBoxLayout, QMessageBox, QStatusBar, QCheckBox, QListWidget, QMenu, QDockWidget
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
-from PyQt5.QtGui import QTextCursor
 import time
 import threading
 
@@ -251,6 +249,14 @@ class GUI(QWidget):
 		self.filterResOut = QListWidget()  # 筛选结果输出框
 		self.searchResOut = QListWidget()  # 搜索结果输出框
 
+		# 创建可停靠的窗口
+		self.dock = QDockWidget("上下文log（只显示选中log的前后10条）", self)
+		self.dock.setWidget(self.contextOut)
+		self.dock.setFloating(True)  # 将可停靠窗口置于浮动状态
+		self.dock.setFeatures(QDockWidget.DockWidgetFloatable)  # 改为只允许float，不允许关闭、移动
+		self.dock.resize(700,300)
+		self.dock.setVisible(False)  # 默认不可见
+
 		self.fileNameEdit = QLineEdit()
 		openFileBtn = QPushButton('1.选择文件')
 		parseFileBtn = QPushButton('2.开始解析')
@@ -287,7 +293,7 @@ class GUI(QWidget):
 		self.searchInput.setEditable(True)
 		self.searchInput.setInsertPolicy(QComboBox.NoInsert)  # 回车时不自动插入，由按键处理
 		self.searchInput.setSizeAdjustPolicy(1)
-		self.searchInput.setToolTip('Python正则表达式：\n^ 开始位置\n$ 结尾位置\n. 任意字符\n| 或\n\ 特殊字符\n'\
+		self.searchInput.setToolTip('Python正则表达式：\n^ 开始位置\n$ 结尾位置\n. 任意字符\n| 或\n\ 特殊字符\n' \
 		                            '[] 多种字符\n() 子表达式\n{} 匹配次数\n? 0 次或 1 次\n+ 至少 1次\n* 0次或任意次')
 		self.regex = QCheckBox('正则表达式')
 
@@ -346,10 +352,10 @@ class GUI(QWidget):
 		searchToolBox = QVBoxLayout()
 
 		mainBox.addLayout(fileBox)
-		mainBox.addWidget(self.contextOut)
 		mainBox.addLayout(menuBox)
 		mainBox.addLayout(resBox)
 		mainBox.addLayout(searchBox)
+		mainBox.addWidget(self.dock)
 		mainBox.addWidget(self.statusLabel)
 
 		resBox.addWidget(self.filterResOut)
@@ -403,13 +409,13 @@ class GUI(QWidget):
 		filename = file[0]
 		self.fileNameEdit.setText(filename)
 
-		# # 直接打开文件并显示，会卡，暂取消
-		# with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
-		# 	data = f.read()
-		# self.outEdit.setText(data)
+	# # 直接打开文件并显示，会卡，暂取消
+	# with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
+	# 	data = f.read()
+	# self.outEdit.setText(data)
 
-		# # 显示文件内容（没意义，暂取消）
-		# self.show_file(filename)
+	# # 显示文件内容（没意义，暂取消）
+	# self.show_file(filename)
 
 	def show_file(self, filename):
 		"""
@@ -455,7 +461,7 @@ class GUI(QWidget):
 			if line_no % 1000 == 0 or line_no == self.L.lines - 1:  # 每1000行和最后一行执行一次刷新，可大大加快解析速度！
 				# self.filterResOut.addItem('解析中，请等待...(' + str(line_no) + '/' + str(self.L.lines) + ')')
 				self.show_filter_result('解析中，请等待...(' + str(line_no) + '/' + str(self.L.lines) + ')')
-				# QApplication.processEvents()
+			# QApplication.processEvents()
 
 		end = time.time()  # 计时结束
 
@@ -632,7 +638,7 @@ class GUI(QWidget):
 				if sender.objectName() == 'save_filt':
 					# result = self.filterResOut.toPlainText()
 					text = ''
-					for i in range(0, self.filterResOut.count()+1):
+					for i in range(0, self.filterResOut.count() + 1):
 						text += self.filterResOut.item(i).text()
 					result = text
 				elif sender.objectName() == 'save_search':
@@ -655,16 +661,17 @@ class GUI(QWidget):
 			self.searchHistory.remove(a)
 		except Exception as e:
 			pass
-		self.searchHistory.append(a)
+		self.searchHistory.append(a)  # 最新的搜索内容在列表最后
 
 		self.searchInput.clear()
 		for c in self.searchHistory:
 			self.searchInput.insertItem(0, c)  # 插入到下拉框列表
+		self.searchInput.setCurrentIndex(0)  # 设置当前项为最新的搜索内容
 
 		regex = self.regex.isChecked()  # 获取是否正则表达式
 		if not regex:
 			# 转换正则表达式中的特殊字符
-			a = a.replace('\\', '\\\\') # 放最前面
+			a = a.replace('\\', '\\\\')  # 放最前面
 			a = a.replace('^', '\^')
 			a = a.replace('$', '\$')
 			a = a.replace('.', '\.')
@@ -708,7 +715,7 @@ class GUI(QWidget):
 			return
 
 		new_resLine = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
-		self.searchRes = self.searchRes | new_resLine # 求搜索结果的并集
+		self.searchRes = self.searchRes | new_resLine  # 求搜索结果的并集
 
 		# 逐行显示查找结果
 		self.show_lines(self.searchResOut, self.searchRes)
@@ -730,13 +737,13 @@ class GUI(QWidget):
 		row = self.filterResOut.row(item)
 		lines_list = sorted(list(self.filterRes))
 		line = lines_list[row]  # 当前选中的log行号
-		self.show_context_lines(line, 10)  # 显示上下各10行内容
+		self.show_context_lines(line)  # 显示上下文内容
 
 	def search_item_clicked(self, item):
 		row = self.searchResOut.row(item)
 		lines_list = sorted(list(self.searchRes))
 		line = lines_list[row]  # 当前选中的log行号
-		self.show_context_lines(line, 10)  # 显示上下各10行内容
+		self.show_context_lines(line)  # 显示上下文内容
 
 	def context_item_clicked(self, item):
 		"""
@@ -746,21 +753,24 @@ class GUI(QWidget):
 		"""
 		row = self.contextOut.row(item)
 		line = self.context_lines[row]  # 当前选中的log行号
-		self.show_context_lines(line, 10)  # 显示上下各10行内容
+		self.show_context_lines(line)  # 显示上下文内容
 
-	def show_context_lines(self, log_line, lines):
+	def show_context_lines(self, log_line, lines=10):
 		"""
 		显示某一行的上下文内容
 		:param log_line: 要显示上下文的某一行的行号
-		:param lines: 显示上下各多少行
+		:param lines: 显示上下各多少行，默认10
 		:return:
 		"""
-		self.context_lines = list(range((log_line - lines) if (log_line > lines) else 0, (log_line + lines) if (log_line + lines < self.L.lines) else self.L.lines))
+		self.context_lines = list(range((log_line - lines) if (log_line > lines) else 0,
+		                                (log_line + lines) if (log_line + lines < self.L.lines) else self.L.lines))
 		row = self.context_lines.index(log_line)
 
 		# 逐行显示上下文内容
 		self.show_lines(self.contextOut, self.context_lines)
 		self.contextOut.setCurrentRow(row)  # 选中对应行
+
+		self.dock.setVisible(True)
 
 	def right_click_menu(self, pos):
 		menu = QMenu()
