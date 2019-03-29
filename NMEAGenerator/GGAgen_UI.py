@@ -120,6 +120,10 @@ class Example(QWidget):
 		return res
 
 	def checksum(self,data):
+		"""
+		:param data: content after $, before *
+		:return:
+		"""
 		CS = 0
 		for a in data:
 			CS ^= ord(a)
