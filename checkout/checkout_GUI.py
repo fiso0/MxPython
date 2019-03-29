@@ -61,9 +61,11 @@ class Example(QWidget):
 		self.length.addItems(['1','2','4'])
 
 		btn1 = QPushButton('和校验 >>')
+		btn1.setToolTip('不带进位')
 		btn2 = QPushButton('异或校验 >>')
 		btn3 = QPushButton('CRC校验 >>')
-		btn4 = QPushButton('预留')
+		btn3.setToolTip('目前只支持16位CRC校验，校验长度请选择2')
+		btn4 = QPushButton('进位和校验 >>')
 		btn5 = QPushButton('预留')
 		btn6 = QPushButton('预留')
 		btn_clr = QPushButton('清空')
@@ -92,9 +94,9 @@ class Example(QWidget):
 		rightVBox.addWidget(self.length)
 		rightVBox.addStretch()
 		rightVBox.addWidget(btn1)
+		rightVBox.addWidget(btn4)
 		rightVBox.addWidget(btn2)
 		rightVBox.addWidget(btn3)
-		# rightVBox.addWidget(btn4)
 		# rightVBox.addWidget(btn5)
 		# rightVBox.addWidget(btn6)
 		rightVBox.addStretch()
@@ -191,7 +193,7 @@ class Example(QWidget):
 			except Exception as e:
 				self.text2.setPlainText(e)
 
-	def button4Clicked(self):  # 预留
+	def button4Clicked(self):  # 进位和校验
 		pass
 
 	def button5Clicked(self):  # 预留
@@ -207,7 +209,6 @@ class Example(QWidget):
 	def copyButton1Clicked(self):
 		clipboard = QApplication.clipboard()
 		clipboard.setText(self.text1.toPlainText())
-		pass
 
 	def u2c(self, data_str):
 		'''
