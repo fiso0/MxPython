@@ -777,7 +777,10 @@ class GUI(QWidget):
 		opt_copy = menu.addAction('复制')
 		action = menu.exec_(self.sender().mapToGlobal(pos))
 		if action == opt_copy:
-			text = self.sender().itemAt(pos).text()
+			# text = self.sender().itemAt(pos).text()
+			text = ''
+			for a in self.sender().selectedItems():
+				text += a.text() + '\n'
 			self.copy(text)
 
 
