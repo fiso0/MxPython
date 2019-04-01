@@ -592,7 +592,8 @@ class GUI(QWidget):
 			if lines_num % 100 == 0 or line_no == self.L.lines - 1:  # 每100行和最后一行执行一次刷新，可大大加快解析速度！
 				self.show_status('当前' + str(lines_num) + '条')
 				QApplication.processEvents()
-		self.show_status('共' + str(lines_num) + '条')
+		if container is not self.contextOut:
+			self.show_status('共' + str(lines_num) + '条')
 		if self.__stop_show == True:
 			self.show_status('\n（已停止）', True)
 
