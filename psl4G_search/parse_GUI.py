@@ -805,8 +805,8 @@ class GUI(QWidget):
 
 
 if __name__ == '__main__':
-	app = QApplication(sys.argv)
 	try:
+		app = QApplication(sys.argv)
 		ex = GUI()
 	except Exception as e:
 		print(e)
