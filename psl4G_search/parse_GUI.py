@@ -293,12 +293,13 @@ class GUI(QWidget):
 		self.searchInput.setEditable(True)
 		self.searchInput.setInsertPolicy(QComboBox.NoInsert)  # 回车时不自动插入，由按键处理
 		self.searchInput.setSizeAdjustPolicy(1)
-		self.searchInput.setToolTip('Python正则表达式：\n^ 开始位置\n$ 结尾位置\n. 任意字符\n| 或\n\ 特殊字符\n' \
-		                            '[] 多种字符\n() 子表达式\n{} 匹配次数\n? 0 次或 1 次\n+ 至少 1次\n* 0次或任意次')
 		self.regex = QCheckBox('正则表达式')
+		self.regex.setToolTip('Python正则表达式：\n^ 开始位置\n$ 结尾位置\n. 任意字符\n| 或\n\ 特殊字符\n' \
+		                            '[] 多种字符\n() 子表达式\n{} 匹配次数\n? 0 次或 1 次\n+ 至少 1次\n* 0次或任意次')
 
 		searchBtn1 = QPushButton('新建搜索')
 		searchBtn2 = QPushButton('追加搜索')
+		searchBtn6 = QPushButton('结果中搜索')
 		searchBtn3 = QPushButton('清空')
 		searchBtn4 = QPushButton('复制')
 		searchBtn4.setObjectName('copy_search')
@@ -321,6 +322,7 @@ class GUI(QWidget):
 
 		searchBtn1.clicked.connect(self.new_search)
 		searchBtn2.clicked.connect(self.add_search)
+		searchBtn6.clicked.connect(self.more_search)
 		searchBtn3.clicked.connect(self.clr_search)
 
 		self.filterResOut.itemClicked.connect(self.filter_item_clicked)  # 选中某条筛选结果时显示上下文
@@ -393,6 +395,7 @@ class GUI(QWidget):
 
 		searchToolBox.addWidget(searchBtn1)
 		searchToolBox.addWidget(searchBtn2)
+		searchToolBox.addWidget(searchBtn6)
 		searchToolBox.addWidget(searchBtn3)
 		searchToolBox.addWidget(searchBtn4)
 		searchToolBox.addWidget(searchBtn5)
@@ -720,8 +723,24 @@ class GUI(QWidget):
 		# 逐行显示查找结果
 		self.show_lines(self.searchResOut, self.searchRes)
 
+	def more_search(self):
+		'''
+		在当前搜索结果中搜索
+		:return:
+		'''
+		line_set = self.searchRes  # 在搜索结果范围内搜索
+		search_ptn = self.get_search_ptn()
+
+		if len(line_set) == 0 or len(search_ptn) == 0:
+			return
+
+		self.searchRes = self.L.search_log_lines(line_set, search_ptn)  # 在line_set范围内搜索包含search_ptn内容的行
+
+		# 逐行显示查找结果
+		self.show_lines(self.searchResOut, self.searchRes)
+
 	def clr_search(self):
-		self.searchResOut.setText('')
+		self.searchResOut.clear()
 		self.show_status('已清空')
 		self.searchRes = set()
 
