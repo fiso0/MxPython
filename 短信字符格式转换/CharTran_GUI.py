@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QCheckBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QApplication, QLineEdit, QPushButton, QCheckBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 
 EXAMPLE_1 = '''0x5C 0xA 0x65 0x6C 0x76 0x84 0x5B 0xA2 0x62 0x37 0xFF 0xC 0x60 0xA8 0x59 0x7D 0xFF 0x1 0x62 0x63 0x96 0x64 0x60 0xA8 0x5D 0xF2 0x4E 0xA7 0x75 0x1F 0x76 0x84 0x6D 0x88 0x8D 0x39 0xFF 0x8 0x0 0x30 0x0 0x2E 0x0 0x35 0x0 0x39 0x51 0x43 0xFF 0xC 0x51 0x76 0x4E 0x2D 0x67 0x2C 0x67 0x8 0x6D 0x88 0x8D 0x39 0x0 0x30 0x0 0x2E 0x0 0x35 0x0 0x39 0x51 0x43 0x30 0x1 0x4E 0xA 0x67 0x8 0x53 0xCA 0x4E 0xE5 0x52 0x4D 0x76 0x84 0x53 0x86 0x53 0xF2 0x6D 0x88 0x8D 0x39 0x0 0x30 0x0 0x2E 0x0 0x30 0x0 0x30 0x51 0x43 0xFF 0x9 0x54 0xE 0xFF 0xC 0x60 0xA8 0x5F 0x53 0x52 0x4D 0x4F 0x59 0x98 0x9D 0x0 0x34 0x0 0x34 0x0 0x2E 0x0 0x35 0x0 0x31 0x51 0x43 0x30 0x2'''
@@ -40,6 +40,18 @@ class Example(QWidget):
 		self.btn6 = QPushButton('去掉所有空字符 >>')
 		self.btn_clr = QPushButton('清空')
 
+		box1 = QHBoxLayout()
+		lab1 = QLabel('每')
+		self.selNum = QLineEdit('48')
+		self.selNum.setFixedWidth(20)
+		lab2 = QLabel('字符')
+		self.btn7 = QPushButton('换行 >>')
+		self.btn7.setFixedWidth(55)
+		box1.addWidget(lab1)
+		box1.addWidget(self.selNum)
+		box1.addWidget(lab2)
+		box1.addWidget(self.btn7)
+
 		leftGrid = QGridLayout()
 		leftGrid.setSpacing(10)
 		leftGrid.addWidget(self.label1, 1, 0)
@@ -57,11 +69,12 @@ class Example(QWidget):
 		rightVBox.addWidget(self.btn3)
 		rightVBox.addWidget(self.btn5)
 		rightVBox.addWidget(self.btn6)
+		rightVBox.addLayout(box1)
 		rightVBox.addStretch()
 		rightVBox.addWidget(self.btn_clr)
 
 		mainBox = QHBoxLayout()
-		mainBox.addLayout(leftGrid)
+		mainBox.addLayout(leftGrid, stretch=1)
 		mainBox.addLayout(rightVBox)
 
 		self.setLayout(mainBox)
@@ -73,6 +86,7 @@ class Example(QWidget):
 		self.btn3.clicked.connect(self.button3Clicked)
 		self.btn5.clicked.connect(self.button5Clicked)
 		self.btn6.clicked.connect(self.button6Clicked)
+		self.btn7.clicked.connect(self.button7Clicked)
 		self.btn_clr.clicked.connect(self.buttonClrClicked)
 
 		self.setGeometry(200, 300, 600, 350)
@@ -157,6 +171,17 @@ class Example(QWidget):
 		if (string_origin is not ""):
 			try:
 				string_result = self.removeBlank(string_origin)
+				self.set_output(string_result)
+			except:
+				self.set_output('ERROR!')
+		else:
+			pass
+
+	def button7Clicked(self):  # 换行
+		string_origin = self.get_input()
+		if (string_origin is not ""):
+			try:
+				string_result = self.addReturn(string_origin, int(self.selNum.text()))
 				self.set_output(string_result)
 			except:
 				self.set_output('ERROR!')
@@ -251,6 +276,11 @@ class Example(QWidget):
 	def removeBlank(self, message):
 		# 去掉所有空字符（空格、换行）
 		return ''.join(message.split())
+
+	def addReturn(self, message, num):
+		# 每num个字符添加换行
+		chrstr = [message[i:(i + num)] for i in range(0, len(message), num)]
+		return '\r\n'.join(chrstr)
 
 
 if __name__ == '__main__':
