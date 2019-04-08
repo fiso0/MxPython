@@ -38,7 +38,10 @@ class Example(QWidget):
 		self.btn3 = QPushButton('每2个字符加空格 >>')
 		self.btn5 = QPushButton('HEX386格式处理 >>')
 		self.btn6 = QPushButton('去掉所有空字符 >>')
+		self.btn_cpy = QPushButton('复制')
 		self.btn_clr = QPushButton('清空')
+
+		self.btn5.setToolTip('去掉第一行和最后两行\n去掉开头9个字符和最后2个字符')
 
 		box1 = QHBoxLayout()
 		lab1 = QLabel('每')
@@ -71,6 +74,7 @@ class Example(QWidget):
 		rightVBox.addWidget(self.btn6)
 		rightVBox.addLayout(box1)
 		rightVBox.addStretch()
+		rightVBox.addWidget(self.btn_cpy)
 		rightVBox.addWidget(self.btn_clr)
 
 		mainBox = QHBoxLayout()
@@ -87,10 +91,11 @@ class Example(QWidget):
 		self.btn5.clicked.connect(self.button5Clicked)
 		self.btn6.clicked.connect(self.button6Clicked)
 		self.btn7.clicked.connect(self.button7Clicked)
+		self.btn_cpy.clicked.connect(self.buttonCpyClicked)
 		self.btn_clr.clicked.connect(self.buttonClrClicked)
 
 		self.setGeometry(200, 300, 600, 350)
-		self.setWindowTitle('字符转换')
+		self.setWindowTitle('字符处理')
 		self.show()
 
 	def get_input(self):
@@ -188,6 +193,10 @@ class Example(QWidget):
 		else:
 			pass
 
+	def buttonCpyClicked(self):
+		clipboard = QApplication.clipboard()
+		clipboard.setText(self.text2.toPlainText())
+
 	def buttonClrClicked(self):
 		self.text1.setPlainText("")
 		self.text2.setPlainText("")
@@ -265,12 +274,13 @@ class Example(QWidget):
 		# 每行格式为:LLAAAARRDD...DDDDCC，去掉开头9个字符和最后2个字符
 		result = []
 		data = data_str.split('\n')
-		for i in data[1:-2]:  # 去掉第一行和最后两行
-			try:
-				a = i[9:-2]  # 去掉开头9个字符和最后2个字符
-				result.append(a)
-			except Exception as e:
-				print(e)
+		result = [i[9:-2] for i in data[1:-2]]
+		# for i in data[1:-2]:  # 去掉第一行和最后两行
+		# 	try:
+		# 		a = i[9:-2]  # 去掉开头9个字符和最后2个字符
+		# 		result.append(a)
+		# 	except Exception as e:
+		# 		print(e)
 		return result
 
 	def removeBlank(self, message):
