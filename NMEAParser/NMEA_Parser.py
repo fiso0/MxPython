@@ -59,13 +59,13 @@ class Example(QWidget):
 		self.show()
 
 	def initSize(self):
-		size = self.sizeHint()  # height: 93
+		size = self.sizeHint()  # one-line height: 93
 		self.setMinimumWidth(600)
 		self.resize(600, size.height())
 
 	def parser(self):
 		import re
-		# nmea = self.inputText.text()  # todo:如果要支持多行数据，至少要保证是同一种NMEA
+		# nmea = self.inputText.text()
 		nmeas = self.inputText.toPlainText().split('\n')
 		self.nmea_count = len(nmeas)
 		self.inputText.resize(self.inputText.size().width(), 10 * self.nmea_count)
@@ -114,10 +114,10 @@ class Example(QWidget):
 			if format != None:
 				format = format.split(',')
 
-				if len(data) != len(format):
-					self.delTable()
-					self.outputLabel.setText('解析结果：格式错误')
-					return
+			# 	if len(data) != len(format):
+			# 		self.delTable()
+			# 		self.outputLabel.setText('解析结果：格式错误')
+			# 		return
 
 			if cs == cs_calc:
 				# self.outputLabel.setText(self.outputLabel.text() + ' ' + str(row_count) + '-校验码正确')
@@ -144,7 +144,7 @@ class Example(QWidget):
 			if width > self.maxWidth:
 				self.maxWidth = width
 
-			self.output.resize(width + 100, 100)#30 * row_count)
+			self.output.resize(width + 100, 100)#30 * row_count)  # todo:语句太多时表格高度可能不够，分别设置多个表格尺寸无效
 
 		self.scrollWidget.resize(self.maxWidth + 50, 500)
 		self.resize(self.maxWidth + 150, 600)
@@ -205,16 +205,16 @@ class Example(QWidget):
 
 		self.show()
 
-	def delTable(self):
-		layout = self.layout()
-		try:
-			layout.removeWidget(self.output)
-			self.output.deleteLater()
-			self.output = None
-		except Exception as e:
-			print(e)
-		QApplication.processEvents()
-		self.initSize()
+	# def delTable(self):
+	# 	layout = self.layout()
+	# 	try:
+	# 		layout.removeWidget(self.output)
+	# 		self.output.deleteLater()
+	# 		self.output = None
+	# 	except Exception as e:
+	# 		print(e)
+	# 	QApplication.processEvents()
+	# 	self.initSize()
 
 	def resizeAll(self, contentWidth):
 		self.inputText.resize(self.inputText.sizeHint())
