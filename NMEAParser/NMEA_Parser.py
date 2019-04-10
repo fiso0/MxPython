@@ -144,7 +144,8 @@ class Example(QWidget):
 			if width > self.maxWidth:
 				self.maxWidth = width
 
-			self.output.resize(width + 100, 100)#30 * row_count)  # todo:语句太多时表格高度可能不够，分别设置多个表格尺寸无效
+			self.output.resize(width + 100, 100)#30 * row_count)
+			self.scrollWidget.layout().setStretch(self.scrollWidget.layout().count()-1, row_count)  # 修改表格的拉伸因子
 
 		self.scrollWidget.resize(self.maxWidth + 50, 500)
 		self.resize(self.maxWidth + 150, 600)
