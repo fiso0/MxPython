@@ -250,11 +250,12 @@ class GUI(QWidget):
 		self.searchResOut = QListWidget()  # 搜索结果输出框
 
 		# 创建可停靠的窗口
-		self.dock = QDockWidget("上下文log（只显示选中log的前后10条）", self)
+		self.dock = QDockWidget("上下文log（只显示选中log的前后10条，可键盘上下）", self)
 		self.dock.setWidget(self.contextOut)
 		self.dock.setFloating(True)  # 将可停靠窗口置于浮动状态
-		self.dock.setFeatures(QDockWidget.DockWidgetFloatable)  # 改为只允许float，不允许关闭、移动
-		self.dock.resize(700,300)
+		self.dock.setFeatures(QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable)  # 改为允许float、关闭、移动
+		# self.dock.resize(700,300)
+		self.dock.setFixedSize(700, 300)# 设置为固定大小
 		self.dock.setVisible(False)  # 默认不可见
 
 		self.fileNameEdit = QLineEdit()
@@ -326,7 +327,9 @@ class GUI(QWidget):
 		searchBtn3.clicked.connect(self.clr_search)
 
 		self.filterResOut.itemClicked.connect(self.filter_item_clicked)  # 选中某条筛选结果时显示上下文
-		self.contextOut.itemClicked.connect(self.context_item_clicked)  # 选中某条上下文时刷新显示上下文
+		# self.contextOut.itemClicked.connect(self.context_item_clicked)  # 选中某条上下文时刷新显示上下文
+		# self.contextOut.currentItemChanged.connect(self.context_item_changed)  # 选中某条上下文时刷新显示上下文
+		self.contextOut.currentRowChanged.connect(self.context_row_changed)  # 选中某条上下文时刷新显示上下文
 		self.searchResOut.itemClicked.connect(self.search_item_clicked)  # 选中某条搜索结果时显示上下文
 
 		# ListWidget右键菜单
@@ -338,9 +341,10 @@ class GUI(QWidget):
 		self.searchResOut.customContextMenuRequested.connect(self.right_click_menu)
 
 		# ListWidget选择模式
-		self.filterResOut.setSelectionMode(3)
-		self.contextOut.setSelectionMode(3)
-		self.searchResOut.setSelectionMode(3)
+		# 仅当contextOut选择模式为0时，鼠标点击刷新功能正常，但此时右键复制只能一次复制一行内容
+		self.contextOut.setSelectionMode(0) # 1：SingleSelection 0：NoSelection
+		self.filterResOut.setSelectionMode(3) #:3：ExtendedSelection
+		self.searchResOut.setSelectionMode(3) # 3：ExtendedSelection
 
 		# 布局
 		mainBox = QVBoxLayout()
@@ -408,7 +412,7 @@ class GUI(QWidget):
 		self.show()
 
 	def open_file(self):
-		file = QFileDialog.getOpenFileName(self, '选择log文件', 'D://log//sCRTlog')
+		file = QFileDialog.getOpenFileName(self, '选择log文件', 'E://log//sCRTlog')
 		filename = file[0]
 		self.fileNameEdit.setText(filename)
 
@@ -765,15 +769,37 @@ class GUI(QWidget):
 		line = lines_list[row]  # 当前选中的log行号
 		self.show_context_lines(line)  # 显示上下文内容
 
-	def context_item_clicked(self, item):
-		"""
-		选中某条上下文时刷新显示上下文
-		:param item:
-		:return:
-		"""
-		row = self.contextOut.row(item)
-		line = self.context_lines[row]  # 当前选中的log行号
-		self.show_context_lines(line)  # 显示上下文内容
+	# def context_item_clicked(self, item):
+	# 	"""
+	# 	选中某条上下文时刷新显示上下文
+	# 	:param item:
+	# 	:return:
+	# 	"""
+	# 	self.contextOut.blockSignals(True)
+	# 	row = self.contextOut.row(item)
+	# 	line = self.context_lines[row]  # 当前选中的log行号
+	# 	print('clicked: row=%d, line=%d' % (row,line))
+	# 	# self.show_context_lines(line)  # 显示上下文内容
+	# 	# self.contextOut.blockSignals(False)
+
+	# def context_item_changed(self, current, previous):  # currentItemChanged
+	# 	# print(self.sender().metaObject().method(self.sender().senderSignalIndex()).name())  # windowIconChanged
+	# 	# self.contextOut.blockSignals(True)
+	# 	row = self.contextOut.row(current)
+	# 	print('changed: prev row=%d, curr row=%d' % (self.contextOut.row(previous),row))
+	# 	if row > 0:
+	# 		line = self.context_lines[row]  # 当前选中的log行号
+	# 		self.show_context_lines(line)  # 显示上下文内容
+	# 	# self.contextOut.blockSignals(False)
+
+	def context_row_changed(self, current):
+		print('changed: curr row=%d' % current)
+		# self.contextOut.blockSignals(True)
+		if current > 0:
+			line = self.context_lines[current]  # 当前选中的log行号
+			self.show_context_lines(line)  # 显示上下文内容
+		# self.contextOut.blockSignals(False)
+		# self.contextOut.clearSelection()  # 为什么无效？
 
 	def show_context_lines(self, log_line, lines=10):
 		"""
@@ -782,13 +808,18 @@ class GUI(QWidget):
 		:param lines: 显示上下各多少行，默认10
 		:return:
 		"""
+		print('show context lines: %d' % log_line)
+		# self.contextOut.blockSignals(True)
 		self.context_lines = list(range((log_line - lines) if (log_line > lines) else 0,
 		                                (log_line + lines) if (log_line + lines < self.L.lines) else self.L.lines))
 		row = self.context_lines.index(log_line)
 
 		# 逐行显示上下文内容
 		self.show_lines(self.contextOut, self.context_lines)
+		# self.contextOut.clearSelection()
 		self.contextOut.setCurrentRow(row)  # 选中对应行
+		# self.contextOut.item(row).setBackground(QColor('yellow'))
+		# self.contextOut.blockSignals(False)
 
 		self.dock.setVisible(True)
 
@@ -801,6 +832,8 @@ class GUI(QWidget):
 			text = ''
 			for a in self.sender().selectedItems():
 				text += a.text() + '\n'
+			if text == '':
+				text += self.sender().currentItem().text()
 			self.copy(text)
 
 
