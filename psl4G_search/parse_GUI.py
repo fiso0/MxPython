@@ -341,7 +341,7 @@ class GUI(QWidget):
 		self.searchResOut.customContextMenuRequested.connect(self.right_click_menu)
 
 		# ListWidget选择模式
-		# 仅当contextOut选择模式为0时，鼠标点击刷新功能正常，但此时右键复制只能一次复制一行内容
+		# 仅当contextOut选择模式为0时，鼠标点击任意一条可实现刷新，但右键复制只能一次复制一行内容
 		self.contextOut.setSelectionMode(0) # 1：SingleSelection 0：NoSelection
 		self.filterResOut.setSelectionMode(3) #:3：ExtendedSelection
 		self.searchResOut.setSelectionMode(3) # 3：ExtendedSelection
