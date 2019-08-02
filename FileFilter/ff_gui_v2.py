@@ -62,8 +62,6 @@ class FiltWindow(QDialog):
 		self.resize(500, 200)
 		self.setWindowTitle('过滤条件')
 		self.setFont(QFont('Arial'))
-		# self.setWindowModality(Qt.WindowModal)
-		# self.show()
 
 	def filt_clicked(self):
 		keyword_cur = self.keyword.text().strip()
