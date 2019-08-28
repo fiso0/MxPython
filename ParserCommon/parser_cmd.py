@@ -11,18 +11,19 @@
 配置说明参见：格式说明.txt
 """
 
-DEFAULT_FORMAT_FILE_JTT = 'format/formatJTT.txt'
-DEFAULT_FORMAT_FILE_OneNet = 'format/formatOneNet.txt'
-DEFAULT_FORMAT_FILE = 'format/format.txt'
+DEFAULT_FORMAT_JTT = 'JTT'
+DEFAULT_FORMAT_OneNet = 'OneNet'
+DEFAULT_FORMAT = ''
 
 
-def read_format(f):
+def read_format(cmd):
 	"""
 	读取配置文件
 	若文件不存在，改读取默认配置文件DEFAULT_FORMAT_FILE
 	若读取失败，返回None,None
 	:return: 字段名（列表），字段长度（列表）
 	"""
+	f = 'format/format' + cmd + '.txt'
 	labels = []
 	lens = []
 	try:
@@ -35,23 +36,23 @@ def read_format(f):
 					lens.append(int(len))
 				except Exception as e:
 					print(e)
-		return labels, lens
+		return labels, lens, cmd
 	except FileNotFoundError:
 		# 未找到配置文件，改用默认配置文件
 		if 'OneNet' in f:
-			default_file = DEFAULT_FORMAT_FILE_OneNet
+			default_file = DEFAULT_FORMAT_OneNet
 		elif 'JTT' in f:
-			default_file = DEFAULT_FORMAT_FILE_JTT
+			default_file = DEFAULT_FORMAT_JTT
 		else:
-			default_file = DEFAULT_FORMAT_FILE
+			default_file = DEFAULT_FORMAT
 		if f != default_file:
 			return read_format(default_file)
 		else:
 			print('无法读取默认配置文件：' + default_file)
-			return None, None
+			return None, None, None
 	except Exception as e:
 		print(e)
-		return None, None
+		return None, None, None
 
 
 def get_cmd(text):
@@ -131,10 +132,22 @@ def parser_break(msg, lens):
 	return results
 
 
-def parser_common_cmd(text, cmd):
-	# 根据指令类别读取配置文件
-	file = 'format/format' + cmd + '.txt'
-	labels, lens = read_format(file)
+def parser_common_cmd(text, cmd = None):
+	"""
+	根据给定格式解析
+	:param text:
+	:param cmd:
+	:return:
+	"""
+	if cmd is None:
+		# 获取指令格式
+		cmd = get_cmd(text)
+		if cmd is None:
+			print('获取指令格式失败')
+			return None, None, None, None
+
+	# 根据指令格式读取配置文件
+	labels, lens, format = read_format(cmd)
 
 	# 按字段长度解析内容
 	break_res = parser_break(text, lens)
@@ -151,7 +164,7 @@ def parser_common_cmd(text, cmd):
 	except:
 		print('失败')
 
-	return labels, lens, fields
+	return labels, lens, fields, format
 
 
 if __name__ == '__main__':

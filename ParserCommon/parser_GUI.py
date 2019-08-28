@@ -33,7 +33,7 @@ class MsgCommon(QWidget):
 		self.cmdCombo.setMaximumWidth(100)
 
 		self.message_in.setMaximumHeight(100)
-		self.message_out.setMinimumHeight(500)
+		# self.message_out.setMinimumHeight(300)
 
 		hBox = QHBoxLayout()
 		hBox.addWidget(self.ifAssignFormatCheck)
@@ -76,19 +76,22 @@ class MsgCommon(QWidget):
 
 		# 获取指令格式
 		if not self.assign:  # 自动格式
-			cmd = parser_cmd.get_cmd(text)
-			if cmd is None:
-				res_str = '失败，请手动选择指令类别\n'
-				self.message_out.setText(res_str)
-				return
+			cmd = None
 		else:  # 指定格式
 			cmd = self.cmdCombo.currentText()
 
 		# 根据指令类型解析
 		try:
-			labels, alens, fields = parser_cmd.parser_common_cmd(text, cmd)
+			labels, alens, fields, format = parser_cmd.parser_common_cmd(text, cmd)
 		except Exception as e:
 			print(e)
+
+		if format is None:
+			self.message_out.setText('失败，请手动选择指令类别\n')
+			return
+		else:
+			print('指令格式：' + format)
+			self.cmdCombo.setCurrentText(format)
 
 		# 输出解析结果
 		res_str = ''
@@ -99,9 +102,9 @@ class MsgCommon(QWidget):
 						"{label:.<{width}}{field}".format(label=label, field=field if len(field) > 0 else "空",
 						                                  width=20 - len(label.encode('GBK')) + len(
 							                                  label))) + '\n'  # 为了输出对齐
+			self.message_out.setText(res_str)
 		except:
-			res_str = '失败\n'
-		self.message_out.setText(res_str)
+			self.message_out.setText('失败\n')
 
 
 class TabWindow(QTabWidget):
@@ -114,7 +117,7 @@ class TabWindow(QTabWidget):
 		self.addTab(self.mMsgCommon, '通用')
 		self.setWindowTitle('消息分解')
 		self.setMinimumWidth(350)
-		self.setMinimumHeight(450)
+		# self.setMinimumHeight(450)
 		self.show()
 
 
