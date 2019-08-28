@@ -173,13 +173,13 @@ class Register(QWidget):
 		while i < 15:
 			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
-		self.result_text.setPlainText(result_text)
+		self.result_text.setPlainText(result_text.upper())
 
 	def resultButtonClicked(self):
 		import tran7e
 		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text)  # 显示完整消息
+		self.result_text.setPlainText(result_text.upper())  # 显示完整消息
 
 	def cellChanged(self):
 		text = self.cell_input.text().strip().replace(' ', '')
@@ -339,13 +339,13 @@ class Authorize(QWidget):
 		while i < 9:
 			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
-		self.result_text.setPlainText(result_text)
+		self.result_text.setPlainText(result_text.upper())
 
 	def resultButtonClicked(self):
 		import tran7e
 		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text)  # 显示完整消息
+		self.result_text.setPlainText(result_text.upper())  # 显示完整消息
 
 
 class LocReport(QWidget):
@@ -513,13 +513,13 @@ class LocReport(QWidget):
 		while i < 16:
 			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
-		self.result_text.setPlainText(result_text)
+		self.result_text.setPlainText(result_text.upper())
 
 	def resultButtonClicked(self):
 		import tran7e
 		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text)  # 显示完整消息
+		self.result_text.setPlainText(result_text.upper())  # 显示完整消息
 
 	def latChanged(self):
 		lat_input = self.lat_input.text().strip()
@@ -663,13 +663,13 @@ class Heartbeat(QWidget):
 		while i < 8:
 			result_text += self.edits[i].text().strip().replace(' ', '')
 			i += 1
-		self.result_text.setPlainText(result_text)
+		self.result_text.setPlainText(result_text.upper())
 
 	def resultButtonClicked(self):
 		import tran7e
 		tran_res = tran7e.tran7e(self.header_body_cs)  # 转义处理消息头+消息体+校验码
 		result_text = '7E' + tran_res + '7E'
-		self.result_text.setPlainText(result_text)  # 显示完整消息
+		self.result_text.setPlainText(result_text.upper())  # 显示完整消息
 
 
 class MessageBreak(QWidget):
@@ -768,7 +768,7 @@ class MessageBreak(QWidget):
 
 	def breakButtonClicked(self):
 		import tran7e
-		message = self.message_text.toPlainText().strip().replace(' ', '')  # 去掉空格
+		message = self.message_text.upper().toPlainText().strip().replace(' ', '')  # 去掉空格
 		message = tran7e.detran7e(message)
 		chrstr = [message[i:i + 2] for i in range(0, len(message), 2)]
 		msg_len = len(chrstr)
@@ -847,7 +847,7 @@ class MessageBreak(QWidget):
 		print(header_body)
 		cs = checksum.checksum(header_body)
 		cs_text = '%02x' % cs
-		self.edits[7].setText(cs_text)
+		self.edits[7].setText(cs_text.upper())
 
 		self.header_body_cs = header_body + cs_text  # 消息头+消息体+校验码
 
