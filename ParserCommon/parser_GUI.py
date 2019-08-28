@@ -33,7 +33,7 @@ class MsgCommon(QWidget):
 		self.cmdCombo.setMaximumWidth(100)
 
 		self.message_in.setMaximumHeight(100)
-		# self.message_out.setMinimumHeight(300)
+		self.message_out.setMinimumHeight(500)
 
 		hBox = QHBoxLayout()
 		hBox.addWidget(self.ifAssignFormatCheck)
