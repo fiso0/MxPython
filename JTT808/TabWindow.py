@@ -159,7 +159,7 @@ class Register(QWidget):
 		i = 1
 		header_body = ''  # 消息头+消息体
 		while i < 13:
-			header_body += self.edits[i].text().strip().replace(' ', '')
+			header_body += self.edits[i].text().strip().replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
@@ -325,7 +325,7 @@ class Authorize(QWidget):
 		i = 1
 		header_body = ''  # 消息头+消息体
 		while i < 7:
-			header_body += self.edits[i].text().strip().replace(' ', '')
+			header_body += self.edits[i].text().strip().replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
@@ -499,7 +499,7 @@ class LocReport(QWidget):
 		i = 1
 		header_body = ''  # 消息头+消息体
 		while i < 14:
-			header_body += self.edits[i].text().strip().replace(' ', '')
+			header_body += self.edits[i].text().strip().replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
@@ -649,7 +649,7 @@ class Heartbeat(QWidget):
 		i = 1
 		header_body = ''  # 消息头+消息体
 		while i < 6:
-			header_body += self.edits[i].text().strip().replace(' ', '')
+			header_body += self.edits[i].text().strip().replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
 			i += 1
 		cs = checksum.checksum(header_body)
 		cs_text = '%02X' % cs
@@ -841,9 +841,10 @@ class MessageBreak(QWidget):
 		i = 1
 		header_body = ''  # 消息头+消息体
 		while i < 6:
-			header_body += self.edits[i].text()
+			header_body += self.edits[i].text().strip().replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
 			i += 1
-		header_body += self.edits[6].toPlainText()
+		header_body += self.edits[6].toPlainText().strip().replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
+		print(header_body)
 		cs = checksum.checksum(header_body)
 		cs_text = '%02x' % cs
 		self.edits[7].setText(cs_text)
