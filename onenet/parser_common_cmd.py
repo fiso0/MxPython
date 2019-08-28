@@ -90,7 +90,7 @@ def get_cmd(text):
 	text = text.strip().replace(' ', '').upper()  # 去掉空格 转为大写
 
 	# 尝试解析指令类别
-	if(text[:8] == '26262626'):
+	if(text[:8] == '26262626'): # OneNet指令头
 		try:
 			cmd = text[36:40]
 		except:

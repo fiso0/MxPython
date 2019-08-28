@@ -62,7 +62,10 @@ class MsgOneNet(QWidget):
 			cmd = self.cmdCombo.itemText(cmdIdx)
 
 		# 根据指令类型解析
-		res = parser_common_cmd.parser_common_onenet(text, cmd)
+		try:
+			res = parser_common_cmd.parser_common_onenet(text, cmd)
+		except Exception as e:
+			print(e)
 
 		# 输出解析结果
 		res_str = ''
