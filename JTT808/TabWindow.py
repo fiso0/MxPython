@@ -768,7 +768,7 @@ class MessageBreak(QWidget):
 
 	def breakButtonClicked(self):
 		import tran7e
-		message = self.message_text.upper().toPlainText().strip().replace(' ', '')  # 去掉空格
+		message = self.message_text.toPlainText().upper().strip().replace(' ', '')  # 去掉空格
 		message = tran7e.detran7e(message)
 		chrstr = [message[i:i + 2] for i in range(0, len(message), 2)]
 		msg_len = len(chrstr)
