@@ -32,8 +32,8 @@ class MsgCommon(QWidget):
 		break_button.setMaximumWidth(100)
 		self.cmdCombo.setMaximumWidth(100)
 
-		self.message_in.setMaximumHeight(100)
-		self.message_out.setMinimumHeight(500)
+		self.message_in.setFixedHeight(100)
+		# self.message_out.setFixedHeight(200)
 
 		hBox = QHBoxLayout()
 		hBox.addWidget(self.ifAssignFormatCheck)
@@ -50,6 +50,7 @@ class MsgCommon(QWidget):
 		vBox.addWidget(self.message_out)
 
 		self.setLayout(vBox)
+		# self.setFixedHeight(400)
 		self.setWindowTitle('分解消息')
 		self.show()
 
@@ -102,26 +103,44 @@ class MsgCommon(QWidget):
 						"{label:.<{width}}{field}".format(label=label, field=field if len(field) > 0 else "空",
 						                                  width=20 - len(label.encode('GBK')) + len(
 							                                  label))) + '\n'  # 为了输出对齐
-			self.message_out.setText(res_str)
 		except:
-			self.message_out.setText('失败\n')
+			res_str='失败\n'
+		self.resizeAll(res_str)
+		self.message_out.setText(res_str)
 
 
-class TabWindow(QTabWidget):
-	def __init__(self):
-		super().__init__()
-		self.mMsgCommon = MsgCommon()
-		self.init_ui()
+	def resizeAll(self, result_str):
+		# 原高度
+		# oldHeightAll = self.height()
+		# oldHeightOut = self.message_out.height()
 
-	def init_ui(self):
-		self.addTab(self.mMsgCommon, '通用')
-		self.setWindowTitle('消息分解')
-		self.setMinimumWidth(350)
-		# self.setMinimumHeight(450)
-		self.show()
+		# 新高度
+		lines = result_str.count('\n') + 1
+		newHeightOut = lines * 16
+		# newHeightAll = newHeightOut-oldHeightOut+oldHeightAll
+
+		# 调整为新高度
+		self.message_out.setFixedHeight(newHeightOut)
+		# self.setFixedHeight(newHeightAll)
+
+		# 显示内容
+		# self.message_out.setText(result_str)
+
+# class TabWindow(QTabWidget):
+# 	def __init__(self):
+# 		super().__init__()
+# 		self.mMsgCommon = MsgCommon()
+# 		self.init_ui()
+#
+# 	def init_ui(self):
+# 		self.addTab(self.mMsgCommon, '通用')
+# 		self.setWindowTitle('消息分解')
+# 		self.setMinimumWidth(350)
+# 		# self.setMinimumHeight(450)
+# 		self.show()
 
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	gui = TabWindow()
+	gui = MsgCommon() #TabWindow() # 只需要一个窗口，不需要使用TabWindow，且使用TabWindow后无法自动根据内容调整窗口大小
 	sys.exit(app.exec_())
