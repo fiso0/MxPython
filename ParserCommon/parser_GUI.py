@@ -111,17 +111,25 @@ class MsgCommon(QWidget):
 
 	def resizeAll(self, result_str):
 		# 原高度
-		# oldHeightAll = self.height()
-		# oldHeightOut = self.message_out.height()
+		oldHeightAll = self.height()
+		oldHeightOut = self.message_out.height()
 
 		# 新高度
-		lines = result_str.count('\n') + 1
+		import math
+		# lines = result_str.count('\n') + 1
+		# 计算行数时要考虑一行内容可能很长需要分多行显示
+		result_list = result_str.split('\n')
+		result_lines_list = [math.ceil(len(a)/39) for a in result_list]
+		lines = sum(result_lines_list)
+
 		newHeightOut = lines * 16
-		# newHeightAll = newHeightOut-oldHeightOut+oldHeightAll
+		newHeightAll = newHeightOut-oldHeightOut+oldHeightAll
 
 		# 调整为新高度
 		self.message_out.setFixedHeight(newHeightOut)
-		# self.setFixedHeight(newHeightAll)
+		self.setFixedHeight(newHeightAll)
+		# self.setMinimumHeight(0)
+		# self.setMinimumHeight(newHeightAll)
 
 		# 显示内容
 		# self.message_out.setText(result_str)
