@@ -123,6 +123,8 @@ class MsgCommon(QWidget):
 		lines = sum(result_lines_list)
 
 		newHeightOut = lines * 16
+		if newHeightOut > 650:
+			newHeightOut = 650
 		newHeightAll = newHeightOut-oldHeightOut+oldHeightAll
 
 		# 调整为新高度
