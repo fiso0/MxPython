@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
 # -*- coding: utf-8 -*-
 
 import configparser
@@ -329,7 +329,7 @@ class GUI(QWidget):
 		self.filterResOut.itemClicked.connect(self.filter_item_clicked)  # 选中某条筛选结果时显示上下文
 		# self.contextOut.itemClicked.connect(self.context_item_clicked)  # 选中某条上下文时刷新显示上下文
 		# self.contextOut.currentItemChanged.connect(self.context_item_changed)  # 选中某条上下文时刷新显示上下文
-		self.contextOut.currentRowChanged.connect(self.context_row_changed)  # 选中某条上下文时刷新显示上下文
+		# self.contextOut.currentRowChanged.connect(self.context_row_changed)  # 选中某条上下文时刷新显示上下文
 		self.searchResOut.itemClicked.connect(self.search_item_clicked)  # 选中某条搜索结果时显示上下文
 
 		# ListWidget右键菜单

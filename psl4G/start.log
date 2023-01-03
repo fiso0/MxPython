@@ -1,0 +1,272 @@
+[15:49:39]<N0000000028|T0109155124|INFO> BMT mx_bmt_adc_measure_start enter
+[15:49:39]<N0000000034|T0109155124|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:49:39]<N0000000045|T0109155124|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:49:39]<N0000000054|T0109155124|INFO> MOD_AUX --old one-time, keep results (0, 0) and restart
+[15:49:39]<N0000000055|T0109155124|INFO> MOD_AUX mx_gsensor_start: enter
+[15:49:39]<N0000000074|T0109155124|INFO> MOD_AUX  keep results (0, 0) and restart
+[15:49:39]<N0000000075|T0109155125|INFO> MOD_AUX mx_gsensor_start: enter
+[15:49:39]<N0000000088|T0109155125|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:49:39]<N0000000096|T0109155125|INFO> MOD_AUX  keep results (0, 0) and restart
+[15:49:39]<N0000000097|T0109155125|INFO> MOD_AUX mx_gsensor_start: enter
+[15:49:40]<N0000000127|T0109155125|INFO> MOD_AUX mx_gsensor_start: enter
+[15:49:40]<N0000000169|T0109155125|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:49:40]<N0000000170|T0109155125|INFO> MOD_MXGPS mx_gps_ctrl_get_next_time_type: first time, cold start
+[15:49:40]<N0000000171|T0109155125|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:0)(0:COLD,1:WARM)
+[15:49:40]<N0000000172|T0109155125|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:49:40]<N0000000179|T0109155125|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 300s
+[15:49:40]<N0000000183|T0109155125|INFO> MOD_MXGPS mx_gps_ctrl_cold_hold_timer_start
+[15:49:40]<N0000000186|T0109155125|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__hold set
+[15:49:40]<N0000000189|T0109155125|INFO> MOD_MXGPS [GPS]time_start:176(tick) in mx_gps_power_on
+[15:49:49]<N0000000257|T0109155130|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:49:50]<N0000000316|T0109155135|INFO> MOD_MXGPS [GPS]cold, stop GPS now
+[15:49:50]<N0000000324|T0109155135|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:49:50]<N0000000326|T0109155135|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:49:55]<N0000000418|T0109155140|INFO> MOD_AUX mx_gsensor_start: enter
+[15:50:00]<N0000000441|T0109155145|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:50:02]<N0000000462|T0109155148|INFO> MOD_AUX mx_gsensor_start: enter
+[15:50:02]<N0000000503|T0109155148|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:50:02]<N0000000506|T0109155148|INFO> MOD_MXGPS no network, warm start
+[15:50:02]<N0000000507|T0109155148|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:50:03]<N0000000508|T0109155148|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:50:03]<N0000000514|T0109155148|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:50:03]<N0000000517|T0109155148|INFO> MOD_MXGPS [GPS]time_start:2419(tick) in mx_gps_power_on
+[15:50:07]<N0000000581|T0109155153|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:50:13]<N0000000643|T0109155158|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:50:13]<N0000000650|T0109155158|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:50:13]<N0000000652|T0109155158|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:50:17]<N0000000750|T0109155203|INFO> MOD_AUX mx_gsensor_start: enter
+[15:50:23]<N0000000773|T0109155208|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:50:33]<N0000000778|T0109155218|INFO> MOD_AUX mx_gsensor_start: enter
+[15:50:38]<N0000000801|T0109155223|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:50:39]<N0000000809|T0109155225|INFO> BMT mx_bmt_adc_measure_start enter
+[15:50:39]<N0000000812|T0109155225|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:50:40]<N0000000821|T0109155225|INFO> MOD_AUX mx_gsensor_start: enter
+[15:50:40]<N0000000865|T0109155225|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:50:40]<N0000000868|T0109155225|INFO> MOD_MXGPS no network, warm start
+[15:50:40]<N0000000869|T0109155225|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:50:40]<N0000000870|T0109155225|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:50:40]<N0000000876|T0109155225|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:50:40]<N0000000879|T0109155225|INFO> MOD_MXGPS [GPS]time_start:6150(tick) in mx_gps_power_on
+[15:50:45]<N0000000946|T0109155230|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:50:50]<N0000001001|T0109155235|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:50:50]<N0000001008|T0109155235|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:50:50]<N0000001010|T0109155235|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:50:50]<N0000001059|T0109155235|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:50:55]<N0000001116|T0109155240|INFO> MOD_AUX mx_gsensor_start: enter
+[15:51:00]<N0000001141|T0109155245|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:51:10]<N0000001146|T0109155256|INFO> MOD_AUX mx_gsensor_start: enter
+[15:51:15]<N0000001169|T0109155301|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:51:25]<N0000001174|T0109155311|INFO> MOD_AUX mx_gsensor_start: enter
+[15:51:31]<N0000001197|T0109155316|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:51:40]<N0000001205|T0109155325|INFO> BMT mx_bmt_adc_measure_start enter
+[15:51:40]<N0000001208|T0109155325|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:51:41]<N0000001213|T0109155326|INFO> MOD_AUX mx_gsensor_start: enter
+[15:51:46]<N0000001236|T0109155331|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:51:50]<N0000001245|T0109155336|INFO> MOD_AUX mx_gsensor_start: enter
+[15:51:51]<N0000001289|T0109155336|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:51:51]<N0000001292|T0109155336|INFO> MOD_MXGPS no network, warm start
+[15:51:51]<N0000001293|T0109155336|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:51:51]<N0000001294|T0109155336|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:51:51]<N0000001300|T0109155336|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:51:51]<N0000001303|T0109155336|INFO> MOD_MXGPS [GPS]time_start:13164(tick) in mx_gps_power_on
+[15:51:56]<N0000001370|T0109155341|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:52:01]<N0000001429|T0109155346|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:52:01]<N0000001436|T0109155346|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:52:01]<N0000001438|T0109155346|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:52:01]<N0000001487|T0109155346|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:52:06]<N0000001544|T0109155351|INFO> MOD_AUX mx_gsensor_start: enter
+[15:52:11]<N0000001567|T0109155356|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:52:21]<N0000001572|T0109155406|INFO> MOD_AUX mx_gsensor_start: enter
+[15:52:26]<N0000001595|T0109155411|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:52:36]<N0000001600|T0109155421|INFO> MOD_AUX mx_gsensor_start: enter
+[15:52:40]<N0000001617|T0109155426|INFO> BMT mx_bmt_adc_measure_start enter
+[15:52:40]<N0000001620|T0109155426|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:52:41]<N0000001634|T0109155427|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:52:51]<N0000001639|T0109155437|INFO> MOD_AUX mx_gsensor_start: enter
+[15:52:57]<N0000001662|T0109155442|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:53:01]<N0000001671|T0109155447|INFO> MOD_AUX mx_gsensor_start: enter
+[15:53:02]<N0000001715|T0109155447|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:53:02]<N0000001718|T0109155447|INFO> MOD_MXGPS no network, warm start
+[15:53:02]<N0000001719|T0109155447|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:53:02]<N0000001720|T0109155447|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:53:02]<N0000001726|T0109155447|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:53:02]<N0000001729|T0109155447|INFO> MOD_MXGPS [GPS]time_start:20215(tick) in mx_gps_power_on
+[15:53:07]<N0000001796|T0109155452|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:53:12]<N0000001855|T0109155457|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:53:12]<N0000001862|T0109155457|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:53:12]<N0000001864|T0109155457|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:53:12]<N0000001913|T0109155457|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:53:17]<N0000001970|T0109155502|INFO> MOD_AUX mx_gsensor_start: enter
+[15:53:22]<N0000001993|T0109155507|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:53:32]<N0000001998|T0109155517|INFO> MOD_AUX mx_gsensor_start: enter
+[15:53:37]<N0000002021|T0109155522|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:53:41]<N0000002029|T0109155526|INFO> BMT mx_bmt_adc_measure_start enter
+[15:53:41]<N0000002032|T0109155526|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:53:47]<N0000002037|T0109155532|INFO> MOD_AUX mx_gsensor_start: enter
+[15:53:52]<N0000002060|T0109155538|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:54:02]<N0000002065|T0109155548|INFO> MOD_AUX mx_gsensor_start: enter
+[15:54:08]<N0000002088|T0109155553|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:54:12]<N0000002097|T0109155558|INFO> MOD_AUX mx_gsensor_start: enter
+[15:54:13]<N0000002141|T0109155558|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:54:13]<N0000002144|T0109155558|INFO> MOD_MXGPS no network, warm start
+[15:54:13]<N0000002145|T0109155558|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:54:13]<N0000002146|T0109155558|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:54:13]<N0000002152|T0109155558|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:54:13]<N0000002155|T0109155558|INFO> MOD_MXGPS [GPS]time_start:27266(tick) in mx_gps_power_on
+[15:54:18]<N0000002222|T0109155603|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:54:23]<N0000002281|T0109155608|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:54:23]<N0000002288|T0109155608|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:54:23]<N0000002290|T0109155608|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:54:23]<N0000002339|T0109155608|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:54:28]<N0000002396|T0109155613|INFO> MOD_AUX mx_gsensor_start: enter
+[15:54:33]<N0000002419|T0109155618|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:54:41]<N0000002427|T0109155626|INFO> BMT mx_bmt_adc_measure_start enter
+[15:54:41]<N0000002430|T0109155626|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:54:43]<N0000002435|T0109155628|INFO> MOD_AUX mx_gsensor_start: enter
+[15:54:48]<N0000002458|T0109155633|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:54:58]<N0000002463|T0109155643|INFO> MOD_AUX mx_gsensor_start: enter
+[15:55:03]<N0000002486|T0109155649|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:55:13]<N0000002491|T0109155659|INFO> MOD_AUX mx_gsensor_start: enter
+[15:55:19]<N0000002514|T0109155704|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:55:23]<N0000002523|T0109155709|INFO> MOD_AUX mx_gsensor_start: enter
+[15:55:24]<N0000002567|T0109155709|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:55:24]<N0000002570|T0109155709|INFO> MOD_MXGPS no network, warm start
+[15:55:24]<N0000002571|T0109155709|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:55:24]<N0000002572|T0109155709|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:55:24]<N0000002578|T0109155709|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:55:24]<N0000002581|T0109155709|INFO> MOD_MXGPS [GPS]time_start:34318(tick) in mx_gps_power_on
+[15:55:29]<N0000002648|T0109155714|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:55:34]<N0000002707|T0109155719|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:55:34]<N0000002714|T0109155719|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:55:34]<N0000002716|T0109155719|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:55:34]<N0000002765|T0109155719|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:55:39]<N0000002822|T0109155724|INFO> MOD_AUX mx_gsensor_start: enter
+[15:55:41]<N0000002839|T0109155727|INFO> BMT mx_bmt_adc_measure_start enter
+[15:55:42]<N0000002842|T0109155727|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:55:44]<N0000002856|T0109155729|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:55:54]<N0000002861|T0109155739|INFO> MOD_AUX mx_gsensor_start: enter
+[15:55:59]<N0000002884|T0109155744|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:56:09]<N0000002889|T0109155754|INFO> MOD_AUX mx_gsensor_start: enter
+[15:56:14]<N0000002912|T0109155800|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:56:24]<N0000002917|T0109155810|INFO> MOD_AUX mx_gsensor_start: enter
+[15:56:30]<N0000002940|T0109155815|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:56:34]<N0000002949|T0109155820|INFO> MOD_AUX mx_gsensor_start: enter
+[15:56:35]<N0000002993|T0109155820|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:56:35]<N0000002996|T0109155820|INFO> MOD_MXGPS no network, warm start
+[15:56:35]<N0000002997|T0109155820|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:56:35]<N0000002998|T0109155820|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:56:35]<N0000003004|T0109155820|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:56:35]<N0000003007|T0109155820|INFO> MOD_MXGPS [GPS]time_start:41369(tick) in mx_gps_power_on
+[15:56:40]<N0000003074|T0109155825|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:56:42]<N0000003108|T0109155827|INFO> BMT mx_bmt_adc_measure_start enter
+[15:56:42]<N0000003111|T0109155827|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:56:45]<N0000003144|T0109155830|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:56:45]<N0000003151|T0109155830|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:56:45]<N0000003153|T0109155830|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:56:45]<N0000003202|T0109155830|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:58:08]<N0000003259|T0109155835|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:08]<N0000003282|T0109155840|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:08]<N0000003287|T0109155850|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:08]<N0000003310|T0109155855|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:08]<N0000003315|T0109155906|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:08]<N0000003338|T0109155911|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:08]<N0000003343|T0109155921|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:08]<N0000003366|T0109155926|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:08]<N0000003374|T0109155928|INFO> BMT mx_bmt_adc_measure_start enter
+[15:58:08]<N0000003377|T0109155928|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:58:08]<N0000003386|T0109155931|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:08]<N0000003430|T0109155931|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:58:08]<N0000003433|T0109155931|INFO> MOD_MXGPS no network, warm start
+[15:58:08]<N0000003434|T0109155931|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:58:08]<N0000003435|T0109155931|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:58:08]<N0000003441|T0109155931|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:58:08]<N0000003444|T0109155931|INFO> MOD_MXGPS [GPS]time_start:48420(tick) in mx_gps_power_on
+[15:58:08]<N0000003511|T0109155936|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:08]<N0000003570|T0109155941|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:58:08]<N0000003577|T0109155941|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:58:08]<N0000003579|T0109155941|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:58:08]<N0000003628|T0109155941|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:58:08]<N0000003685|T0109155946|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:08]<N0000003708|T0109155951|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:16]<N0000003713|T0109160001|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:21]<N0000003736|T0109160006|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:31]<N0000003741|T0109160017|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:36]<N0000003764|T0109160022|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:43]<N0000003772|T0109160028|INFO> BMT mx_bmt_adc_measure_start enter
+[15:58:43]<N0000003775|T0109160028|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:58:48]<N0000003780|T0109160032|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:52]<N0000003803|T0109160037|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:58:56]<N0000003812|T0109160042|INFO> MOD_AUX mx_gsensor_start: enter
+[15:58:57]<N0000003856|T0109160042|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[15:58:57]<N0000003859|T0109160042|INFO> MOD_MXGPS no network, warm start
+[15:58:57]<N0000003860|T0109160042|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[15:58:57]<N0000003861|T0109160042|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[15:58:57]<N0000003867|T0109160042|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[15:58:57]<N0000003870|T0109160042|INFO> MOD_MXGPS [GPS]time_start:55472(tick) in mx_gps_power_on
+[15:59:02]<N0000003937|T0109160047|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:59:07]<N0000003996|T0109160052|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[15:59:07]<N0000004003|T0109160052|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[15:59:07]<N0000004005|T0109160052|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[15:59:07]<N0000004054|T0109160052|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[15:59:12]<N0000004111|T0109160057|INFO> MOD_AUX mx_gsensor_start: enter
+[15:59:17]<N0000004134|T0109160102|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:59:27]<N0000004139|T0109160112|INFO> MOD_AUX mx_gsensor_start: enter
+[15:59:32]<N0000004162|T0109160117|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:59:42]<N0000004167|T0109160128|INFO> MOD_AUX mx_gsensor_start: enter
+[15:59:43]<N0000004184|T0109160129|INFO> BMT mx_bmt_adc_measure_start enter
+[15:59:43]<N0000004187|T0109160129|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[15:59:47]<N0000004201|T0109160133|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[15:59:57]<N0000004206|T0109160143|INFO> MOD_AUX mx_gsensor_start: enter
+[16:00:03]<N0000004229|T0109160148|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:00:07]<N0000004238|T0109160153|INFO> MOD_AUX mx_gsensor_start: enter
+[16:00:08]<N0000004282|T0109160153|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[16:00:08]<N0000004285|T0109160153|INFO> MOD_MXGPS no network, warm start
+[16:00:08]<N0000004286|T0109160153|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[16:00:08]<N0000004287|T0109160153|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[16:00:08]<N0000004293|T0109160153|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[16:00:08]<N0000004296|T0109160153|INFO> MOD_MXGPS [GPS]time_start:62523(tick) in mx_gps_power_on
+[16:00:13]<N0000004363|T0109160158|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:00:18]<N0000004422|T0109160203|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[16:00:18]<N0000004429|T0109160203|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[16:00:18]<N0000004431|T0109160203|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[16:00:18]<N0000004480|T0109160203|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[16:00:23]<N0000004537|T0109160208|INFO> MOD_AUX mx_gsensor_start: enter
+[16:00:28]<N0000004560|T0109160213|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:00:38]<N0000004565|T0109160223|INFO> MOD_AUX mx_gsensor_start: enter
+[16:00:43]<N0000004588|T0109160228|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:00:44]<N0000004596|T0109160229|INFO> BMT mx_bmt_adc_measure_start enter
+[16:00:44]<N0000004599|T0109160229|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[16:00:53]<N0000004604|T0109160239|INFO> MOD_AUX mx_gsensor_start: enter
+[16:00:58]<N0000004627|T0109160244|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:01:08]<N0000004632|T0109160254|INFO> MOD_AUX mx_gsensor_start: enter
+[16:01:14]<N0000004655|T0109160259|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:01:18]<N0000004664|T0109160304|INFO> MOD_AUX mx_gsensor_start: enter
+[16:01:19]<N0000004708|T0109160304|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[16:01:19]<N0000004711|T0109160304|INFO> MOD_MXGPS no network, warm start
+[16:01:19]<N0000004712|T0109160304|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[16:01:19]<N0000004713|T0109160304|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[16:01:19]<N0000004719|T0109160304|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[16:01:19]<N0000004722|T0109160304|INFO> MOD_MXGPS [GPS]time_start:69574(tick) in mx_gps_power_on
+[16:01:24]<N0000004789|T0109160309|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:01:29]<N0000004848|T0109160314|INFO> MOD_MXGPS [GPS]warm, stop GPS now
+[16:01:29]<N0000004855|T0109160314|INFO> MOD_MXGPS [GPS]time_finish:9(seconds) in mx_gps_power_off
+[16:01:29]<N0000004857|T0109160314|INFO> MOD_MXGPS [GPS]mx_gps_ready_to_close__valid set
+[16:01:29]<N0000004906|T0109160314|INFO> MOD_SOC mx_location_period_timer_start(0s): enter
+[16:01:34]<N0000004963|T0109160319|INFO> MOD_AUX mx_gsensor_start: enter
+[16:01:39]<N0000004986|T0109160324|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:01:44]<N0000004994|T0109160330|INFO> BMT mx_bmt_adc_measure_start enter
+[16:01:44]<N0000004997|T0109160330|INFO> BMT mx_bmt_adc_measure_start leave [0]
+[16:01:49]<N0000005002|T0109160334|INFO> MOD_AUX mx_gsensor_start: enter
+[16:01:54]<N0000005025|T0109160339|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:02:04]<N0000005030|T0109160350|INFO> MOD_AUX mx_gsensor_start: enter
+[16:02:09]<N0000005053|T0109160355|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:02:19]<N0000005058|T0109160405|INFO> MOD_AUX mx_gsensor_start: enter
+[16:02:25]<N0000005081|T0109160410|INFO> MOD_AUX     gsensor delay 10(s) to restart
+[16:02:29]<N0000005090|T0109160415|INFO> MOD_AUX mx_gsensor_start: enter
+[16:02:30]<N0000005134|T0109160415|INFO> MOD_MXGPS mx_gps_ctrl_drv_start()
+[16:02:30]<N0000005137|T0109160415|INFO> MOD_MXGPS no network, warm start
+[16:02:30]<N0000005138|T0109160415|INFO> MOD_MXGPS [GPS]mx_gps_drv_start(type:1)(0:COLD,1:WARM)
+[16:02:30]<N0000005139|T0109160415|INFO> MOD_MXGPS mx_gps_ctrl_phase_1_timer_start
+[16:02:30]<N0000005145|T0109160415|INFO> MOD_MXGPS mx_gps_ctrl_phase_all_timer_start: 90s
+[16:02:30]<N0000005148|T0109160415|INFO> MOD_MXGPS [GPS]time_start:76625(tick) in mx_gps_power_on
+[16:02:35]<N0000005215|T0109160420|INFO> MOD_AUX     gsensor delay 10(s) to restart
