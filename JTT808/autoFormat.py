@@ -7,8 +7,8 @@ def addBlank(message):
 	return ' '.join(chrstr)
 
 def removeBlank(message):
-	# 删除全部空格
-	return message.replace(' ','')
+	# 删除全部空格、换行等空白字符
+	return message.replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
 
 def formatBody(msg_id, body):
 	# 根据msg_id格式化消息体body

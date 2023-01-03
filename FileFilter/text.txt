@@ -1,0 +1,6 @@
+05-16 17:05:26.762  1995  4670 V WindowManager: finishDrawingLocked: mDrawState=COMMIT_DRAW_PENDING Window{ccd16c0 u0 com.mx.mxlocation/com.mx.mxlocation.activity.MainActivity} in Surface(name=com.mx.mxlocation/com.mx.mxlocation.activity.MainActivity)/@0x8df673a
+05-16 17:05:29.432  1995  1995 D ZenLog  : disable_effects: 0|com.mediatek.mtklogger|9|null|10061,booleanState
+--------- beginning of main
+05-16 17:05:36.188   442  4224 D GpsLocationProvider bd_gps:  3: ''
+05-16 17:05:36.191   442  4224 E MtkGnssHAL_GnssInterface: nmeaCb: callback 2
+05-16 17:05:36.191   442  4224 E GpsLocationProvider bd_gps: nmea_reader_addc: line = 1250 -1074753448 $BDVTG,0.03,T,,M,0.176,N,0.327,K,A*29
