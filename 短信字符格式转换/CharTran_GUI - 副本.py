@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QWidget, QApplication, QLineEdit, QPushButton, QCheckBox, QTextEdit, QGridLayout, QLabel, QVBoxLayout, QHBoxLayout
 from PyQt5.QtCore import Qt
 
 EXAMPLE_1 = '''0x5C 0xA 0x65 0x6C 0x76 0x84 0x5B 0xA2 0x62 0x37 0xFF 0xC 0x60 0xA8 0x59 0x7D 0xFF 0x1 0x62 0x63 0x96 0x64 0x60 0xA8 0x5D 0xF2 0x4E 0xA7 0x75 0x1F 0x76 0x84 0x6D 0x88 0x8D 0x39 0xFF 0x8 0x0 0x30 0x0 0x2E 0x0 0x35 0x0 0x39 0x51 0x43 0xFF 0xC 0x51 0x76 0x4E 0x2D 0x67 0x2C 0x67 0x8 0x6D 0x88 0x8D 0x39 0x0 0x30 0x0 0x2E 0x0 0x35 0x0 0x39 0x51 0x43 0x30 0x1 0x4E 0xA 0x67 0x8 0x53 0xCA 0x4E 0xE5 0x52 0x4D 0x76 0x84 0x53 0x86 0x53 0xF2 0x6D 0x88 0x8D 0x39 0x0 0x30 0x0 0x2E 0x0 0x30 0x0 0x30 0x51 0x43 0xFF 0x9 0x54 0xE 0xFF 0xC 0x60 0xA8 0x5F 0x53 0x52 0x4D 0x4F 0x59 0x98 0x9D 0x0 0x34 0x0 0x34 0x0 0x2E 0x0 0x35 0x0 0x31 0x51 0x43 0x30 0x2'''
@@ -38,44 +38,22 @@ class Example(QWidget):
 		self.btn3 = QPushButton('每2个字符加空格 >>')
 		self.btn5 = QPushButton('HEX386格式处理 >>')
 		self.btn6 = QPushButton('去掉所有空字符 >>')
-		self.btn7 = QPushButton('字节串逆序 >>')
-
 		self.btn_cpy = QPushButton('复制')
 		self.btn_clr = QPushButton('清空')
 
-		self.btn1.setToolTip('转换unicode字符')
 		self.btn5.setToolTip('去掉第一行和最后两行\n去掉开头9个字符和最后2个字符')
-		self.btn7.setToolTip('将以空格分隔的字节串逆序')
-
-		transLabel = QLabel('格式：')
-		toLabel = QLabel('->')
-		self.transF = QComboBox()
-		self.transF.addItems(['HEX'])
-		# self.transF.setMinimumWidth(50)
-		self.transT = QComboBox()
-		self.transT.addItems(['HEX','DEC','ASCII'])
-		# self.transT.setMinimumWidth(50)
-
-		self.transF.activated.connect(self.transItemChanged)
-		self.transT.activated.connect(self.transItemChanged)
-
-		hBox = QHBoxLayout()
-		hBox.addWidget(transLabel)
-		hBox.addWidget(self.transF)
-		hBox.addWidget(toLabel)
-		hBox.addWidget(self.transT)
 
 		box1 = QHBoxLayout()
 		lab1 = QLabel('每')
 		self.selNum = QLineEdit('48')
 		self.selNum.setFixedWidth(20)
 		lab2 = QLabel('字符')
-		self.btn_newline = QPushButton('换行 >>')
-		self.btn_newline.setFixedWidth(55)
+		self.btn7 = QPushButton('换行 >>')
+		self.btn7.setFixedWidth(55)
 		box1.addWidget(lab1)
 		box1.addWidget(self.selNum)
 		box1.addWidget(lab2)
-		box1.addWidget(self.btn_newline)
+		box1.addWidget(self.btn7)
 
 		leftGrid = QGridLayout()
 		leftGrid.setSpacing(10)
@@ -91,11 +69,9 @@ class Example(QWidget):
 		rightVBox.addWidget(self.btn1)
 		rightVBox.addWidget(self.btn2)
 		rightVBox.addWidget(self.btn4)
-		rightVBox.addWidget(self.btn5)
 		rightVBox.addWidget(self.btn3)
+		rightVBox.addWidget(self.btn5)
 		rightVBox.addWidget(self.btn6)
-		rightVBox.addWidget(self.btn7)
-		rightVBox.addLayout(hBox)
 		rightVBox.addLayout(box1)
 		rightVBox.addStretch()
 		rightVBox.addWidget(self.btn_cpy)
@@ -115,7 +91,6 @@ class Example(QWidget):
 		self.btn5.clicked.connect(self.button5Clicked)
 		self.btn6.clicked.connect(self.button6Clicked)
 		self.btn7.clicked.connect(self.button7Clicked)
-		self.btn_newline.clicked.connect(self.button_newlineClicked)
 		self.btn_cpy.clicked.connect(self.buttonCpyClicked)
 		self.btn_clr.clicked.connect(self.buttonClrClicked)
 
@@ -136,31 +111,6 @@ class Example(QWidget):
 
 	def set_output(self, output_result):
 		return self.text2.setPlainText(output_result)
-
-	# 格式转换
-	def transItemChanged(self):
-		import sys
-		sys.path.append('E:\\MX_bk\\python\\onenet')
-		import transFormat
-
-		# 获取解析结果
-		res = self.get_input()
-
-		# 获取格式转换需求
-		f_from = self.transF.currentText()
-		f_to = self.transT.currentText()
-
-		# 输出解析结果
-		res_str = []
-		try:
-			for field in res.split('\n'):
-				# 格式转换
-				field_new = ''.join(transFormat.transformat(field,f_from,f_to))
-				res_str.append(field_new)
-			res_str = '\n'.join(res_str)
-		except:
-			res_str = '失败\n'
-		self.set_output(res_str)
 
 	def button1Clicked(self):  # 短信转中文
 		string_origin = self.get_input()
@@ -203,8 +153,7 @@ class Example(QWidget):
 		string_origin = self.get_input()
 		if (string_origin is not ""):
 			try:
-				# string_result = self.addBlank(string_origin)
-				string_result = '\n'.join([self.addBlank(line) for line in string_origin.split('\n')])
+				string_result = self.addBlank(string_origin)
 				self.set_output(''.join(string_result))
 			except:
 				self.set_output('ERROR!')
@@ -233,20 +182,7 @@ class Example(QWidget):
 		else:
 			pass
 
-	def button7Clicked(self):  # 字节逆序
-		string_origin = self.get_input()
-		if (string_origin is not ""):
-			try:
-				bytes = string_origin.split(" ")
-				bytes.reverse()
-				string_result = " ".join(bytes)
-				self.set_output(string_result)
-			except:
-				self.set_output('ERROR!')
-		else:
-			pass
-
-	def button_newlineClicked(self):  # 换行
+	def button7Clicked(self):  # 换行
 		string_origin = self.get_input()
 		if (string_origin is not ""):
 			try:

@@ -38,14 +38,10 @@ class Example(QWidget):
 		self.btn3 = QPushButton('每2个字符加空格 >>')
 		self.btn5 = QPushButton('HEX386格式处理 >>')
 		self.btn6 = QPushButton('去掉所有空字符 >>')
-		self.btn7 = QPushButton('字节串逆序 >>')
-
 		self.btn_cpy = QPushButton('复制')
 		self.btn_clr = QPushButton('清空')
 
-		self.btn1.setToolTip('转换unicode字符')
 		self.btn5.setToolTip('去掉第一行和最后两行\n去掉开头9个字符和最后2个字符')
-		self.btn7.setToolTip('将以空格分隔的字节串逆序')
 
 		transLabel = QLabel('格式：')
 		toLabel = QLabel('->')
@@ -70,12 +66,12 @@ class Example(QWidget):
 		self.selNum = QLineEdit('48')
 		self.selNum.setFixedWidth(20)
 		lab2 = QLabel('字符')
-		self.btn_newline = QPushButton('换行 >>')
-		self.btn_newline.setFixedWidth(55)
+		self.btn7 = QPushButton('换行 >>')
+		self.btn7.setFixedWidth(55)
 		box1.addWidget(lab1)
 		box1.addWidget(self.selNum)
 		box1.addWidget(lab2)
-		box1.addWidget(self.btn_newline)
+		box1.addWidget(self.btn7)
 
 		leftGrid = QGridLayout()
 		leftGrid.setSpacing(10)
@@ -91,10 +87,9 @@ class Example(QWidget):
 		rightVBox.addWidget(self.btn1)
 		rightVBox.addWidget(self.btn2)
 		rightVBox.addWidget(self.btn4)
-		rightVBox.addWidget(self.btn5)
 		rightVBox.addWidget(self.btn3)
+		rightVBox.addWidget(self.btn5)
 		rightVBox.addWidget(self.btn6)
-		rightVBox.addWidget(self.btn7)
 		rightVBox.addLayout(hBox)
 		rightVBox.addLayout(box1)
 		rightVBox.addStretch()
@@ -115,7 +110,6 @@ class Example(QWidget):
 		self.btn5.clicked.connect(self.button5Clicked)
 		self.btn6.clicked.connect(self.button6Clicked)
 		self.btn7.clicked.connect(self.button7Clicked)
-		self.btn_newline.clicked.connect(self.button_newlineClicked)
 		self.btn_cpy.clicked.connect(self.buttonCpyClicked)
 		self.btn_clr.clicked.connect(self.buttonClrClicked)
 
@@ -233,20 +227,7 @@ class Example(QWidget):
 		else:
 			pass
 
-	def button7Clicked(self):  # 字节逆序
-		string_origin = self.get_input()
-		if (string_origin is not ""):
-			try:
-				bytes = string_origin.split(" ")
-				bytes.reverse()
-				string_result = " ".join(bytes)
-				self.set_output(string_result)
-			except:
-				self.set_output('ERROR!')
-		else:
-			pass
-
-	def button_newlineClicked(self):  # 换行
+	def button7Clicked(self):  # 换行
 		string_origin = self.get_input()
 		if (string_origin is not ""):
 			try:
