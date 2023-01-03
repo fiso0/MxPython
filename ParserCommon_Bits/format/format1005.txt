@@ -1,0 +1,14 @@
+消息编号	u12
+参考站ID	u12
+预留ITRF年	u6
+GPS指示符	b1
+GLONASS指示符	b1
+预留Galileo指示符	b1
+参考站指示符	b1
+天线参考点ECEF-X	i38
+单接收机晶振指示符	b1
+预留	b1
+天线参考点ECEF-Y	i38
+四分之一周期指示符	b2
+天线参考点ECEF-Z	i38
+天线高	u16

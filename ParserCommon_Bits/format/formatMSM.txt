@@ -1,0 +1,13 @@
+消息编号	u12
+参考站ID	u12
+GNSS星历时刻	u30
+多消息标识位	b1
+站描述信息	u3
+保留	b7
+接收机钟差处理标识	u2
+外接钟使用标识	u2
+GNSS_DFree平滑标识	b1
+DFree平滑间隔	b3
+GNSS卫星标志组	b64
+GNSS信号标志组	b32
+GNSS_Cell标志组	b0
