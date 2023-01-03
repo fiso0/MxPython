@@ -1,0 +1,86 @@
+# $language = "Python"
+# $interface = "1.0"
+
+# GetTabByName.py.txt
+#
+# Description:
+#   - Shows how to get a reference to a tab object by name/title/caption.
+#     SecureCRT's Scripting API doesn't have a native GetTabByName() method.
+#     So, you must iterate over each existing tab checking each tab's caption
+#     to get a reference to a tab by name.
+#
+#  Last Modified:
+#    Oct 12, 2018:
+#      - Initial version
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def GetTabByName(strName):
+    # Iterate over all existing tabs, looking for one named the same as
+    # what was passed in as arg strName
+    for nTabIndex in range(1, crt.GetTabCount() + 1):
+        objTab = crt.GetTab(nTabIndex)
+        if objTab.Caption == strName:
+            return objTab
+
+    # Default to returning nothing if we never find a tab by the given name
+    return None
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def GetTabByNameCI(strName):
+    # Iterate over all existing tabs, looking for one named the same as
+    # what was passed in as arg strName
+    for nTabIndex in range(1, crt.GetTabCount() + 1):
+        objTab = crt.GetTab(nTabIndex)
+        if objTab.Caption.lower() == strName.lower():
+            return objTab
+
+    # Default to returning nothing if we never find a tab by the given name
+    return None
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def Example():
+    strTabTitle = "MyTabTitle"
+    while True:
+        strTabTitle = crt.Dialog.Prompt(
+            "Please enter desired tab title (case matters)",
+            "Tab title/name?",
+            strTabTitle)
+        if strTabTitle == "":
+            break
+
+        objTab = GetTabByName(strTabTitle)
+        if objTab == None:
+            crt.Dialog.MessageBox("Tab '{0}' was not found.".format(
+                strTabTitle))
+        else:
+            objTab.Activate()
+            crt.Dialog.MessageBox(
+                "Tab #{0} (\"{1}\") is now active.".format(
+                    objTab.Index,
+                    objTab.Caption))
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def ExampleCI():
+    strTabTitle = "mytabtitle"
+    while True:
+        strTabTitle = crt.Dialog.Prompt(
+            "Please enter desired tab title (case doesn't matter)",
+            "Tab title/name?",
+            strTabTitle)
+        if strTabTitle == "":
+            break
+
+        objTab = GetTabByNameCI(strTabTitle)
+        if objTab == None:
+            crt.Dialog.MessageBox("Tab '{0}' was not found.".format(
+                strTabTitle))
+        else:
+            objTab.Activate()
+            crt.Dialog.MessageBox(
+                "Tab #{0} (\"{1}\") is now active.".format(
+                    objTab.Index,
+                    objTab.Caption))
+
+
+Example()
+ExampleCI()
