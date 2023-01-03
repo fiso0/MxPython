@@ -1,0 +1,40 @@
+WARNING:root:[WinError 10054] 远程主机强迫关闭了一个现有的连接。
+2016-08-18 16:11:49 [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+2016-08-19 13:20:53 local variable 'f' referenced before assignment
+2016-08-19 13:28:28 local variable 'f' referenced before assignment
+2016-08-19 13:28:30 local variable 'f' referenced before assignment
+2016-08-19 13:28:32 local variable 'f' referenced before assignment
+2016-08-19 13:28:34 local variable 'f' referenced before assignment
+2016-08-19 13:28:36 local variable 'f' referenced before assignment
+2016-08-19 13:34:49 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:34:51 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:34:53 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:34:55 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:34:57 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:34:59 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:35:01 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:35:03 local variable 'f' referenced before assignment [in main]
+2016-08-19 13:38:36 [Errno 13] Permission denied: 'agnss_test_log.csv' [in main]
+2016-08-19 13:45:22 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 13:46:20 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 13:46:22 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 13:46:24 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 13:46:26 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 13:46:28 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 13:48:32 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 14:08:25 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 14:09:37 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 14:15:17 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 14:34:35 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 14:47:47 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 14:51:46 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-19 14:53:20 [Errno 13] Permission denied: 'agnss_test_log.csv' [in log_result]
+2016-08-23 09:29:33 [Errno 11004] getaddrinfo failed [in main]
+2016-08-30 09:45:17 [Errno 11004] getaddrinfo failed [in main]
+2017-02-27 17:58:02 not enough values to unpack (expected 2, got 1) [in one_try]
+2017-02-27 17:58:04 not enough values to unpack (expected 2, got 1) [in one_try]
+2017-02-27 17:58:06 not enough values to unpack (expected 2, got 1) [in one_try]
+2017-02-27 17:58:08 not enough values to unpack (expected 2, got 1) [in one_try]
+2017-02-27 17:58:10 not enough values to unpack (expected 2, got 1) [in one_try]
+2017-02-27 17:58:12 not enough values to unpack (expected 2, got 1) [in one_try]
+2017-02-27 17:58:14 not enough values to unpack (expected 2, got 1) [in one_try]
