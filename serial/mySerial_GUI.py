@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
 # -*- coding: utf-8 -*-
 
 import serial  # 导入模块
@@ -8,7 +8,10 @@ class MySerial(object):
 	def __init__(self):
 		self.STRGLO = ""  # 读取的数据
 		self.BOOL = True  # 读取标志位
-	
+
+		# self.STRSEND = "" # 待发送的数据
+		# self.INPUT_DONE = False # 待发送数据准备完毕标识位
+		# self.SEND_BOOL = True # 发送标识位
 	
 	# 读数代码本体实现
 	def ReadData(self, ser):
@@ -18,7 +21,14 @@ class MySerial(object):
 				self.STRGLO = ser.read(ser.in_waiting).decode("utf-8", errors='ignore')
 				print(self.STRGLO, end='')
 	
-	
+	# 新增：发送字符串
+	# def SendData(ser):
+		# while self.SEND_BOOL:
+			# if ser.in_waiting and self.INPUT_DONE:
+				# result = ser.write(self.STRSEND + "\r\n")
+				# if result:
+					# self.INPUT_DONE = False
+					
 	# 打开串口
 	# 端口，GNU / Linux上的/ dev / ttyUSB0 等 或 Windows上的 COM3 等
 	# 波特率，标准值之一：50,75,110,134,150,200,300,600,1200,1800,2400,4800,9600,19200,38400,57600,115200
@@ -32,6 +42,7 @@ class MySerial(object):
 			if (ser.is_open):
 				ret = True
 				threading.Thread(target=self.ReadData, args=(ser,)).start()
+				# threading.Thread(target=self.SendData, args=(ser,)).start()
 		except Exception as e:
 			print("---异常---：", e)
 		return ser, ret
@@ -108,7 +119,7 @@ class Example(QWidget):
 		self.init_port()
 
 	def init_port(self):
-		ser, ret = self.s.DOpenPort("COM1", 19200, None) # 自动开始接收
+		self.ser, ret = self.s.DOpenPort("COM33", 921600, None) # 自动开始接收
 		threading.Thread(target=self.update_rx, args=()).start()
 
 	def update_rx(self):
@@ -120,7 +131,9 @@ class Example(QWidget):
 			print(e)
 
 	def tx(self):
-		pass
+		# pass
+		sendStr = "showBaudRate()" # self.txText.text()
+		self.s.DWritePort(self.ser, sendStr)
 
 
 
