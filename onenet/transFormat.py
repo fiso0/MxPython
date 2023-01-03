@@ -70,16 +70,23 @@ def addBlank(message):
 	return ' '.join(chrstr)
 
 
-def transformat(str_in,f_from,f_to):
+def transformat(str_in,f_from,f_to,delete_blank=False):
+	str_out = ''
+	if str_in == '':
+		return str_out
+
 	if f_from.upper() == f_to.upper():
 		# 无需转换
 		str_out = str_in
 
-	if f_from.upper() == 'HEX' and f_to.upper() == 'DEC':
+	elif f_from.upper() == 'HEX' and f_to.upper() == 'DEC':
 		# 十六进制 转为 十进制 例如 30 转为 48
-		str_out = str(int(str_in.replace(' ',''),16))
+		if(delete_blank): # 删除空格
+			str_out = str(int(str_in.replace(' ',''),16))
+		else: # 支持一次性转换多个输入（以空格分隔）
+			str_out = ' '.join([str(int(a, 16)) for a in str_in.split(' ')])
 
-	if f_from.upper() == 'HEX' and f_to.upper() == 'ASCII':
+	elif f_from.upper() == 'HEX' and f_to.upper() == 'ASCII':
 		# 十六进制 转为 ASCII码 例如 30 转为 0
 		str_out = a2c(str_in)
 
