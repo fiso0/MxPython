@@ -1,0 +1,16 @@
+协议头header	8
+协议长度length	4
+协议类型type	4
+定位纬度lat	8
+定位经度lon	8
+定位高程alt	4
+时间戳time	8
+速度speed	4
+航向角heading	4
+加速度acc	4
+振幅amp	4
+频率fre	4
+压实度vcv	4
+温度temp	4
+设备唯一标识长度	4
+设备唯一标识imei	15

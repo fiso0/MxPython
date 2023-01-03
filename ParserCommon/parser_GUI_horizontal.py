@@ -30,11 +30,12 @@ class MsgCommon(QWidget):
 		self.cmdCombo.setEnabled(False)
 
 		break_button.setMaximumWidth(100)
-		# self.cmdCombo.setMaximumWidth(100)
+		self.cmdCombo.setMaximumWidth(100)
 
-		self.message_in.setFixedHeight(100)
+		# self.message_in.setFixedHeight(100)
 		# self.message_out.setFixedHeight(200)
 
+		# 格式
 		hBox = QHBoxLayout()
 		hBox.addWidget(self.ifAssignFormatCheck)
 		hBox.addWidget(cmdLabel)
@@ -46,10 +47,16 @@ class MsgCommon(QWidget):
 		vBox.addWidget(inTextLabel)
 		vBox.addWidget(self.message_in)
 		vBox.addLayout(hBox)
-		vBox.addWidget(outTextLabel)
-		vBox.addWidget(self.message_out)
 
-		self.setLayout(vBox)
+		vBox2 = QVBoxLayout()
+		vBox2.addWidget(outTextLabel)
+		vBox2.addWidget(self.message_out)
+
+		hBox2 = QHBoxLayout()
+		hBox2.addLayout(vBox,1)
+		hBox2.addLayout(vBox2,2)
+
+		self.setLayout(hBox2)
 		# self.setFixedHeight(400)
 		self.setWindowTitle('分解消息')
 		self.show()
@@ -105,7 +112,7 @@ class MsgCommon(QWidget):
 							                                  label))) + '\n'  # 为了输出对齐
 		except:
 			res_str='失败\n'
-		self.resizeAll(res_str)
+		# self.resizeAll(res_str)
 		self.message_out.setText(res_str)
 
 
@@ -123,8 +130,6 @@ class MsgCommon(QWidget):
 		lines = sum(result_lines_list)
 
 		newHeightOut = lines * 16
-		if newHeightOut > 650:
-			newHeightOut = 650
 		newHeightAll = newHeightOut-oldHeightOut+oldHeightAll
 
 		# 调整为新高度
