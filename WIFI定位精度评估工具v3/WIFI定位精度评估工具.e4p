@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project SYSTEM "Project-5.1.dtd">
+<!-- eric project file for project 多基站定位精度评估工具 -->
+<!-- Saved: 2016-08-16, 18:07:27 -->
+<!-- Copyright (C) 2016 ,  -->
+<Project version="5.1">
+  <Language>en_US</Language>
+  <Hash>e9c75e57c8ba4ce9e58618cf785b92c5c3e211b7</Hash>
+  <ProgLanguage mixed="0">Python2</ProgLanguage>
+  <ProjectType>Qt4</ProjectType>
+  <Description></Description>
+  <Version>0.1</Version>
+  <Author></Author>
+  <Email></Email>
+  <Eol index="-1"/>
+  <Sources>
+    <Source>Analysis/Amap_Analysis.py</Source>
+    <Source>Analysis/BaseAnalysis.py</Source>
+    <Source>Analysis/ConvertAny2BaiDu.py</Source>
+    <Source>Analysis/Haoservice_Analysis.py</Source>
+    <Source>Analysis/Heclouds_Analysis.py</Source>
+    <Source>Analysis/Mapbar_Analysis.py</Source>
+    <Source>Analysis/__init__.py</Source>
+    <Source>__init__.py</Source>
+    <Source>browse.py</Source>
+    <Source>webkit/__init__.py</Source>
+    <Source>webkit/coordTransform_utils.py</Source>
+    <Source>webkit/previewer.py</Source>
+  </Sources>
+  <Forms/>
+  <Translations/>
+  <Resources/>
+  <Interfaces/>
+  <Others/>
+  <MainScript>browse.py</MainScript>
+  <Vcs>
+    <VcsType>None</VcsType>
+  </Vcs>
+  <FiletypeAssociations>
+    <FiletypeAssociation pattern="*.idl" type="INTERFACES"/>
+    <FiletypeAssociation pattern="*.ptl" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.py" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.py2" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.pyw" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.pyw2" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.qm" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.qrc" type="RESOURCES"/>
+    <FiletypeAssociation pattern="*.ts" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.ui" type="FORMS"/>
+  </FiletypeAssociations>
+</Project>
